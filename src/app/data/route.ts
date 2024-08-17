@@ -1,5 +1,42 @@
-import ytdl, { videoFormat, videoInfo } from "@distube/ytdl-core";
 import { NextRequest, NextResponse } from "next/server";
+
+import ytdl, { videoInfo } from "@distube/ytdl-core";
+import getPixels from "get-pixels";
+import { extractColors } from "extract-colors";
+
+async function getAccentColors(vidInfo: videoInfo) {
+  try {
+    const pixels: any = await new Promise<any>((resolve, reject) => {
+      getPixels(
+        `https://img.youtube.com/vi/${vidInfo.videoDetails.videoId}/maxresdefault.jpg`,
+        (err, pixels) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(pixels);
+          }
+        }
+      );
+    });
+
+    const data = Array.from(pixels.data) as any;
+    const [width, height] = pixels.shape;
+
+    const colors = await extractColors({ data, width, height });
+
+    let accentColors = [] as any;
+    colors.forEach((color) => {
+      accentColors.push(color.hex);
+    });
+
+    if (accentColors.length > 0) {
+      const topColor = accentColors[0];
+      return { pallete: accentColors, topC: topColor };
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 export async function POST(req: NextRequest) {
   const id = req.nextUrl.searchParams.get("id");
@@ -35,6 +72,11 @@ export async function POST(req: NextRequest) {
   const vidInfo = await ytdl.getBasicInfo(
     `https://www.youtube.com/watch?v=${id}`
   );
+
+  const data = await getAccentColors(vidInfo);
+  const pallete = data?.pallete;
+  const topC = data?.topC;
+
   return NextResponse.json(
     {
       vid: {
@@ -42,12 +84,10 @@ export async function POST(req: NextRequest) {
         url: vidInfo.videoDetails.video_url,
         title: vidInfo.videoDetails.title,
         thumbnail: {
-          main:
-            vidInfo.videoDetails.thumbnails[0]?.url ||
-            vidInfo.videoDetails.thumbnails[1]?.url ||
-            vidInfo.videoDetails.thumbnails[2]?.url,
-          alt: reqBody.def_vid_thumbnail || null,
+          main: `https://img.youtube.com/vi/${vidInfo.videoDetails.videoId}/maxresdefault.jpg`,
+          alt: reqBody.def_vid_thumbnail,
         },
+        duration: Number(vidInfo.videoDetails.lengthSeconds),
       },
       owner: {
         title: vidInfo.videoDetails.ownerChannelName,
@@ -61,6 +101,8 @@ export async function POST(req: NextRequest) {
         volume: Number(reqBody.volume) || 0.5,
         loop: reqBody.loop,
         vidEnabled: reqBody.vidEnabled,
+        accentColors: pallete,
+        topColor: topC,
       },
     },
     { status: 200 }

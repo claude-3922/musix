@@ -1,62 +1,23 @@
 "use client";
-import { useState } from "react";
-import { Player, PlayerProps } from "./components/Player";
+
+import { Suspense, useRef, useState } from "react";
+import { Player } from "./components/Player/Player";
+import PlayerLoading from "./components/Player/PlayerLoading";
 
 export default function Home() {
   const [id, setId] = useState("");
-  const [songDataLoaded, setSongDataLoaded] = useState(false);
-  const [songData, setSongData] = useState<PlayerProps>({
-    vid: {
-      id: "",
-      url: "",
-      title: "-",
-      thumbnail: {
-        main: "",
-        alt: "",
-      },
-    },
-    owner: {
-      title: "-",
-      url: "",
-      thumbnail: {
-        main: "",
-        alt: "",
-      },
-    },
-    playerInfo: {
-      volume: -1,
-      loop: false,
-      vidEnabled: false,
-    },
-  });
+  const [vid, setVid] = useState(false);
 
-  const handleLoadStart = async (songId: string) => {
-    const res = await fetch(`/data?id=${songId}`, {
-      method: "POST",
-      body: JSON.stringify({
-        def_vid_thumbnail: `/def_vid_thumbnail.png`,
-        def_ch_thumbnail: `/def_ch_thumbnail.png`,
-        volume: 0.5,
-        loop: false,
-        vidEnabled: true,
-      }),
-    });
-
-    if (res.status === 200) {
-      const data: PlayerProps = await res.json();
-      console.log(data);
-      setSongData(data);
-      setSongDataLoaded(true);
-    }
-  };
+  const audioPlayer = useRef<HTMLAudioElement | null>(null);
 
   return (
     <>
       <div className="flex flex-col items-center justify-center">
         <input
           id=""
+          name="songId"
           onChange={(e) => (e.target.id = e.target.value)}
-          className="border-2 p-2"
+          className="border-2 p-2 bg-custom_black"
           type="text"
           placeholder="enter song id here"
         />
@@ -64,25 +25,37 @@ export default function Home() {
           type="submit"
           className="border-2 p-2"
           onClick={() => {
-            setId(document.getElementsByTagName("input")[0].id);
+            setId(document.getElementsByName("songId")[0].id);
           }}
         >
           Play
         </button>
+        <label>
+          Vid?
+          <input
+            type="checkbox"
+            name="vidEnabled"
+            onChange={(e) => {
+              console.log(e.target.checked);
+              setVid(e.target.checked);
+            }}
+          />
+        </label>
 
         <audio
           autoPlay
+          id="audioPlayer"
+          ref={audioPlayer}
           src={`/media?id=${id}&vid=0`}
-          onLoadStart={() => handleLoadStart(id)}
         />
 
-        {songDataLoaded && (
+        <Suspense fallback={<PlayerLoading />}>
           <Player
-            vid={songData.vid}
-            owner={songData.owner}
-            playerInfo={songData.playerInfo}
+            songId={id}
+            vidEnabled={vid}
+            audioPlayer={audioPlayer.current || null}
           />
-        )}
+        </Suspense>
       </div>
     </>
   );

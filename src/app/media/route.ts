@@ -41,12 +41,29 @@ export async function GET(req: NextRequest) {
 
   const vidInfo = await ytdl.getInfo(`https://www.youtube.com/watch?v=${id}`);
 
-  const format = ytdl.chooseFormat(vidInfo.formats, {
-    filter: mediaType === 1 ? "videoonly" : "audioonly",
-    quality: mediaType === 1 ? "lowestvideo" : "lowestaudio", // large specified 480p for video
-  });
+  let format;
 
-  const fileSize = Number(format.contentLength);
+  if (mediaType === 0) {
+    format = ytdl.chooseFormat(vidInfo.formats, {
+      filter: "audioonly",
+      quality: "highestaudio",
+    });
+  } else if (mediaType === 1) {
+    format = ytdl.chooseFormat(vidInfo.formats, {
+      filter: "videoonly",
+      quality: 135,
+    });
+  }
+
+  if (!format) {
+    console.log(" INFO /media 'Error while choosing format'");
+    return Response.json(
+      { message: "Error while choosing format" },
+      { status: 500 }
+    );
+  }
+
+  const fileSize = Number(format?.contentLength);
 
   if (req.headers.get("range")) {
     const parts = req.headers
@@ -71,7 +88,7 @@ export async function GET(req: NextRequest) {
       res.headers.set(`Content-Range`, `bytes ${start}-${end}/${fileSize}`);
       res.headers.set("Accept-Ranges", "bytes");
       res.headers.set(`Content-Length`, `${chunksize}`);
-      res.headers.set(`Content-Type`, `${format.mimeType}`);
+      res.headers.set(`Content-Type`, `${format?.mimeType}`);
 
       return res;
     }
@@ -81,7 +98,7 @@ export async function GET(req: NextRequest) {
     const res = new NextResponse(readableStream as any, { status: 200 });
 
     res.headers.set(`Content-Length`, `${fileSize}`);
-    res.headers.set(`Content-Type`, `${format.mimeType}`);
+    res.headers.set(`Content-Type`, `${format?.mimeType}`);
 
     return res;
   }

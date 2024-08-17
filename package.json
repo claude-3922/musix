@@ -10,17 +10,23 @@
   },
   "dependencies": {
     "@distube/ytdl-core": "^4.14.4",
+    "@types/get-pixels": "^3.3.4",
     "next": "14.2.5",
     "react": "^18",
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@lokesh.dhakar/quantize": "^1.3.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
+    "extract-colors": "^4.0.6",
+    "get-pixels": "^3.3.3",
+    "hex-rgb": "^5.0.0",
     "postcss": "^8",
+    "rgb-hex": "^4.1.0",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
