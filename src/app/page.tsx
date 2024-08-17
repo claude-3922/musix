@@ -7,6 +7,7 @@ import PlayerLoading from "./components/Player/PlayerLoading";
 export default function Home() {
   const [id, setId] = useState("");
   const [vid, setVid] = useState(false);
+  const [goLoad, setGoLoad] = useState(false);
 
   const audioPlayer = useRef<HTMLAudioElement | null>(null);
 
@@ -43,18 +44,23 @@ export default function Home() {
         </label>
 
         <audio
-          autoPlay
           id="audioPlayer"
           ref={audioPlayer}
           src={`/media?id=${id}&vid=0`}
+          onLoadedMetadata={() => {
+            setGoLoad((v) => (v ? v : !v));
+          }}
+          autoPlay
         />
 
         <Suspense fallback={<PlayerLoading />}>
-          <Player
-            songId={id}
-            vidEnabled={vid}
-            audioPlayer={audioPlayer.current || null}
-          />
+          {goLoad && (
+            <Player
+              songId={id}
+              vidEnabled={vid}
+              audioPlayer={audioPlayer.current || null}
+            />
+          )}
         </Suspense>
       </div>
     </>

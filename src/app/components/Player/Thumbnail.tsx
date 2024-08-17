@@ -41,9 +41,11 @@ export default function Thumbnail({ songData, audioPlayer }: ThumbnailProps) {
             className="object-cover rounded-[4px]"
             src={vidSrc}
             poster={`${vid.thumbnail.main || vid.thumbnail.alt}`}
-            onPlay={(e) =>
-              (e.currentTarget.currentTime = audioPlayer.currentTime)
-            }
+            onPlay={() => {
+              if (videoPlayer.current) {
+                videoPlayer.current.currentTime = audioPlayer.currentTime;
+              }
+            }}
           />
         ) : (
           <img

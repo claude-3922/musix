@@ -1,16 +1,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import React, {
-  ChangeEvent,
-  ForwardedRef,
-  forwardRef,
-  Ref,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { ChangeEvent, useRef, useState } from "react";
 import { SongData } from "./Player";
 import { formatSongDuration } from "@/util/format";
 
@@ -22,7 +13,7 @@ interface InfoProps {
 export default function Info({ player, audioPlayer }: InfoProps) {
   const { vid } = player;
 
-  const [playing, setPlaying] = useState(false);
+  const [playing, setPlaying] = useState(true);
   const [audioTime, setAudioTime] = useState(audioPlayer.currentTime);
 
   const seekBar = useRef<HTMLInputElement | null>(null);
@@ -41,7 +32,25 @@ export default function Info({ player, audioPlayer }: InfoProps) {
   };
 
   audioPlayer.onplay = () => {
+    let videoPlayer = document.getElementById(
+      "videoPlayer"
+    ) as HTMLVideoElement;
+
     setPlaying(true);
+    if (videoPlayer) {
+      videoPlayer.play();
+    }
+  };
+
+  audioPlayer.onpause = () => {
+    let videoPlayer = document.getElementById(
+      "videoPlayer"
+    ) as HTMLVideoElement;
+
+    setPlaying(false);
+    if (videoPlayer) {
+      videoPlayer.pause();
+    }
   };
 
   audioPlayer.ontimeupdate = () => {
@@ -51,40 +60,6 @@ export default function Info({ player, audioPlayer }: InfoProps) {
       seekBar.current.value = `${audioPlayer.currentTime}`;
     }
   };
-
-  const handlePaused = () => {
-    let videoPlayer = document.getElementById(
-      "videoPlayer"
-    ) as HTMLVideoElement;
-
-    if (audioPlayer) {
-      if (audioPlayer.paused) {
-        audioPlayer.play();
-        if (videoPlayer) {
-          videoPlayer.play();
-        }
-        setPlaying(true);
-      } else {
-        audioPlayer.pause();
-        if (videoPlayer) {
-          videoPlayer.pause();
-        }
-        setPlaying(false);
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (playing) {
-      if (playbackButton.current) {
-        playbackButton.current.src = "/icons/pauseButton.svg";
-      }
-    } else {
-      if (playbackButton.current) {
-        playbackButton.current.src = "/icons/playButton.svg";
-      }
-    }
-  }, [playing]);
 
   return (
     <div className="flex flex-col justify-center items-center">
@@ -116,10 +91,14 @@ export default function Info({ player, audioPlayer }: InfoProps) {
       </span>
       <span className="flex flex-row justify-center items-center">
         <button className="border-2">PREVIOUS</button>
-        <button onClick={handlePaused}>
+        <button
+          onClick={() =>
+            audioPlayer.paused ? audioPlayer.play() : audioPlayer.pause()
+          }
+        >
           <img
             ref={playbackButton}
-            src="/icons/playButton.svg"
+            src={playing ? `/icons/pauseButton.svg` : `/icons/playButton.svg`}
             height={64}
             width={64}
           ></img>
