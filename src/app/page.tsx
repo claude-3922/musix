@@ -7,7 +7,6 @@ import PlayerLoading from "./components/Player/PlayerLoading";
 export default function Home() {
   const [id, setId] = useState("");
   const [vid, setVid] = useState(false);
-  const [goLoad, setGoLoad] = useState(false);
 
   const audioPlayer = useRef<HTMLAudioElement | null>(null);
 
@@ -37,7 +36,6 @@ export default function Home() {
             type="checkbox"
             name="vidEnabled"
             onChange={(e) => {
-              console.log(e.target.checked);
               setVid(e.target.checked);
             }}
           />
@@ -47,20 +45,14 @@ export default function Home() {
           id="audioPlayer"
           ref={audioPlayer}
           src={`/media?id=${id}&vid=0`}
-          onLoadedMetadata={() => {
-            setGoLoad((v) => (v ? v : !v));
-          }}
-          autoPlay
         />
 
         <Suspense fallback={<PlayerLoading />}>
-          {goLoad && (
-            <Player
-              songId={id}
-              vidEnabled={vid}
-              audioPlayer={audioPlayer.current || null}
-            />
-          )}
+          <Player
+            songId={id}
+            vidEnabled={vid}
+            audioPlayer={audioPlayer.current || null}
+          />
         </Suspense>
       </div>
     </>

@@ -8,7 +8,7 @@ async function getAccentColors(vidInfo: videoInfo) {
   try {
     const pixels: any = await new Promise<any>((resolve, reject) => {
       getPixels(
-        `https://img.youtube.com/vi/${vidInfo.videoDetails.videoId}/maxresdefault.jpg`,
+        `https://img.youtube.com/vi/${vidInfo.videoDetails.videoId}/hqdefault.jpg`,
         (err, pixels) => {
           if (err) {
             reject(err);
@@ -53,22 +53,6 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const reqBody = await req.json();
-
-  /*
-  if (!reqBody.def_vid_thumbnail || reqBody.def_ch_thumbnail) {
-    console.log(
-      " INFO /data 'No default video or channel thumbnails given in request body'"
-    );
-    return NextResponse.json(
-      {
-        message: "No default video or channel thumbnails given in request body",
-      },
-      { status: 403 }
-    );
-  }
-  */
-
   const vidInfo = await ytdl.getBasicInfo(
     `https://www.youtube.com/watch?v=${id}`
   );
@@ -83,24 +67,22 @@ export async function POST(req: NextRequest) {
         id: vidInfo.videoDetails.videoId,
         url: vidInfo.videoDetails.video_url,
         title: vidInfo.videoDetails.title,
-        thumbnail: {
-          main: `https://img.youtube.com/vi/${vidInfo.videoDetails.videoId}/maxresdefault.jpg`,
-          alt: reqBody.def_vid_thumbnail,
-        },
+        thumbnail:
+          vidInfo.videoDetails.thumbnails[
+            vidInfo.videoDetails.thumbnails.length - 1
+          ].url || "/def_vid_thumbnail.jpg",
+
         duration: Number(vidInfo.videoDetails.lengthSeconds),
       },
       owner: {
         title: vidInfo.videoDetails.ownerChannelName,
         url: vidInfo.videoDetails.ownerProfileUrl,
-        thumbnail: {
-          main: vidInfo.videoDetails.author.avatar,
-          alt: reqBody.def_ch_thumbnail || null,
-        },
+        thumbnail:
+          vidInfo.videoDetails.thumbnails[
+            vidInfo.videoDetails.thumbnails.length - 1
+          ].url || "/def_user_thumbnail.jpg",
       },
       playerInfo: {
-        volume: Number(reqBody.volume) || 0.5,
-        loop: reqBody.loop,
-        vidEnabled: reqBody.vidEnabled,
         accentColors: pallete,
         topColor: topC,
       },

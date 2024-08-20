@@ -2,15 +2,20 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { ForwardedRef, forwardRef, useRef } from "react";
+import React, { ForwardedRef, forwardRef, useEffect, useRef } from "react";
 import { SongData } from "./Player";
 
 interface ThumbnailProps {
   songData: SongData;
   audioPlayer: HTMLAudioElement;
+  vidEnabled: boolean;
 }
 
-export default function Thumbnail({ songData, audioPlayer }: ThumbnailProps) {
+export default function Thumbnail({
+  songData,
+  audioPlayer,
+  vidEnabled,
+}: ThumbnailProps) {
   const { vid, owner, playerInfo } = songData;
   const vidSrc = `/media?id=${vid.id}&vid=1`;
 
@@ -30,29 +35,11 @@ export default function Thumbnail({ songData, audioPlayer }: ThumbnailProps) {
 
   return (
     <div className="flex flex-col justify-center items-center mix-blend-normal">
-      <span
-        className={`flex justify-center w-[12.25rem] h-[8rem] overflow-hidden`}
-      >
-        {playerInfo.vidEnabled ? (
-          <video
-            autoPlay
-            id="videoPlayer"
-            ref={playerInfo.vidEnabled ? videoPlayer : null}
-            className="object-cover rounded-[4px]"
-            src={vidSrc}
-            poster={`${vid.thumbnail.main || vid.thumbnail.alt}`}
-            onPlay={() => {
-              if (videoPlayer.current) {
-                videoPlayer.current.currentTime = audioPlayer.currentTime;
-              }
-            }}
-          />
-        ) : (
-          <img
-            src={vid.thumbnail.main || vid.thumbnail.alt}
-            className="object-cover rounded-[4px]"
-          ></img>
-        )}
+      <span className={`flex justify-center w-[6rem] h-[6rem] overflow-hidden`}>
+        <img
+          src={vid.thumbnail || vid.thumbnail}
+          className="object-cover rounded-[4px]"
+        ></img>
       </span>
     </div>
   );

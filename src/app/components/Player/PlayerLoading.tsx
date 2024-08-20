@@ -6,7 +6,9 @@ import React from "react";
 
 export default function PlayerLoading() {
   return (
-    <span className="absolute left-[45vw] bottom-[45vh] z-1">
+    <div
+      className={`flex flex-row items-center justify-evenly w-[100vw] h-[14vh] px-[2vw] my-[2vh] mx-[1vw] rounded-[4px] bg-custom_d_gray`}
+    >
       <span className="flex items-center justify-center border-4 rounded-xl h-[6rem] w-[6rem]">
         <img
           className="object-fit invert"
@@ -15,6 +17,6 @@ export default function PlayerLoading() {
           height={150}
         ></img>
       </span>
-    </span>
+    </div>
   );
 }
