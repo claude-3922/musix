@@ -1,8 +1,10 @@
 "use client";
 
-import { Suspense, useRef, useState } from "react";
+import { ReactElement, Suspense, useRef, useState } from "react";
 import { Player } from "./components/Player/Player";
 import PlayerLoading from "./components/Player/PlayerLoading";
+import Preview from "./components/Preview/Preview";
+import PreviewLoading from "./components/Preview/PreviewLoading";
 
 export default function Home() {
   const [id, setId] = useState("");
@@ -47,11 +49,20 @@ export default function Home() {
           src={`/media?id=${id}&vid=0`}
         />
 
-        <Suspense fallback={<PlayerLoading />}>
-          <Player
+        <Suspense fallback={<PreviewLoading />}>
+          <Preview
             songId={id}
             vidEnabled={vid}
             audioPlayer={audioPlayer.current || null}
+            thumbnail={`https://img.youtube.com/vi/${id}/maxresdefault.jpg`}
+          />
+        </Suspense>
+
+        <Suspense fallback={<PlayerLoading />}>
+          <Player
+            songId={id}
+            audioPlayer={audioPlayer.current || null}
+            vidEnabled={vid}
           />
         </Suspense>
       </div>

@@ -2,44 +2,26 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { ForwardedRef, forwardRef, useEffect, useRef } from "react";
+import React, {
+  ForwardedRef,
+  forwardRef,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { SongData } from "./Player";
 
 interface ThumbnailProps {
   songData: SongData;
-  audioPlayer: HTMLAudioElement;
-  vidEnabled: boolean;
 }
 
-export default function Thumbnail({
-  songData,
-  audioPlayer,
-  vidEnabled,
-}: ThumbnailProps) {
+export default function Thumbnail({ songData }: ThumbnailProps) {
   const { vid, owner, playerInfo } = songData;
-  const vidSrc = `/media?id=${vid.id}&vid=1`;
-
-  const videoPlayer = useRef<HTMLVideoElement | null>(null);
-
-  audioPlayer.ontimeupdate = () => {
-    if (videoPlayer.current) {
-      if (
-        Math.abs(audioPlayer.currentTime - videoPlayer.current.currentTime) >=
-        0.25
-      ) {
-        videoPlayer.current.currentTime = audioPlayer.currentTime;
-        console.log("Video time changed");
-      }
-    }
-  };
 
   return (
-    <div className="flex flex-col justify-center items-center mix-blend-normal">
+    <div className="flex justify-start items-center mix-blend-normal w-[17vw] mx-[1vw]">
       <span className={`flex justify-center w-[6rem] h-[6rem] overflow-hidden`}>
-        <img
-          src={vid.thumbnail || vid.thumbnail}
-          className="object-cover rounded-[4px]"
-        ></img>
+        <img src={vid.thumbnail} className="object-cover rounded-[4px]"></img>
       </span>
     </div>
   );

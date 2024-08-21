@@ -44,7 +44,7 @@ export interface SongData {
   };
 }
 
-export async function Player({ songId, vidEnabled, audioPlayer }: PlayerProps) {
+export async function Player({ songId, audioPlayer, vidEnabled }: PlayerProps) {
   const [songData, setSongData] = useState<SongData | null>(null);
 
   useEffect(() => {
@@ -59,9 +59,14 @@ export async function Player({ songId, vidEnabled, audioPlayer }: PlayerProps) {
       }
 
       await audioPlayer?.play();
+      if (document.getElementById("videoPlayer")) {
+        await (
+          document.getElementById("videoPlayer") as HTMLVideoElement
+        ).play();
+      }
     }
     fetchDataAndPlay();
-  }, [songId, vidEnabled, audioPlayer]);
+  }, [songId, audioPlayer, vidEnabled]);
 
   if (audioPlayer) {
     if (songData) {
@@ -71,16 +76,12 @@ export async function Player({ songId, vidEnabled, audioPlayer }: PlayerProps) {
 
       return (
         <div
-          className={`text-white flex flex-row items-center justify-between w-[100vw] h-[14vh] px-[2vw] my-[2vh] mx-[1vw] rounded-[4px]`}
+          className={`text-white flex flex-row items-center justify-between w-[100vw] h-[14vh] px-[1vw] my-[2vh] mx-[1vw] rounded-[4px]`}
           style={{
             backgroundColor: darkerAccent ?? "gray",
           }}
         >
-          <Thumbnail
-            songData={{ vid, owner, playerInfo }}
-            audioPlayer={audioPlayer}
-            vidEnabled={vidEnabled}
-          />
+          <Thumbnail songData={{ vid, owner, playerInfo }} />
 
           <Info player={{ vid, owner, playerInfo }} audioPlayer={audioPlayer} />
           <Extras

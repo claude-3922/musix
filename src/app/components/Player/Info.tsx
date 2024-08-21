@@ -1,7 +1,13 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import React, {
+  ChangeEvent,
+  CSSProperties,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { SongData } from "./Player";
 import { formatSongDuration } from "@/util/format";
 import hexRgb from "hex-rgb";
@@ -34,22 +40,24 @@ export default function Info({ player, audioPlayer }: InfoProps) {
   };
 
   audioPlayer.onplay = () => {
+    setPlaying(true);
+
     let videoPlayer = document.getElementById(
       "videoPlayer"
     ) as HTMLVideoElement;
 
-    setPlaying(true);
     if (videoPlayer) {
       videoPlayer.play();
     }
   };
 
   audioPlayer.onpause = () => {
+    setPlaying(false);
+
     let videoPlayer = document.getElementById(
       "videoPlayer"
     ) as HTMLVideoElement;
 
-    setPlaying(false);
     if (videoPlayer) {
       videoPlayer.pause();
     }
@@ -65,10 +73,12 @@ export default function Info({ player, audioPlayer }: InfoProps) {
 
   const lighterAccent = pSBC(0.25, playerInfo.topColor);
 
+  const seekBarStyle = { accentColor: lighterAccent } as CSSProperties;
+
   return (
     <div className="flex flex-col justify-center items-center">
       <span className="flex w-[30vw] whitespace-nowrap overflow-hidden justify-center ">
-        {vid.title.length > 50 ? (
+        {vid.title.length > 45 ? (
           <h1 className="flex justify-start text-xl w-[30vw] animateTitle">
             {vid.title}
           </h1>
@@ -90,9 +100,7 @@ export default function Info({ player, audioPlayer }: InfoProps) {
           max={vid.duration}
           step={1}
           onChange={handleSeekChange}
-          style={{
-            accentColor: lighterAccent ?? "gray",
-          }}
+          style={seekBarStyle}
         />
 
         <span className="flex text-sm w-[5vw] overflow-hidden justify-center">
