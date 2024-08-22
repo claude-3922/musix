@@ -19,36 +19,42 @@ export default function Home() {
     setShowPreview(b);
   };
 
+  const getPreview = () => {
+    return showPreview;
+  };
+
   return (
     <>
-      <div className="flex flex-col items-center justify-center">
-        <input
-          id=""
-          name="songId"
-          onChange={(e) => (e.target.id = e.target.value)}
-          className="border-2 p-2 bg-custom_black"
-          type="text"
-          placeholder="enter song id here"
-        />
-        <button
-          type="submit"
-          className="border-2 p-2"
-          onClick={() => {
-            setId(document.getElementsByName("songId")[0].id);
-          }}
-        >
-          Play
-        </button>
-        <label>
-          Vid?
+      <div className="flex flex-col items-center justify-between">
+        <nav className="flex flex-row items-center justify-between">
           <input
-            type="checkbox"
-            name="vidEnabled"
-            onChange={(e) => {
-              setVid(e.target.checked);
-            }}
+            id=""
+            name="songId"
+            onChange={(e) => (e.target.id = e.target.value)}
+            className="border-2 p-2 bg-custom_black"
+            type="text"
+            placeholder="enter song id here"
           />
-        </label>
+          <button
+            type="submit"
+            className="border-2 p-2"
+            onClick={() => {
+              setId(document.getElementsByName("songId")[0].id);
+            }}
+          >
+            Play
+          </button>
+          <label>
+            Vid?
+            <input
+              type="checkbox"
+              name="vidEnabled"
+              onChange={(e) => {
+                setVid(e.target.checked);
+              }}
+            />
+          </label>
+        </nav>
 
         <audio
           id="audioPlayer"
@@ -56,24 +62,28 @@ export default function Home() {
           src={id.length > 0 ? `/media?id=${id}&vid=0` : ``}
         />
 
-        {showPreview ? (
-          <Preview
-            songId={id}
-            vidEnabled={vid}
-            audioPlayer={audioPlayer.current || null}
-          />
-        ) : (
-          <Main></Main>
-        )}
+        <main className="flex items-center bg-black/20 rounded-[4px] justify-center w-[100vw] my-[2vh]">
+          {showPreview ? (
+            <Preview
+              songId={id}
+              vidEnabled={vid}
+              audioPlayer={audioPlayer.current || null}
+            />
+          ) : (
+            <Main></Main>
+          )}
+        </main>
 
-        <Suspense fallback={<PlayerLoading />}>
-          <Player
-            songId={id}
-            audioPlayer={audioPlayer.current || null}
-            vidEnabled={vid}
-            callTogglePreview={togglePreview}
-          />
-        </Suspense>
+        <div className="flex items-center justify-center w-[100vw]">
+          <Suspense fallback={<PlayerLoading />}>
+            <Player
+              songId={id}
+              audioPlayer={audioPlayer.current || null}
+              togglePreview={togglePreview}
+              getPreview={getPreview}
+            />
+          </Suspense>
+        </div>
       </div>
     </>
   );

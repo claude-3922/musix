@@ -50,8 +50,8 @@ export async function GET(req: NextRequest) {
     });
   } else if (mediaType === 1) {
     format = ytdl.chooseFormat(vidInfo.formats, {
-      filter: "videoonly",
-      quality: 135,
+      filter: (format) =>
+        !format.hasAudio && format.hasVideo && format.quality === "hd720",
     });
   }
 
@@ -81,7 +81,7 @@ export async function GET(req: NextRequest) {
         format: format,
       });
 
-      readableStream.on("error", (err) => console.log(err));
+      readableStream.on("error", (err) => console.log(`NIGGER NIGGER ${err}`));
 
       const res = new NextResponse(readableStream as any, { status: 206 });
 

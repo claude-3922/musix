@@ -23,7 +23,7 @@ export default function Preview({
         <video
           id="videoPlayer"
           ref={videoPlayer}
-          className="flex bg-black object-cover w-[480px] hover:ring rounded-xl"
+          className="flex bg-black object-contain w-[720px] hover:ring rounded-xl"
           src={vidEnabled ? vidSrc : ""}
           poster={`https://img.youtube.com/vi/${songId}/maxresdefault.jpg`}
           onTimeUpdate={() => {

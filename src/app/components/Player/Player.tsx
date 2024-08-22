@@ -21,9 +21,10 @@ import { pSBC } from "@/util/pSBC";
 
 interface PlayerProps {
   songId: string;
-  vidEnabled: boolean;
+
   audioPlayer: HTMLAudioElement | null;
-  callTogglePreview: (b: boolean) => void;
+  togglePreview: (b: boolean) => void;
+  getPreview: () => boolean;
 }
 
 export interface SongData {
@@ -48,8 +49,8 @@ export interface SongData {
 export async function Player({
   songId,
   audioPlayer,
-  vidEnabled,
-  callTogglePreview,
+  togglePreview,
+  getPreview,
 }: PlayerProps) {
   const [songData, setSongData] = useState<SongData | null>(null);
 
@@ -70,24 +71,25 @@ export async function Player({
       }
     }
     fetchDataAndPlay();
-  }, [songId, audioPlayer, vidEnabled]);
+  }, [songId, audioPlayer]);
 
   if (audioPlayer) {
     if (songData) {
       const { vid, owner, playerInfo } = songData;
 
-      const darkerAccent = pSBC(-0.8, playerInfo.topColor, "#1E201E");
+      const darkerAccent = pSBC(-0.925, playerInfo.topColor, "#1E201E");
 
       return (
         <div
-          className={`text-white flex flex-row items-center justify-between w-[100vw] h-[14vh] px-[1vw] my-[2vh] mx-[1vw] rounded-[4px]`}
+          className={`text-white flex flex-row items-center justify-between w-[100vw] h-[14vh] px-[1vw] mx-[1vw] rounded-xl`}
           style={{
             backgroundColor: darkerAccent ?? "gray",
           }}
         >
           <Thumbnail
             songData={{ vid, owner, playerInfo }}
-            togglePreview={callTogglePreview}
+            togglePreview={togglePreview}
+            getPreview={getPreview}
           />
 
           <Info player={{ vid, owner, playerInfo }} audioPlayer={audioPlayer} />
@@ -100,7 +102,7 @@ export async function Player({
     } else {
       return (
         <div
-          className={`text-white flex flex-row items-center justify-center w-[100vw] h-[14vh] px-[1vw] my-[2vh] mx-[1vw] rounded-[4px] bg-custom_gray/20`}
+          className={`text-white flex flex-row items-center justify-center w-[100vw] h-[14vh] px-[1vw] mx-[1vw] rounded-xl bg-custom_gray/20`}
         >
           <h1 className="text-2xl">Just a sec...</h1>
         </div>

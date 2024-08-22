@@ -19,7 +19,7 @@ export default function Extras({ player, audioPlayer }: ExtrasProps) {
 
   const volumeSlider = useRef<HTMLInputElement | null>(null);
 
-  const lighterAccent = pSBC(0.25, playerInfo.topColor);
+  const lighterAccent = pSBC(0.1, playerInfo.topColor);
 
   audioPlayer.onvolumechange = () => {
     const isMuted = audioPlayer.volume === 0;
