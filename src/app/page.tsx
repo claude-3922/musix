@@ -67,6 +67,7 @@ export default function Home() {
             songId={id}
             audioPlayer={audioPlayer.current || null}
             vidEnabled={vid}
+            previewToggle={showPreview}
           />
         </Suspense>
       </div>

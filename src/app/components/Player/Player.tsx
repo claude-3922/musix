@@ -23,6 +23,7 @@ interface PlayerProps {
   songId: string;
   vidEnabled: boolean;
   audioPlayer: HTMLAudioElement | null;
+  previewToggle: boolean;
 }
 
 export interface SongData {
@@ -44,7 +45,12 @@ export interface SongData {
   };
 }
 
-export async function Player({ songId, audioPlayer, vidEnabled }: PlayerProps) {
+export async function Player({
+  songId,
+  audioPlayer,
+  vidEnabled,
+  previewToggle,
+}: PlayerProps) {
   const [songData, setSongData] = useState<SongData | null>(null);
 
   useEffect(() => {
@@ -84,7 +90,10 @@ export async function Player({ songId, audioPlayer, vidEnabled }: PlayerProps) {
             backgroundColor: darkerAccent ?? "gray",
           }}
         >
-          <Thumbnail songData={{ vid, owner, playerInfo }} />
+          <Thumbnail
+            songData={{ vid, owner, playerInfo }}
+            previewToggle={previewToggle}
+          />
 
           <Info player={{ vid, owner, playerInfo }} audioPlayer={audioPlayer} />
           <Extras
