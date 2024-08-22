@@ -35,7 +35,7 @@ export default function Preview({
             audioPlayer.paused ? audioPlayer.play() : audioPlayer.pause();
           }}
           onLoadedData={() => {
-            if (audioPlayer.currentTime > 0) {
+            if (audioPlayer.currentTime > 0 && !audioPlayer.paused) {
               videoPlayer.current?.play();
             }
           }}
