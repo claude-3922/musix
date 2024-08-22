@@ -23,7 +23,7 @@ interface PlayerProps {
   songId: string;
   vidEnabled: boolean;
   audioPlayer: HTMLAudioElement | null;
-  previewToggle: boolean;
+  callTogglePreview: (b: boolean) => void;
 }
 
 export interface SongData {
@@ -49,7 +49,7 @@ export async function Player({
   songId,
   audioPlayer,
   vidEnabled,
-  previewToggle,
+  callTogglePreview,
 }: PlayerProps) {
   const [songData, setSongData] = useState<SongData | null>(null);
 
@@ -67,11 +67,6 @@ export async function Player({
         }
 
         await audioPlayer?.play();
-        if (document.getElementById("videoPlayer")) {
-          await (
-            document.getElementById("videoPlayer") as HTMLVideoElement
-          ).play();
-        }
       }
     }
     fetchDataAndPlay();
@@ -92,7 +87,7 @@ export async function Player({
         >
           <Thumbnail
             songData={{ vid, owner, playerInfo }}
-            previewToggle={previewToggle}
+            togglePreview={callTogglePreview}
           />
 
           <Info player={{ vid, owner, playerInfo }} audioPlayer={audioPlayer} />

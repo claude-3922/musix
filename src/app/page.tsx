@@ -15,6 +15,10 @@ export default function Home() {
 
   const audioPlayer = useRef<HTMLAudioElement | null>(null);
 
+  const togglePreview = (b: boolean) => {
+    setShowPreview(b);
+  };
+
   return (
     <>
       <div className="flex flex-col items-center justify-center">
@@ -67,7 +71,7 @@ export default function Home() {
             songId={id}
             audioPlayer={audioPlayer.current || null}
             vidEnabled={vid}
-            previewToggle={showPreview}
+            callTogglePreview={togglePreview}
           />
         </Suspense>
       </div>
