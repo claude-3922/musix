@@ -34,7 +34,7 @@ export default function Extras({ player, audioPlayer }: ExtrasProps) {
 
   return (
     <div
-      className="flex flex-row justify-end items-center w-[17vw]"
+      className="flex flex-row justify-end items-center w-[17vw] h-[6rem] mx-[1vw]"
       onMouseOver={() => setShowVolumeBar(true)}
       onMouseOut={() => setShowVolumeBar(false)}
     >

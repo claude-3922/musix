@@ -7,16 +7,23 @@ import React from "react";
 export default function PlayerLoading() {
   return (
     <div
-      className={`flex flex-row items-center justify-evenly w-[100vw] h-[14vh] px-[2vw] my-[2vh] mx-[1vw] rounded-[4px] bg-custom_d_gray`}
+      className={`flex flex-row items-center justify-between w-[100vw] h-[14vh] px-[2vw] my-[2vh] mx-[1vw] rounded-[4px] bg-custom_gray/20`}
     >
-      <span className="flex items-center justify-center border-4 rounded-xl h-[6rem] w-[6rem]">
-        <img
-          className="object-fit invert"
-          src="/icons/loading.gif"
-          width={150}
-          height={150}
-        ></img>
-      </span>
+      <div className="flex justify-start items-center w-[17vw] mx-[1vw]">
+        <span
+          className={`animate-pulse flex justify-center w-[6rem] h-[6rem] bg-black/20 rounded-[4px]`}
+        ></span>
+      </div>
+
+      <div className="flex flex-col justify-center items-center w-[70vw] h-[10vh]">
+        <span className="animate-pulse flex w-[30vw] h-[4vh] justify-center bg-black/20 my-[0.25rem] rounded-[4px]"></span>
+        <span className="animate-pulse flex items-center justify-start w-[50vw] h-[4vh] my-[0.25rem] bg-black/20 rounded-[4px]"></span>
+        <span className="animate-pulse flex items-center justify-start w-[10vw] h-[4vh] my-[0.25rem] bg-black/20 rounded-[4px]"></span>
+      </div>
+
+      <div className="flex flex-col justify-center items-center w-[20vw] h-[10vh]">
+        <span className="animate-pulse flex items-center justify-start w-[10vw] h-[4vh] my-[1vh] bg-black/20 rounded-[4px]"></span>
+      </div>
     </div>
   );
 }

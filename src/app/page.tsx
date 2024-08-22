@@ -5,10 +5,13 @@ import { Player } from "./components/Player/Player";
 import PlayerLoading from "./components/Player/PlayerLoading";
 import Preview from "./components/Preview/Preview";
 import PreviewLoading from "./components/Preview/PreviewLoading";
+import Main from "./components/Main/Main";
 
 export default function Home() {
   const [id, setId] = useState("");
   const [vid, setVid] = useState(false);
+
+  const [showPreview, setShowPreview] = useState(false);
 
   const audioPlayer = useRef<HTMLAudioElement | null>(null);
 
@@ -46,17 +49,18 @@ export default function Home() {
         <audio
           id="audioPlayer"
           ref={audioPlayer}
-          src={`/media?id=${id}&vid=0`}
+          src={id.length > 0 ? `/media?id=${id}&vid=0` : ``}
         />
 
-        <Suspense fallback={<PreviewLoading />}>
+        {showPreview ? (
           <Preview
             songId={id}
             vidEnabled={vid}
             audioPlayer={audioPlayer.current || null}
-            thumbnail={`https://img.youtube.com/vi/${id}/maxresdefault.jpg`}
           />
-        </Suspense>
+        ) : (
+          <Main></Main>
+        )}
 
         <Suspense fallback={<PlayerLoading />}>
           <Player

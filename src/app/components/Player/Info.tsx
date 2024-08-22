@@ -25,7 +25,6 @@ export default function Info({ player, audioPlayer }: InfoProps) {
   const [audioTime, setAudioTime] = useState(audioPlayer.currentTime);
 
   const seekBar = useRef<HTMLInputElement | null>(null);
-  const playbackButton = useRef<HTMLImageElement | null>(null);
 
   const handleSeekChange = (e: ChangeEvent<HTMLInputElement>) => {
     audioPlayer.currentTime = Number(e.target.value);
@@ -78,7 +77,7 @@ export default function Info({ player, audioPlayer }: InfoProps) {
   return (
     <div className="flex flex-col justify-center items-center">
       <span className="flex w-[30vw] whitespace-nowrap overflow-hidden justify-center ">
-        {vid.title.length > 45 ? (
+        {vid.title.length > 40 ? (
           <h1 className="flex justify-start text-xl w-[30vw] animateTitle">
             {vid.title}
           </h1>
@@ -118,12 +117,26 @@ export default function Info({ player, audioPlayer }: InfoProps) {
             audioPlayer.paused ? audioPlayer.play() : audioPlayer.pause()
           }
         >
-          <img
-            ref={playbackButton}
-            src={playing ? `/icons/pauseButton.svg` : `/icons/playButton.svg`}
-            height={36}
-            width={36}
-          ></img>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="36"
+            height="36"
+            fill="white"
+            className="playBackButton"
+            viewBox="0 0 16 16"
+          >
+            {playing ? (
+              <path
+                className="pause"
+                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M6.25 5C5.56 5 5 5.56 5 6.25v3.5a1.25 1.25 0 1 0 2.5 0v-3.5C7.5 5.56 6.94 5 6.25 5m3.5 0c-.69 0-1.25.56-1.25 1.25v3.5a1.25 1.25 0 1 0 2.5 0v-3.5C11 5.56 10.44 5 9.75 5"
+              />
+            ) : (
+              <path
+                className="play"
+                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M6.79 5.093A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814z"
+              />
+            )}
+          </svg>
         </button>
         <button className="mr-[0.75rem]">
           <img src="/icons/next.svg" height={28} width={28}></img>

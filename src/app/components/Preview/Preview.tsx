@@ -1,16 +1,14 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface PreviewProps {
   vidEnabled: boolean;
   songId: string;
-  thumbnail: string;
   audioPlayer: HTMLAudioElement | null;
 }
 
 export default function Preview({
   vidEnabled,
   songId,
-  thumbnail,
   audioPlayer,
 }: PreviewProps) {
   const videoPlayer = useRef<HTMLVideoElement | null>(null);
@@ -20,14 +18,14 @@ export default function Preview({
   if (audioPlayer) {
     return (
       <div
-        className={`videoContainer flex items-center justify-center w-[48vw] h-[52.5vh] mt-[2vh] rounded-xl bg-custom_d_gray/50 overflow:hidden`}
+        className={`videoContainer flex items-center justify-center w-[48vw] h-[52.5vh] mt-[2vh] overflow:hidden`}
       >
         <video
           id="videoPlayer"
           ref={videoPlayer}
-          className="flex object-cover h-[360px] hover:ring rounded-xl"
+          className="flex bg-black object-contain w-[480px] hover:ring rounded-xl"
           src={vidEnabled ? vidSrc : ""}
-          poster={thumbnail}
+          poster={`https://img.youtube.com/vi/${songId}/maxresdefault.jpg`}
           onTimeUpdate={() => {
             if (videoPlayer.current) {
               syncVideoToAudio(audioPlayer, videoPlayer.current);
@@ -49,4 +47,21 @@ const syncVideoToAudio = (audio: HTMLAudioElement, video: HTMLVideoElement) => {
     video.currentTime = audio.currentTime;
     console.log(`Video time changed`);
   }
+};
+
+const getBestThumbnail = (songId: string) => {
+  let returnVal = `/def_vid_thumbnail.jpg`;
+  fetch(`https://img.youtube.com/vi/${songId}/maxresdefault.jpg`)
+    .then((res) => {
+      if (res.status !== 404) {
+        returnVal = `https://img.youtube.com/vi/${songId}/maxresdefault.jpg`;
+      } else {
+        returnVal = `https://img.youtube.com/vi/${songId}/0.jpg`;
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+  return returnVal;
 };

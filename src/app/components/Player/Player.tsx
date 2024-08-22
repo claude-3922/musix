@@ -49,20 +49,23 @@ export async function Player({ songId, audioPlayer, vidEnabled }: PlayerProps) {
 
   useEffect(() => {
     async function fetchDataAndPlay() {
-      const res = await fetch(`/data?id=${songId}`, {
-        method: "POST",
-      });
+      setSongData(null);
+      if (songId.length > 0) {
+        const res = await fetch(`/data?id=${songId}`, {
+          method: "POST",
+        });
 
-      if (res.status === 200) {
-        const data = await res.json();
-        setSongData(data);
-      }
+        if (res.status === 200) {
+          const data = await res.json();
+          setSongData(data);
+        }
 
-      await audioPlayer?.play();
-      if (document.getElementById("videoPlayer")) {
-        await (
-          document.getElementById("videoPlayer") as HTMLVideoElement
-        ).play();
+        await audioPlayer?.play();
+        if (document.getElementById("videoPlayer")) {
+          await (
+            document.getElementById("videoPlayer") as HTMLVideoElement
+          ).play();
+        }
       }
     }
     fetchDataAndPlay();
@@ -72,7 +75,7 @@ export async function Player({ songId, audioPlayer, vidEnabled }: PlayerProps) {
     if (songData) {
       const { vid, owner, playerInfo } = songData;
 
-      const darkerAccent = pSBC(-0.75, playerInfo.topColor);
+      const darkerAccent = pSBC(-0.8, playerInfo.topColor, "#1E201E");
 
       return (
         <div
@@ -88,6 +91,14 @@ export async function Player({ songId, audioPlayer, vidEnabled }: PlayerProps) {
             player={{ vid, owner, playerInfo }}
             audioPlayer={audioPlayer}
           />
+        </div>
+      );
+    } else {
+      return (
+        <div
+          className={`text-white flex flex-row items-center justify-center w-[100vw] h-[14vh] px-[1vw] my-[2vh] mx-[1vw] rounded-[4px] bg-custom_gray/20`}
+        >
+          <h1 className="text-2xl">Just a sec...</h1>
         </div>
       );
     }
