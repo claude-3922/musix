@@ -9,3 +9,12 @@ export function formatSongDuration(seconds: number) {
 
   return `${formattedHrs}${formattedMins}${formattedSecs}`.trim();
 }
+
+export function durationSeconds(duration: string) {
+  const parts = duration.split(":");
+  const secs = Number(parts[parts.length - 1]);
+  const mins = Number(parts[parts.length - 2] ?? 0);
+  const hrs = Number(parts[parts.length - 3] ?? 0);
+
+  return secs + mins * 60 + hrs * 3600;
+}

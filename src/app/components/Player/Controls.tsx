@@ -8,17 +8,17 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { SongData } from "./Player";
+import { SongData } from "@/util/types/SongData";
 import { formatSongDuration } from "@/util/format";
 import hexRgb from "hex-rgb";
 import { pSBC } from "@/util/pSBC";
 
-interface InfoProps {
+interface ControlsProps {
   player: SongData;
   audioPlayer: HTMLAudioElement;
 }
 
-export default function Info({ player, audioPlayer }: InfoProps) {
+export default function Controls({ player, audioPlayer }: ControlsProps) {
   const { vid, playerInfo } = player;
 
   const [playing, setPlaying] = useState(true);
@@ -75,38 +75,8 @@ export default function Info({ player, audioPlayer }: InfoProps) {
   const seekBarStyle = { accentColor: lighterAccent } as CSSProperties;
 
   return (
-    <div className="flex flex-col justify-center items-center">
-      <span className="flex w-[30vw] whitespace-nowrap overflow-hidden justify-center ">
-        {vid.title.length > 40 ? (
-          <h1 className="flex justify-start text-xl w-[30vw] animateTitle">
-            {vid.title}
-          </h1>
-        ) : (
-          <h1 className="flex justify-center text-xl w-[30vw]">{vid.title}</h1>
-        )}
-      </span>
-      <span className="flex flex-row items-center justify-start w-[50vw]">
-        <span className="flex text-sm w-[5vw] overflow-hidden justify-center">
-          {formatSongDuration(audioTime)}
-        </span>
-
-        <input
-          id="seekBar"
-          className="w-[40vw] h-[0.5vh] rounded-[10px] bg-white hover:border-none"
-          ref={seekBar}
-          type="range"
-          min={0}
-          max={vid.duration}
-          step={1}
-          onChange={handleSeekChange}
-          style={seekBarStyle}
-        />
-
-        <span className="flex text-sm w-[5vw] overflow-hidden justify-center">
-          {formatSongDuration(vid.duration)}
-        </span>
-      </span>
-      <span className="flex flex-row justify-center items-center my-[0.25rem]">
+    <>
+      <span className="flex flex-row justify-center items-center h-[2vw]">
         <button className="mr-[0.75rem]">
           <img src="/icons/previous.svg" height={28} width={28}></img>
         </button>
@@ -142,6 +112,27 @@ export default function Info({ player, audioPlayer }: InfoProps) {
           <img src="/icons/next.svg" height={28} width={28}></img>
         </button>
       </span>
-    </div>
+      <span className="flex flex-row items-center justify-center">
+        <span className="flex text-sm w-[5vw] overflow-hidden justify-center">
+          {formatSongDuration(audioTime)}
+        </span>
+
+        <input
+          id="seekBar"
+          className="w-[30vw] h-[0.25vw] rounded-[10px] bg-white hover:border-none"
+          ref={seekBar}
+          type="range"
+          min={0}
+          max={vid.duration}
+          step={1}
+          onChange={handleSeekChange}
+          style={seekBarStyle}
+        />
+
+        <span className="flex text-sm w-[5vw] overflow-hidden justify-center">
+          {formatSongDuration(vid.duration)}
+        </span>
+      </span>
+    </>
   );
 }

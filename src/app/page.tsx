@@ -6,12 +6,16 @@ import PlayerLoading from "./components/Player/PlayerLoading";
 import Preview from "./components/Preview/Preview";
 import PreviewLoading from "./components/Preview/PreviewLoading";
 import Main from "./components/Main/Main";
+import SearchResults from "./components/SearchResults/SearchResults";
+import SearchResultsLoading from "./components/SearchResults/SearchResultsLoading";
 
 export default function Home() {
+  const [query, setQuery] = useState("");
   const [id, setId] = useState("");
   const [vid, setVid] = useState(false);
 
   const [showPreview, setShowPreview] = useState(false);
+  const [showSearchResults, setShowSearchResults] = useState(false);
 
   const audioPlayer = useRef<HTMLAudioElement | null>(null);
 
@@ -27,6 +31,24 @@ export default function Home() {
     <>
       <div className="flex flex-col items-center justify-between">
         <nav className="flex flex-row items-center justify-between">
+          <input
+            id=""
+            name="searchQuery"
+            onChange={(e) => (e.target.id = e.target.value)}
+            className="border-2 p-2 bg-custom_black"
+            type="text"
+            placeholder="search a song"
+          />
+          <button
+            type="submit"
+            className="border-2 p-2"
+            onClick={() => {
+              setQuery(document.getElementsByName("searchQuery")[0].id);
+              setShowSearchResults(true);
+            }}
+          >
+            Search
+          </button>
           <input
             id=""
             name="songId"
@@ -69,8 +91,12 @@ export default function Home() {
               vidEnabled={vid}
               audioPlayer={audioPlayer.current || null}
             />
+          ) : showSearchResults ? (
+            <Suspense fallback={<SearchResultsLoading />}>
+              <SearchResults query={query} />
+            </Suspense>
           ) : (
-            <Main></Main>
+            <Main />
           )}
         </main>
 

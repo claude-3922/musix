@@ -1,4 +1,4 @@
-import ytdl, { videoInfo } from "@distube/ytdl-core";
+import ytdl from "@distube/ytdl-core";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {

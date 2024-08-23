@@ -14,10 +14,12 @@ import React, {
   Suspense,
 } from "react";
 import Thumbnail from "./Thumbnail";
-import Info from "./Info";
+import Controls from "./Controls";
 import Extras from "./Extras";
 import PlayerLoading from "./PlayerLoading";
 import { pSBC } from "@/util/pSBC";
+import Title from "./Title";
+import { SongData } from "@/util/types/SongData";
 
 interface PlayerProps {
   songId: string;
@@ -25,25 +27,6 @@ interface PlayerProps {
   audioPlayer: HTMLAudioElement | null;
   togglePreview: (b: boolean) => void;
   getPreview: () => boolean;
-}
-
-export interface SongData {
-  vid: {
-    id: string;
-    url: string;
-    title: string;
-    thumbnail: string;
-    duration: number;
-  };
-  owner: {
-    title: string;
-    url: string;
-    thumbnail: string;
-  };
-  playerInfo: {
-    accentColors: string[];
-    topColor: string;
-  };
 }
 
 export async function Player({
@@ -81,32 +64,33 @@ export async function Player({
 
       return (
         <div
-          className={`text-white flex flex-row items-center justify-between w-[100vw] h-[14vh] px-[1vw] mx-[1vw] rounded-xl`}
+          className={`text-white flex flex-row items-center justify-between w-[100vw] h-[6vw] px-[1vw] mx-[1vw] rounded-xl`}
           style={{
             backgroundColor: darkerAccent ?? "gray",
           }}
         >
-          <Thumbnail
-            songData={{ vid, owner, playerInfo }}
-            togglePreview={togglePreview}
-            getPreview={getPreview}
-          />
+          <div className="flex justify-start items-center w-[30vw]">
+            <Thumbnail songData={{ vid, owner, playerInfo }} />
+            <Title data={{ vid, owner, playerInfo }} />
+          </div>
 
-          <Info player={{ vid, owner, playerInfo }} audioPlayer={audioPlayer} />
+          <div className="flex flex-col justify-evenly w-[40vw] h-[5vw] items-center">
+            <Controls
+              player={{ vid, owner, playerInfo }}
+              audioPlayer={audioPlayer}
+            />
+          </div>
+
           <Extras
             player={{ vid, owner, playerInfo }}
             audioPlayer={audioPlayer}
+            togglePreview={togglePreview}
+            getPreview={getPreview}
           />
         </div>
       );
     } else {
-      return (
-        <div
-          className={`text-white flex flex-row items-center justify-center w-[100vw] h-[14vh] px-[1vw] mx-[1vw] rounded-xl bg-custom_gray/20`}
-        >
-          <h1 className="text-2xl">Just a sec...</h1>
-        </div>
-      );
+      return <PlayerLoading />;
     }
   } else {
     console.log("Audio element doesn't exist. This really shouldn't happen");

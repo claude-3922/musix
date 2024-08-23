@@ -1,42 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import ytdl, { videoInfo } from "@distube/ytdl-core";
-import getPixels from "get-pixels";
-import { extractColors } from "extract-colors";
-
-async function getAccentColors(vidInfo: videoInfo) {
-  try {
-    const pixels: any = await new Promise<any>((resolve, reject) => {
-      getPixels(
-        `https://img.youtube.com/vi/${vidInfo.videoDetails.videoId}/hqdefault.jpg`,
-        (err, pixels) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(pixels);
-          }
-        }
-      );
-    });
-
-    const data = Array.from(pixels.data) as any;
-    const [width, height] = pixels.shape;
-
-    const colors = await extractColors({ data, width, height });
-
-    let accentColors = [] as any;
-    colors.forEach((color) => {
-      accentColors.push(color.hex);
-    });
-
-    if (accentColors.length > 0) {
-      const topColor = accentColors[0];
-      return { pallete: accentColors, topC: topColor };
-    }
-  } catch (err) {
-    console.log(err);
-  }
-}
+import ytdl from "@distube/ytdl-core";
+import { getAccentColors } from "@/util/colors";
 
 export async function POST(req: NextRequest) {
   const id = req.nextUrl.searchParams.get("id");
@@ -57,7 +22,7 @@ export async function POST(req: NextRequest) {
     `https://www.youtube.com/watch?v=${id}`
   );
 
-  const data = await getAccentColors(vidInfo);
+  const data = await getAccentColors(vidInfo.videoDetails.videoId);
   const pallete = data?.pallete;
   const topC = data?.topC;
 
