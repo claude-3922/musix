@@ -1,16 +1,10 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import React, {
-  ChangeEvent,
-  CSSProperties,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { ChangeEvent, CSSProperties, useRef, useState } from "react";
 import { SongData } from "@/util/types/SongData";
 import { formatSongDuration } from "@/util/format";
-import hexRgb from "hex-rgb";
+
 import { pSBC } from "@/util/pSBC";
 
 interface ControlsProps {
@@ -22,7 +16,7 @@ export default function Controls({ player, audioPlayer }: ControlsProps) {
   const { vid, playerInfo } = player;
 
   const [playing, setPlaying] = useState(true);
-  const [audioTime, setAudioTime] = useState(audioPlayer.currentTime);
+  const [audioTime, setAudioTime] = useState(0);
 
   const seekBar = useRef<HTMLInputElement | null>(null);
 
@@ -70,9 +64,12 @@ export default function Controls({ player, audioPlayer }: ControlsProps) {
     }
   };
 
-  const lighterAccent = pSBC(0.25, playerInfo.topColor);
+  const lighterAccent = pSBC(0.1, playerInfo.topColor);
 
-  const seekBarStyle = { accentColor: lighterAccent } as CSSProperties;
+  const seekBarStyle = {
+    accentColor: lighterAccent,
+    backgroundColor: "white",
+  } as CSSProperties;
 
   return (
     <>
@@ -83,9 +80,9 @@ export default function Controls({ player, audioPlayer }: ControlsProps) {
 
         <button
           className="mr-[0.75rem]"
-          onClick={() =>
-            audioPlayer.paused ? audioPlayer.play() : audioPlayer.pause()
-          }
+          onClick={() => {
+            audioPlayer.paused ? audioPlayer.play() : audioPlayer.pause();
+          }}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -119,7 +116,7 @@ export default function Controls({ player, audioPlayer }: ControlsProps) {
 
         <input
           id="seekBar"
-          className="w-[30vw] h-[0.25vw] rounded-[10px] bg-white hover:border-none"
+          className="w-[30vw] h-[0.25vw] rounded-[10px]"
           ref={seekBar}
           type="range"
           min={0}

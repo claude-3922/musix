@@ -1,5 +1,5 @@
 import React from "react";
-import { SongData } from "./Player";
+import { SongData } from "@/util/types/SongData";
 
 interface TitleProps {
   data: SongData;

@@ -1,24 +1,31 @@
 "use client";
 
-import { ReactElement, Suspense, useRef, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import { Player } from "./components/Player/Player";
 import PlayerLoading from "./components/Player/PlayerLoading";
 import Preview from "./components/Preview/Preview";
-import PreviewLoading from "./components/Preview/PreviewLoading";
+
 import Main from "./components/Main/Main";
 import SearchResults from "./components/SearchResults/SearchResults";
 import SearchResultsLoading from "./components/SearchResults/SearchResultsLoading";
+import { SongData } from "@/util/types/SongData";
+import PreviewLoading from "./components/Preview/PreviewLoading";
 
 export default function Home() {
   const [query, setQuery] = useState("");
-  const [id, setId] = useState("");
+  const [songData, setSongData] = useState<SongData | null>(null);
+  const toggleSongData = (s: SongData) => {
+    setSongData(s);
+  };
+
   const [vid, setVid] = useState(false);
 
+  const [showPlayer, setShowPlayer] = useState(false);
+  const togglePlayer = (b: boolean) => {
+    setShowPlayer(b);
+  };
+
   const [showPreview, setShowPreview] = useState(false);
-  const [showSearchResults, setShowSearchResults] = useState(false);
-
-  const audioPlayer = useRef<HTMLAudioElement | null>(null);
-
   const togglePreview = (b: boolean) => {
     setShowPreview(b);
   };
@@ -27,8 +34,20 @@ export default function Home() {
     return showPreview;
   };
 
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const toggleShowResults = (b: boolean) => {
+    setShowSearchResults(b);
+  };
+
+  const audioPlayer = useRef<HTMLAudioElement | null>(null);
+
   return (
     <>
+      <audio
+        id="audioPlayer"
+        ref={audioPlayer}
+        src={songData ? `/media?id=${songData.vid.id}&vid=0` : ``}
+      />
       <div className="flex flex-col items-center justify-between">
         <nav className="flex flex-row items-center justify-between">
           <input
@@ -45,26 +64,10 @@ export default function Home() {
             onClick={() => {
               setQuery(document.getElementsByName("searchQuery")[0].id);
               setShowSearchResults(true);
+              setShowPreview(false);
             }}
           >
             Search
-          </button>
-          <input
-            id=""
-            name="songId"
-            onChange={(e) => (e.target.id = e.target.value)}
-            className="border-2 p-2 bg-custom_black"
-            type="text"
-            placeholder="enter song id here"
-          />
-          <button
-            type="submit"
-            className="border-2 p-2"
-            onClick={() => {
-              setId(document.getElementsByName("songId")[0].id);
-            }}
-          >
-            Play
           </button>
           <label>
             Vid?
@@ -78,22 +81,23 @@ export default function Home() {
           </label>
         </nav>
 
-        <audio
-          id="audioPlayer"
-          ref={audioPlayer}
-          src={id.length > 0 ? `/media?id=${id}&vid=0` : ``}
-        />
-
-        <main className="flex items-center bg-black/20 rounded-[4px] justify-center w-[100vw] my-[2vh]">
+        <main className="flex items-start bg-custom_black rounded-[4px] justify-center w-[100vw] h-[77vh] my-[2vh] overflow-y-scroll">
           {showPreview ? (
-            <Preview
-              songId={id}
-              vidEnabled={vid}
-              audioPlayer={audioPlayer.current || null}
-            />
+            <Suspense fallback={<PreviewLoading />}>
+              <Preview
+                songData={songData}
+                vidEnabled={vid}
+                audioPlayer={audioPlayer.current || null}
+              />
+            </Suspense>
           ) : showSearchResults ? (
             <Suspense fallback={<SearchResultsLoading />}>
-              <SearchResults query={query} />
+              <SearchResults
+                query={query}
+                toggleShowResults={toggleShowResults}
+                toggleSongData={toggleSongData}
+                togglePlayer={togglePlayer}
+              />
             </Suspense>
           ) : (
             <Main />
@@ -101,14 +105,14 @@ export default function Home() {
         </main>
 
         <div className="flex items-center justify-center w-[100vw]">
-          <Suspense fallback={<PlayerLoading />}>
+          {showPlayer && (
             <Player
-              songId={id}
               audioPlayer={audioPlayer.current || null}
               togglePreview={togglePreview}
               getPreview={getPreview}
+              data={songData}
             />
-          </Suspense>
+          )}
         </div>
       </div>
     </>

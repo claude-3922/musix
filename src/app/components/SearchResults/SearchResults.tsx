@@ -1,12 +1,21 @@
 import { SongData } from "@/util/types/SongData";
 import React, { useEffect, useState } from "react";
-import NoResults from "./NoResults";
+import Item from "./Item";
+import SearchResultsLoading from "./SearchResultsLoading";
 
 interface SearchResultsProps {
   query: string;
+  toggleShowResults: (b: boolean) => void;
+  toggleSongData: (s: SongData) => void;
+  togglePlayer: (b: boolean) => void;
 }
 
-export default function SearchResults({ query }: SearchResultsProps) {
+export default async function SearchResults({
+  query,
+  toggleShowResults,
+  toggleSongData,
+  togglePlayer,
+}: SearchResultsProps) {
   const [results, setResults] = useState<SongData[] | null>(null);
 
   useEffect(() => {
@@ -23,20 +32,28 @@ export default function SearchResults({ query }: SearchResultsProps) {
 
   if (results) {
     return (
-      <>
-        <ul>
-          {results.map((r, i) => (
-            <li key={i} id={r.vid.id}>
-              {r.vid.title}
-            </li>
-          ))}
-        </ul>
-      </>
+      <div>
+        <button
+          className="border-2 mx-[2vw] my-[2vh]"
+          onClick={() => toggleShowResults(false)}
+        >
+          HOME
+        </button>
+
+        {results.map((r, i) => (
+          <Item
+            key={i}
+            data={r}
+            toggleSongData={toggleSongData}
+            togglePlayer={togglePlayer}
+          />
+        ))}
+      </div>
     );
   } else {
     return (
       <>
-        <NoResults />
+        <SearchResultsLoading />
       </>
     );
   }

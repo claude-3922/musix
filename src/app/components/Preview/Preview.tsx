@@ -1,31 +1,32 @@
+import { SongData } from "@/util/types/SongData";
 import React, { useEffect, useRef, useState } from "react";
 
 interface PreviewProps {
   vidEnabled: boolean;
-  songId: string;
+  songData: SongData | null;
   audioPlayer: HTMLAudioElement | null;
 }
 
-export default function Preview({
+export default async function Preview({
   vidEnabled,
-  songId,
+  songData,
   audioPlayer,
 }: PreviewProps) {
   const videoPlayer = useRef<HTMLVideoElement | null>(null);
 
-  const vidSrc = `/media?id=${songId}&vid=1`;
+  if (audioPlayer && songData) {
+    const vidSrc = `/media?id=${songData.vid.id}&vid=1`;
 
-  if (audioPlayer) {
     return (
       <div
-        className={`videoContainer flex items-center justify-center w-[48vw] h-[52.5vh] mt-[2vh] overflow:hidden`}
+        className={`videoContainer flex items-center justify-center w-[48vw] h-[52.5vh] mt-[2vh]`}
       >
         <video
           id="videoPlayer"
           ref={videoPlayer}
-          className="flex bg-black object-contain w-[720px] hover:ring rounded-xl"
+          className="flex bg-black object-cover w-[50vw] h-[50vh] hover:ring rounded-xl"
           src={vidEnabled ? vidSrc : ""}
-          poster={`https://img.youtube.com/vi/${songId}/maxresdefault.jpg`}
+          poster={songData.vid.thumbnail}
           onTimeUpdate={() => {
             if (videoPlayer.current) {
               syncVideoToAudio(audioPlayer, videoPlayer.current);
@@ -34,16 +35,10 @@ export default function Preview({
           onClick={() => {
             audioPlayer.paused ? audioPlayer.play() : audioPlayer.pause();
           }}
-          onLoadedData={() => {
-            if (audioPlayer.currentTime > 0 && !audioPlayer.paused) {
-              videoPlayer.current?.play();
-            }
-          }}
+          autoPlay={audioPlayer.paused ? false : true}
         />
       </div>
     );
-  } else {
-    console.log("Audio element doesn't exist. This really shouldn't happen");
   }
 }
 
