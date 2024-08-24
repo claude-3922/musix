@@ -22,9 +22,7 @@ export async function POST(req: NextRequest) {
     `https://www.youtube.com/watch?v=${id}`
   );
 
-  const data = await getAccentColors(vidInfo.videoDetails.videoId);
-  const pallete = data?.pallete;
-  const topC = data?.topC;
+  const colors = await getAccentColors(vidInfo.videoDetails.videoId);
 
   return NextResponse.json(
     {
@@ -48,8 +46,8 @@ export async function POST(req: NextRequest) {
           ].url || "/def_user_thumbnail.jpg",
       },
       playerInfo: {
-        accentColors: pallete,
-        topColor: topC,
+        accentColors: colors?.colors,
+        topColor: colors?.topColor,
       },
     },
     { status: 200 }

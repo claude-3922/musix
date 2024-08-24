@@ -12,7 +12,7 @@ export interface SongData {
     thumbnail: string;
   };
   playerInfo: {
-    accentColors: string[];
-    topColor: string;
+    accentColors?: string[];
+    topColor?: string;
   };
 }

@@ -6,19 +6,19 @@ import { SongData } from "@/util/types/SongData";
 import { pSBC } from "@/util/pSBC";
 
 interface ExtrasProps {
-  player: SongData;
+  data: SongData;
   audioPlayer: HTMLAudioElement;
   togglePreview: (b: boolean) => void;
   getPreview: () => boolean;
 }
 
 export default function Extras({
-  player,
+  data,
   audioPlayer,
   togglePreview,
   getPreview,
 }: ExtrasProps) {
-  const { vid, playerInfo, owner } = player;
+  const { vid, playerInfo, owner } = data;
   const [showLikeFill, setShowLikeFill] = useState(false);
   const [looped, setLooped] = useState(false);
   const [muted, setMuted] = useState(false);
@@ -26,7 +26,7 @@ export default function Extras({
 
   const volumeSlider = useRef<HTMLInputElement | null>(null);
 
-  const lighterAccent = pSBC(0.1, playerInfo.topColor);
+  const lighterAccent = pSBC(0.4, playerInfo.topColor);
 
   audioPlayer.onvolumechange = () => {
     const isMuted = audioPlayer.volume === 0;
@@ -36,6 +36,14 @@ export default function Extras({
       isMuted
         ? (volumeSlider.current.value = "0")
         : (volumeSlider.current.value = `${audioPlayer.volume}`);
+    }
+
+    sessionStorage.setItem("volume", JSON.stringify(audioPlayer.volume));
+  };
+
+  audioPlayer.onplay = () => {
+    if (volumeSlider.current) {
+      volumeSlider.current.value = `${audioPlayer.volume}`;
     }
   };
 
@@ -47,7 +55,7 @@ export default function Extras({
     >
       <input
         type="range"
-        className="bg-white w-[7vw] h-[0.5vh] rounded-[10px] mr-[1.125rem]"
+        className="bg-white w-[7vw] h-[0.5vh] rounded-[10px] mr-[1.125rem] opacity-85 "
         style={{
           accentColor: lighterAccent ?? "gray",
         }}
@@ -62,7 +70,7 @@ export default function Extras({
       />
 
       <button
-        className="mr-[1.125rem]"
+        className="mr-[1.125rem] opacity-85 hover:opacity-100"
         onClick={() => {
           const isMuted = audioPlayer.volume === 0;
           isMuted ? (audioPlayer.volume = 1) : (audioPlayer.volume = 0);
@@ -76,7 +84,7 @@ export default function Extras({
       </button>
 
       <button
-        className="mr-[1.125rem]"
+        className="mr-[1.125rem] opacity-85 hover:opacity-100"
         onClick={() => setShowLikeFill((p) => !p)}
       >
         {showLikeFill ? (
@@ -98,22 +106,41 @@ export default function Extras({
         )}
       </button>
       <button
-        className="mr-[1.125rem]"
+        className="mr-[1.125rem] opacity-85 hover:opacity-100"
         onClick={() => {
           setLooped((p) => !p);
           audioPlayer.loop = !looped; //Need a ! because state won't update until rerender
         }}
       >
         {looped ? (
-          <img src="/icons/repeat_tick.svg" height={22} width={22} />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="22"
+            height="22"
+            fill={`${lighterAccent}`}
+            className="bi bi-repeat"
+            viewBox="0 0 16 16"
+          >
+            <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192m3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+          </svg>
         ) : (
-          <img src="/icons/repeat.svg" height={22} width={22} />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="22"
+            height="22"
+            fill="white"
+            className="bi bi-repeat"
+            viewBox="0 0 16 16"
+          >
+            <path d="M11 5.466V4H5a4 4 0 0 0-3.584 5.777.5.5 0 1 1-.896.446A5 5 0 0 1 5 3h6V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192m3.81.086a.5.5 0 0 1 .67.225A5 5 0 0 1 11 13H5v1.466a.25.25 0 0 1-.41.192l-2.36-1.966a.25.25 0 0 1 0-.384l2.36-1.966a.25.25 0 0 1 .41.192V12h6a4 4 0 0 0 3.585-5.777.5.5 0 0 1 .225-.67Z" />
+          </svg>
         )}
       </button>
       <span
         className={`flex justify-center items-center w-[2rem] h-[2rem] overflow-hidden`}
       >
         <button
+          className=" opacity-85 hover:opacity-100"
           onClick={() => {
             togglePreview(!getPreview());
           }}

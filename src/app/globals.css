@@ -11,9 +11,15 @@ main {
   scrollbar-color: gray #181a18;
 }
 
+#seekBar ::-webkit-slider-thumb {
+  appearance: none;
+  width: 1px;
+  height: 1px;
+}
+
 @keyframes titleAnim {
   0% {
-    transform: translateX(100%);
+    transform: translateX(10%);
   }
   100% {
     transform: translateX(-100%);
@@ -22,7 +28,7 @@ main {
 
 .animateTitle {
   animation-name: titleAnim;
-  animation-duration: 20s;
+  animation-duration: 10s;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
 }

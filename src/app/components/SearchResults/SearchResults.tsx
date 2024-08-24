@@ -10,7 +10,7 @@ interface SearchResultsProps {
   togglePlayer: (b: boolean) => void;
 }
 
-export default async function SearchResults({
+export default function SearchResults({
   query,
   toggleShowResults,
   toggleSongData,
@@ -31,29 +31,33 @@ export default async function SearchResults({
   }, [query]);
 
   if (results) {
-    return (
-      <div>
-        <button
-          className="border-2 mx-[2vw] my-[2vh]"
-          onClick={() => toggleShowResults(false)}
-        >
-          HOME
-        </button>
+    if (results.length > 0) {
+      return (
+        <div>
+          <button
+            className="border-2 mx-[2vw] my-[2vh]"
+            onClick={() => toggleShowResults(false)}
+          >
+            HOME
+          </button>
 
-        {results.map((r, i) => (
-          <Item
-            key={i}
-            data={r}
-            toggleSongData={toggleSongData}
-            togglePlayer={togglePlayer}
-          />
-        ))}
-      </div>
-    );
+          {results.map((r, i) => (
+            <Item
+              key={i}
+              data={r}
+              toggleSongData={toggleSongData}
+              togglePlayer={togglePlayer}
+            />
+          ))}
+        </div>
+      );
+    } else {
+      return <p>NO RESULTS</p>;
+    }
   } else {
     return (
       <>
-        <SearchResultsLoading />
+        <SearchResultsLoading toggleShowResults={toggleShowResults} />
       </>
     );
   }

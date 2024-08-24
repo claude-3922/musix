@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
   for (let i = 0; i < vids.length; ++i) {
     const v = vids[i];
 
-    let colorData = await getAccentColors(v.id);
+    //let colorData = await getAccentColors(v.id);
     const songData = {
       vid: {
         id: v.id,
@@ -40,8 +40,8 @@ export async function POST(req: NextRequest) {
         thumbnail: v.author?.bestAvatar.url || "/def_user_thumbnail.jpg",
       },
       playerInfo: {
-        accentColors: colorData?.pallete || "gray",
-        topColor: colorData?.topC || "gray",
+        accentColors: undefined,
+        topColor: undefined,
       },
     };
 

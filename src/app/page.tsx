@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { Player } from "./components/Player/Player";
 import PlayerLoading from "./components/Player/PlayerLoading";
 import Preview from "./components/Preview/Preview";
@@ -29,7 +29,6 @@ export default function Home() {
   const togglePreview = (b: boolean) => {
     setShowPreview(b);
   };
-
   const getPreview = () => {
     return showPreview;
   };
@@ -79,28 +78,42 @@ export default function Home() {
               }}
             />
           </label>
+          <label>
+            Slowed?
+            <input
+              type="checkbox"
+              name="slowed"
+              onChange={(e) => {
+                //setSlowed(e.target.checked);
+              }}
+            />
+          </label>
         </nav>
 
-        <main className="flex items-start bg-custom_black rounded-[4px] justify-center w-[100vw] h-[77vh] my-[2vh] overflow-y-scroll">
+        <main>
           {showPreview ? (
             <Suspense fallback={<PreviewLoading />}>
-              <Preview
-                songData={songData}
-                vidEnabled={vid}
-                audioPlayer={audioPlayer.current || null}
-              />
+              <div className="flex items-center bg-custom_black rounded-[4px] justify-center w-[100vw] h-[77.5vh] my-[2vh] overflow-y-scroll">
+                <Preview
+                  songData={songData}
+                  vidEnabled={vid}
+                  audioPlayer={audioPlayer.current || null}
+                />
+              </div>
             </Suspense>
           ) : showSearchResults ? (
-            <Suspense fallback={<SearchResultsLoading />}>
+            <div className="flex items-start bg-custom_black rounded-[4px] justify-center w-[100vw] h-[77.5vh] my-[2vh] overflow-y-scroll">
               <SearchResults
                 query={query}
                 toggleShowResults={toggleShowResults}
                 toggleSongData={toggleSongData}
                 togglePlayer={togglePlayer}
               />
-            </Suspense>
+            </div>
           ) : (
-            <Main />
+            <div className="flex items-start bg-custom_black rounded-[4px] justify-center w-[100vw] h-[77.5vh] my-[2vh] overflow-y-scroll">
+              <Main />
+            </div>
           )}
         </main>
 
@@ -111,6 +124,7 @@ export default function Home() {
               togglePreview={togglePreview}
               getPreview={getPreview}
               data={songData}
+              toggleSongData={toggleSongData}
             />
           )}
         </div>
