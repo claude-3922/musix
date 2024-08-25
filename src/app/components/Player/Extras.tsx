@@ -4,19 +4,18 @@
 import React, { useRef, useState } from "react";
 import { SongData } from "@/util/types/SongData";
 import { pSBC } from "@/util/pSBC";
+import { StateManager } from "@/util/types/StateManager";
 
 interface ExtrasProps {
   data: SongData;
   audioPlayer: HTMLAudioElement;
-  togglePreview: (b: boolean) => void;
-  getPreview: () => boolean;
+  previewState: StateManager<boolean>;
 }
 
 export default function Extras({
   data,
   audioPlayer,
-  togglePreview,
-  getPreview,
+  previewState,
 }: ExtrasProps) {
   const { vid, playerInfo, owner } = data;
   const [showLikeFill, setShowLikeFill] = useState(false);
@@ -142,10 +141,10 @@ export default function Extras({
         <button
           className=" opacity-85 hover:opacity-100"
           onClick={() => {
-            togglePreview(!getPreview());
+            previewState.set(!previewState.get);
           }}
         >
-          {getPreview() ? (
+          {previewState.get ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="28"

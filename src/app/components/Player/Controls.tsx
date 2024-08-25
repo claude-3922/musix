@@ -6,19 +6,21 @@ import { SongData } from "@/util/types/SongData";
 import { formatSongDuration } from "@/util/format";
 
 import { pSBC } from "@/util/pSBC";
+import { Queue } from "@/util/types/Queue";
+import { StateManager } from "@/util/types/StateManager";
 
 interface ControlsProps {
   data: SongData;
-  toggleSongData: (s: SongData) => void;
   audioPlayer: HTMLAudioElement;
   isAudioLoading: boolean;
+  songState: StateManager<SongData | null>;
 }
 
 export default function Controls({
   data,
-  toggleSongData,
   audioPlayer,
   isAudioLoading,
+  songState,
 }: ControlsProps) {
   const { vid, playerInfo } = data;
 
@@ -84,33 +86,21 @@ export default function Controls({
         <button
           className="mr-[0.75rem] opacity-85 hover:opacity-100"
           onClick={() => {
+            let history = JSON.parse(
+              sessionStorage.getItem("history") || "{}"
+            ) as Queue;
             if (
-              !sessionStorage.getItem("history") ||
-              (
-                JSON.parse(
-                  sessionStorage.getItem("history") as any
-                ) as SongData[]
-              ).length <= 0
+              Object.keys(history).length === 0 ||
+              history.items.length === 0
             ) {
-              audioPlayer.currentTime = 0;
-            } else {
-              let history = JSON.parse(
-                sessionStorage.getItem("history") as any
-              ) as SongData[];
-              let newSong = history.pop() as SongData;
-              sessionStorage.setItem("history", JSON.stringify(history));
-              toggleSongData(newSong);
-
-              //This is here because whenever a new song is played the previous one is added to the history, the song which the previous button was clicked on should not be added to the history (below is only temporary, until a proper fix is implemented)
-              setTimeout(() => {
-                let newHistory = JSON.parse(
-                  sessionStorage.getItem("history") as any
-                ) as SongData[];
-                if (newHistory.pop()) {
-                  sessionStorage.setItem("history", JSON.stringify(history));
-                }
-              }, 1000);
+              //No queue key was found, or it was empty
+              return (audioPlayer.currentTime = 0);
             }
+
+            const prevSong = history.items.pop();
+            if (!prevSong) return;
+
+            songState.set(prevSong);
           }}
         >
           <img src="/icons/previous.svg" height={28} width={28}></img>

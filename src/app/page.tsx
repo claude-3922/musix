@@ -10,33 +10,17 @@ import SearchResults from "./components/SearchResults/SearchResults";
 import SearchResultsLoading from "./components/SearchResults/SearchResultsLoading";
 import { SongData } from "@/util/types/SongData";
 import PreviewLoading from "./components/Preview/PreviewLoading";
+import { StateManager } from "@/util/types/StateManager";
+import useStateManager from "./hooks/StateManager";
 
 export default function Home() {
-  const [query, setQuery] = useState("");
-  const [songData, setSongData] = useState<SongData | null>(null);
-  const toggleSongData = (s: SongData) => {
-    setSongData(s);
-  };
+  const [query, setQuery] = useState<string>("");
+  const [vid, setVid] = useState<boolean>(false);
 
-  const [vid, setVid] = useState(false);
-
-  const [showPlayer, setShowPlayer] = useState(false);
-  const togglePlayer = (b: boolean) => {
-    setShowPlayer(b);
-  };
-
-  const [showPreview, setShowPreview] = useState(false);
-  const togglePreview = (b: boolean) => {
-    setShowPreview(b);
-  };
-  const getPreview = () => {
-    return showPreview;
-  };
-
-  const [showSearchResults, setShowSearchResults] = useState(false);
-  const toggleShowResults = (b: boolean) => {
-    setShowSearchResults(b);
-  };
+  const songState = useStateManager<SongData | null>(null);
+  const playerState = useStateManager<boolean>(false);
+  const previewState = useStateManager<boolean>(false);
+  const searchResultState = useStateManager<boolean>(false);
 
   const audioPlayer = useRef<HTMLAudioElement | null>(null);
 
@@ -45,7 +29,7 @@ export default function Home() {
       <audio
         id="audioPlayer"
         ref={audioPlayer}
-        src={songData ? `/media?id=${songData.vid.id}&vid=0` : ``}
+        src={songState.get ? `/media?id=${songState.get.vid.id}&vid=0` : ``}
       />
       <div className="flex flex-col items-center justify-between">
         <nav className="flex flex-row items-center justify-between">
@@ -62,8 +46,8 @@ export default function Home() {
             className="border-2 p-2"
             onClick={() => {
               setQuery(document.getElementsByName("searchQuery")[0].id);
-              setShowSearchResults(true);
-              setShowPreview(false);
+              searchResultState.set(true);
+              previewState.set(false);
             }}
           >
             Search
@@ -78,36 +62,26 @@ export default function Home() {
               }}
             />
           </label>
-          <label>
-            Slowed?
-            <input
-              type="checkbox"
-              name="slowed"
-              onChange={(e) => {
-                //setSlowed(e.target.checked);
-              }}
-            />
-          </label>
         </nav>
 
         <main>
-          {showPreview ? (
+          {previewState.get ? (
             <Suspense fallback={<PreviewLoading />}>
               <div className="flex items-center bg-custom_black rounded-[4px] justify-center w-[100vw] h-[77.5vh] my-[2vh] overflow-y-scroll">
                 <Preview
-                  songData={songData}
+                  songData={songState.get}
                   vidEnabled={vid}
                   audioPlayer={audioPlayer.current || null}
                 />
               </div>
             </Suspense>
-          ) : showSearchResults ? (
+          ) : searchResultState.get ? (
             <div className="flex items-start bg-custom_black rounded-[4px] justify-center w-[100vw] h-[77.5vh] my-[2vh] overflow-y-scroll">
               <SearchResults
                 query={query}
-                toggleShowResults={toggleShowResults}
-                toggleSongData={toggleSongData}
-                togglePlayer={togglePlayer}
+                searchResultState={searchResultState}
+                songState={songState}
+                playerState={playerState}
               />
             </div>
           ) : (
@@ -118,13 +92,11 @@ export default function Home() {
         </main>
 
         <div className="flex items-center justify-center w-[100vw]">
-          {showPlayer && (
+          {playerState.get && (
             <Player
               audioPlayer={audioPlayer.current || null}
-              togglePreview={togglePreview}
-              getPreview={getPreview}
-              data={songData}
-              toggleSongData={toggleSongData}
+              songState={songState}
+              previewState={previewState}
             />
           )}
         </div>

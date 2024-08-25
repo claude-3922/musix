@@ -12,6 +12,7 @@ import React, {
   useEffect,
   createRef,
   Suspense,
+  useMemo,
 } from "react";
 import Thumbnail from "./Thumbnail";
 import Controls from "./Controls";
@@ -20,70 +21,52 @@ import PlayerLoading from "./PlayerLoading";
 import { pSBC } from "@/util/pSBC";
 import Title from "./Title";
 import { SongData } from "@/util/types/SongData";
-import { getAccentColors } from "@/util/colors";
+
+import { StateManager } from "@/util/types/StateManager";
+import { Queue } from "@/util/types/Queue";
 
 interface PlayerProps {
-  data: SongData | null;
-  toggleSongData: (s: SongData) => void;
   audioPlayer: HTMLAudioElement | null;
-  togglePreview: (b: boolean) => void;
-  getPreview: () => boolean;
+  songState: StateManager<SongData | null>;
+  previewState: StateManager<boolean>;
 }
 
-export function Player({
-  togglePreview,
-  getPreview,
-  data,
-  toggleSongData,
-  audioPlayer,
-}: PlayerProps) {
-  const [songData, setSongData] = useState<SongData | null>(null);
+export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
+  const data = songState.get;
 
+  const [songData, setSongData] = useState<SongData | null>(null);
   const [audioLoading, setAudioLoading] = useState(true);
 
   useEffect(() => {
-    async function playFromData(data: SongData, audioPlayer: HTMLAudioElement) {
-      let completeData = data;
-      const res = await fetch(`/data/colors?id=${completeData.vid.id}`);
-      const colors = await res.json();
-      completeData.playerInfo.accentColors = colors.colors;
-      completeData.playerInfo.topColor = colors.topColor;
+    if (!data || !audioPlayer) return;
+
+    let completeData = data;
+
+    async function loadFromData(data: SongData, audioPlayer: HTMLAudioElement) {
+      if (
+        !completeData.playerInfo.accentColors ||
+        !completeData.playerInfo.topColor
+      ) {
+        const res = await fetch(`/data/colors?id=${completeData.vid.id}`);
+        const colors = await res.json();
+        completeData.playerInfo.accentColors = colors.accentColors;
+        completeData.playerInfo.topColor = colors.topColor;
+      }
 
       setSongData(completeData);
 
       audioPlayer.load();
-      sessionStorage.setItem("now_playing", JSON.stringify(data));
+
+      sessionStorage.setItem("now_playing", JSON.stringify(completeData));
     }
 
     setSongData(null);
 
-    if (data && audioPlayer) {
-      audioPlayer.volume = Number(
-        JSON.parse(sessionStorage.getItem("volume") || "1")
-      );
+    audioPlayer.volume = Number(
+      JSON.parse(sessionStorage.getItem("volume") || "1")
+    );
 
-      playFromData(data, audioPlayer);
-    }
-
-    //TODO: fix bug which causes the first song in the history to be repeated
-    return () => {
-      if (data) {
-        if (!sessionStorage.getItem("history")) {
-          sessionStorage.setItem("history", "[]");
-        }
-
-        let history = JSON.parse(
-          sessionStorage.getItem("history") as any
-        ) as SongData[];
-
-        history.push(data);
-        sessionStorage.setItem("history", JSON.stringify(history));
-      }
-    };
-  }, [audioPlayer, data]);
-
-  if (songData && audioPlayer) {
-    const { vid, owner, playerInfo } = songData;
+    loadFromData(data, audioPlayer);
 
     audioPlayer.onloadstart = () => {
       setAudioLoading(true);
@@ -94,6 +77,29 @@ export function Player({
 
       audioPlayer.play();
     };
+
+    return () => {
+      if (!data) return;
+
+      let history: Queue;
+
+      if (!sessionStorage.getItem("history")) {
+        sessionStorage.setItem(
+          "history",
+          JSON.stringify({ items: [] } as Queue)
+        );
+      }
+      history = JSON.parse(
+        sessionStorage.getItem("history") as string
+      ) as Queue;
+      history.items.push(completeData as SongData);
+
+      sessionStorage.setItem("history", JSON.stringify(history));
+    };
+  }, [audioPlayer, data]);
+
+  if (songData && audioPlayer) {
+    const { vid, owner, playerInfo } = songData;
 
     const darkerAccent = pSBC(-0.925, playerInfo.topColor, "#1E201E");
 
@@ -112,7 +118,7 @@ export function Player({
         <div className="flex flex-col justify-evenly w-[40vw] h-[5vw] items-center">
           <Controls
             data={{ vid, owner, playerInfo }}
-            toggleSongData={toggleSongData}
+            songState={songState}
             audioPlayer={audioPlayer}
             isAudioLoading={audioLoading}
           />
@@ -121,8 +127,7 @@ export function Player({
         <Extras
           data={{ vid, owner, playerInfo }}
           audioPlayer={audioPlayer}
-          togglePreview={togglePreview}
-          getPreview={getPreview}
+          previewState={previewState}
         />
       </div>
     );

@@ -1,17 +1,18 @@
+import { StateManager } from "@/util/types/StateManager";
 import React from "react";
 
 interface SearchResultsLoadingProps {
-  toggleShowResults: (b: boolean) => void;
+  searchResultState: StateManager<boolean>;
 }
 
 export default function SearchResultsLoading({
-  toggleShowResults,
+  searchResultState,
 }: SearchResultsLoadingProps) {
   return (
     <div className="">
       <button
         className="border-2 mx-[2vw] my-[2vh]"
-        onClick={() => toggleShowResults(false)}
+        onClick={() => searchResultState.set(false)}
       >
         HOME
       </button>

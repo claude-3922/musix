@@ -3,19 +3,16 @@
 import { formatSongDuration } from "@/util/format";
 import { pSBC } from "@/util/pSBC";
 import { SongData } from "@/util/types/SongData";
+import { StateManager } from "@/util/types/StateManager";
 import React from "react";
 
 interface ItemProps {
   data: SongData;
-  toggleSongData: (s: SongData) => void;
-  togglePlayer: (b: boolean) => void;
+  songState: StateManager<SongData | null>;
+  playerState: StateManager<boolean>;
 }
 
-export default function Item({
-  data,
-  toggleSongData,
-  togglePlayer,
-}: ItemProps) {
+export default function Item({ data, songState, playerState }: ItemProps) {
   const { vid, owner, playerInfo } = data;
 
   return (
@@ -39,8 +36,8 @@ export default function Item({
         <button
           className="text-sm border-2 rounded-[4px] px-[0.25vw] py-[0.25vh] mb-[0.25vh] bg-custom_d_gray"
           onClick={() => {
-            toggleSongData(data);
-            togglePlayer(true);
+            songState.set(data);
+            playerState.set(true);
           }}
         >
           PLAY

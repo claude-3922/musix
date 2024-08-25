@@ -2,19 +2,20 @@ import { SongData } from "@/util/types/SongData";
 import React, { useEffect, useState } from "react";
 import Item from "./Item";
 import SearchResultsLoading from "./SearchResultsLoading";
+import { StateManager } from "@/util/types/StateManager";
 
 interface SearchResultsProps {
   query: string;
-  toggleShowResults: (b: boolean) => void;
-  toggleSongData: (s: SongData) => void;
-  togglePlayer: (b: boolean) => void;
+  searchResultState: StateManager<boolean>;
+  songState: StateManager<SongData | null>;
+  playerState: StateManager<boolean>;
 }
 
 export default function SearchResults({
   query,
-  toggleShowResults,
-  toggleSongData,
-  togglePlayer,
+  searchResultState,
+  songState,
+  playerState,
 }: SearchResultsProps) {
   const [results, setResults] = useState<SongData[] | null>(null);
 
@@ -36,7 +37,7 @@ export default function SearchResults({
         <div>
           <button
             className="border-2 mx-[2vw] my-[2vh]"
-            onClick={() => toggleShowResults(false)}
+            onClick={() => searchResultState.set(false)}
           >
             HOME
           </button>
@@ -45,8 +46,8 @@ export default function SearchResults({
             <Item
               key={i}
               data={r}
-              toggleSongData={toggleSongData}
-              togglePlayer={togglePlayer}
+              songState={songState}
+              playerState={playerState}
             />
           ))}
         </div>
@@ -57,7 +58,7 @@ export default function SearchResults({
   } else {
     return (
       <>
-        <SearchResultsLoading toggleShowResults={toggleShowResults} />
+        <SearchResultsLoading searchResultState={searchResultState} />
       </>
     );
   }
