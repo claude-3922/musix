@@ -23,7 +23,10 @@ import Title from "./Title";
 import { SongData } from "@/util/types/SongData";
 
 import { StateManager } from "@/util/types/StateManager";
-import { Queue } from "@/util/types/Queue";
+import { queueDB } from "@/db/queueDB";
+import { useLiveQuery } from "dexie-react-hooks";
+import { resolve } from "path";
+import useStateManager from "@/app/hooks/StateManager";
 
 interface PlayerProps {
   audioPlayer: HTMLAudioElement | null;
@@ -36,29 +39,38 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
 
   const [songData, setSongData] = useState<SongData | null>(null);
   const [audioLoading, setAudioLoading] = useState(true);
-
   useEffect(() => {
     if (!data || !audioPlayer) return;
 
-    let completeData = data;
+    let completeData: SongData | null = null;
 
-    async function loadFromData(data: SongData, audioPlayer: HTMLAudioElement) {
-      if (
-        !completeData.playerInfo.accentColors ||
-        !completeData.playerInfo.topColor
-      ) {
-        const res = await fetch(`/data/colors?id=${completeData.vid.id}`);
+    const completeColors = async (
+      incompleteData: SongData,
+      videoId: string
+    ) => {
+      let data = incompleteData;
+      if (!data.playerInfo.accentColors || !data.playerInfo.topColor) {
+        const res = await fetch(`/data/colors?id=${data.vid.id || videoId}`);
         const colors = await res.json();
-        completeData.playerInfo.accentColors = colors.accentColors;
-        completeData.playerInfo.topColor = colors.topColor;
+        data.playerInfo.accentColors = colors.accentColors;
+        data.playerInfo.topColor = colors.topColor;
       }
 
-      setSongData(completeData);
+      return data;
+    };
+    const loadFromData = async (
+      data: SongData,
+      audioPlayer: HTMLAudioElement
+    ) => {
+      let fullData = await completeColors(data, data.vid.id);
+      setSongData(fullData);
+
+      completeData = fullData;
 
       audioPlayer.load();
 
-      sessionStorage.setItem("now_playing", JSON.stringify(completeData));
-    }
+      await queueDB.setNowPlaying(fullData);
+    };
 
     setSongData(null);
 
@@ -80,21 +92,6 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
 
     return () => {
       if (!data) return;
-
-      let history: Queue;
-
-      if (!sessionStorage.getItem("history")) {
-        sessionStorage.setItem(
-          "history",
-          JSON.stringify({ items: [] } as Queue)
-        );
-      }
-      history = JSON.parse(
-        sessionStorage.getItem("history") as string
-      ) as Queue;
-      history.items.push(completeData as SongData);
-
-      sessionStorage.setItem("history", JSON.stringify(history));
     };
   }, [audioPlayer, data]);
 

@@ -11,12 +11,6 @@ main {
   scrollbar-color: gray #181a18;
 }
 
-#seekBar ::-webkit-slider-thumb {
-  appearance: none;
-  width: 1px;
-  height: 1px;
-}
-
 @keyframes titleAnim {
   0% {
     transform: translateX(10%);
@@ -31,4 +25,9 @@ main {
   animation-duration: 10s;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
+}
+
+.password::-ms-reveal,
+::-ms-clear {
+  display: none;
 }

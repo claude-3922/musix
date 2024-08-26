@@ -6,8 +6,9 @@ import { SongData } from "@/util/types/SongData";
 import { formatSongDuration } from "@/util/format";
 
 import { pSBC } from "@/util/pSBC";
-import { Queue } from "@/util/types/Queue";
+
 import { StateManager } from "@/util/types/StateManager";
+import { queueDB } from "@/db/queueDB";
 
 interface ControlsProps {
   data: SongData;
@@ -85,22 +86,20 @@ export default function Controls({
       <span className="flex flex-row justify-center items-center h-[2vw]">
         <button
           className="mr-[0.75rem] opacity-85 hover:opacity-100"
-          onClick={() => {
-            let history = JSON.parse(
-              sessionStorage.getItem("history") || "{}"
-            ) as Queue;
-            if (
-              Object.keys(history).length === 0 ||
-              history.items.length === 0
-            ) {
-              //No queue key was found, or it was empty
+          onClick={async () => {
+            const nowPlaying = await queueDB.getNowPlaying();
+            if (nowPlaying) await queueDB.queue.add(nowPlaying);
+
+            const historySongCount = await queueDB.history.count();
+            const prevSong =
+              (await queueDB.history.get(historySongCount)) || null;
+
+            if (!prevSong) {
               return (audioPlayer.currentTime = 0);
             }
-
-            const prevSong = history.items.pop();
-            if (!prevSong) return;
-
             songState.set(prevSong);
+
+            await queueDB.history.delete(historySongCount);
           }}
         >
           <img src="/icons/previous.svg" height={28} width={28}></img>

@@ -11,6 +11,9 @@
   "dependencies": {
     "@distube/ytdl-core": "^4.14.4",
     "@types/get-pixels": "^3.3.4",
+    "dexie": "^4.0.8",
+    "dexie-react-hooks": "^1.1.7",
+    "mongoose": "^8.5.4",
     "next": "14.2.5",
     "rc-slider": "^11.1.5",
     "react": "^18",
