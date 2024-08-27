@@ -12,6 +12,7 @@ import { SongData } from "@/util/types/SongData";
 import PreviewLoading from "./components/Preview/PreviewLoading";
 import { StateManager } from "@/util/types/StateManager";
 import useStateManager from "./hooks/StateManager";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function Home() {
   const [query, setQuery] = useState<string>("");
@@ -64,27 +65,33 @@ export default function Home() {
           </label>
         </nav>
 
-        <main>
-          {previewState.get ? (
-            <Suspense fallback={<PreviewLoading />}>
-              <div className="flex items-center bg-custom_black rounded-[4px] justify-center w-[100vw] h-[77.5vh] my-[2vh] overflow-y-scroll">
+        <main className="overflow-hidden">
+          <AnimatePresence mode="wait">
+            {previewState.get ? (
+              <motion.div
+                key="preview"
+                initial={{ y: "100%", opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: "100%", opacity: 0 }}
+                transition={{ duration: 0.125 }}
+              >
                 <Preview
                   songData={songState.get}
                   vidEnabled={vid}
                   audioPlayer={audioPlayer.current || null}
                 />
-              </div>
-            </Suspense>
-          ) : searchResultState.get ? (
-            <SearchResults
-              query={query}
-              searchResultState={searchResultState}
-              songState={songState}
-              playerState={playerState}
-            />
-          ) : (
-            <Main playerState={playerState} songState={songState} />
-          )}
+              </motion.div>
+            ) : searchResultState.get ? (
+              <SearchResults
+                query={query}
+                searchResultState={searchResultState}
+                songState={songState}
+                playerState={playerState}
+              />
+            ) : (
+              <Main playerState={playerState} songState={songState} />
+            )}
+          </AnimatePresence>
         </main>
 
         <div className="flex items-center justify-center w-[100vw]">

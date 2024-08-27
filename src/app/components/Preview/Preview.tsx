@@ -8,7 +8,7 @@ interface PreviewProps {
   audioPlayer: HTMLAudioElement | null;
 }
 
-export default async function Preview({
+export default function Preview({
   vidEnabled,
   songData,
   audioPlayer,
@@ -19,28 +19,27 @@ export default async function Preview({
     const vidSrc = `/media?id=${songData.vid.id}&vid=1`;
 
     return (
-      <div
-        className={`videoContainer flex items-center justify-center mt-[2vh]`}
-        style={{
-          animation: "slideIn 0.06s linear",
-        }}
-      >
-        <video
-          id="videoPlayer"
-          ref={videoPlayer}
-          className="flex bg-black object-cover max-w-[80vw] max-h-[70vh] hover:ring rounded-xl"
-          src={vidEnabled ? vidSrc : ""}
-          poster={songData.vid.thumbnail}
-          onTimeUpdate={() => {
-            if (videoPlayer.current) {
-              syncVideoToAudio(audioPlayer, videoPlayer.current);
-            }
-          }}
-          onClick={() => {
-            audioPlayer.paused ? audioPlayer.play() : audioPlayer.pause();
-          }}
-          autoPlay={audioPlayer.paused ? false : true}
-        />
+      <div className="flex items-center bg-custom_black rounded-[4px] justify-center w-[100vw] h-[77.5vh] my-[2vh] overflow-y-scroll">
+        <div
+          className={`videoContainer flex items-center justify-center mt-[2vh]`}
+        >
+          <video
+            id="videoPlayer"
+            ref={videoPlayer}
+            className="flex bg-black object-cover max-w-[80vw] max-h-[70vh] hover:ring rounded-xl"
+            src={vidEnabled ? vidSrc : ""}
+            poster={songData.vid.thumbnail}
+            onTimeUpdate={() => {
+              if (videoPlayer.current) {
+                syncVideoToAudio(audioPlayer, videoPlayer.current);
+              }
+            }}
+            onClick={() => {
+              audioPlayer.paused ? audioPlayer.play() : audioPlayer.pause();
+            }}
+            autoPlay={audioPlayer.paused ? false : true}
+          />
+        </div>
       </div>
     );
   }
