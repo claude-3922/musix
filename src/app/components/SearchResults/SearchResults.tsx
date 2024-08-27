@@ -34,22 +34,24 @@ export default function SearchResults({
   if (results) {
     if (results.length > 0) {
       return (
-        <div>
-          <button
-            className="border-2 mx-[2vw] my-[2vh]"
-            onClick={() => searchResultState.set(false)}
-          >
-            HOME
-          </button>
+        <div className="flex items-start bg-custom_black rounded-[4px] justify-center w-[100vw] h-[77.5vh] my-[2vh] overflow-y-scroll">
+          <div className="w-[100vw]">
+            <button
+              className="border-2 mx-[2vw] my-[2vh]"
+              onClick={() => searchResultState.set(false)}
+            >
+              HOME
+            </button>
 
-          {results.map((r, i) => (
-            <Item
-              key={i}
-              data={r}
-              songState={songState}
-              playerState={playerState}
-            />
-          ))}
+            {results.map((r, i) => (
+              <Item
+                key={i}
+                data={r}
+                songState={songState}
+                playerState={playerState}
+              />
+            ))}
+          </div>
         </div>
       );
     } else {

@@ -76,18 +76,14 @@ export default function Home() {
               </div>
             </Suspense>
           ) : searchResultState.get ? (
-            <div className="flex items-start bg-custom_black rounded-[4px] justify-center w-[100vw] h-[77.5vh] my-[2vh] overflow-y-scroll">
-              <SearchResults
-                query={query}
-                searchResultState={searchResultState}
-                songState={songState}
-                playerState={playerState}
-              />
-            </div>
+            <SearchResults
+              query={query}
+              searchResultState={searchResultState}
+              songState={songState}
+              playerState={playerState}
+            />
           ) : (
-            <div className="flex items-start bg-custom_black rounded-[4px] justify-center w-[100vw] h-[77.5vh] my-[2vh] overflow-y-scroll">
-              <Main />
-            </div>
+            <Main playerState={playerState} songState={songState} />
           )}
         </main>
 

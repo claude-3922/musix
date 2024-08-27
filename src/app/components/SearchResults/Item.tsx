@@ -17,7 +17,7 @@ export default function Item({ data, songState, playerState }: ItemProps) {
   const { vid, owner, playerInfo } = data;
 
   return (
-    <div className="flex justify-between items-center w-[70vw] h-[12vh] rounded-xl mb-[1vh] bg-custom_gray/20">
+    <div className="flex justify-between items-center w-[70vw] h-[12vh] rounded-xl mb-[1vh] mx-[1vw] bg-custom_gray/20">
       <span className="flex justify-start items-center">
         <span className="flex flex-col justify-center items-center w-[8vw] h-[12vh]">
           <img
@@ -36,16 +36,32 @@ export default function Item({ data, songState, playerState }: ItemProps) {
       <span className="flex flex-col justify-center items-center w-[20vw] h-[12vh]">
         <button
           className="text-sm border-2 rounded-[4px] px-[0.25vw] py-[0.25vh] mb-[0.25vh] bg-custom_d_gray"
-          onClick={() => {
+          onClick={async () => {
             songState.set(data);
             playerState.set(true);
 
-            queueDB.history.add(data);
+            const historyArray = await queueDB.history.toArray();
+            const duplicate = historyArray.find(
+              (song) => song.vid.id === data.vid.id
+            );
+            if (duplicate) {
+              await queueDB.history
+                .where("vid.id")
+                .equals(data.vid.id)
+                .delete();
+            }
+
+            await queueDB.history.add(data);
           }}
         >
           PLAY
         </button>
-        <button className="text-sm border-2 rounded-[4px] px-[0.25vw] py-[0.25vh] bg-custom_d_gray">
+        <button
+          className="text-sm border-2 rounded-[4px] px-[0.25vw] py-[0.25vh] bg-custom_d_gray"
+          onClick={async () => {
+            await queueDB.queue.add(data);
+          }}
+        >
           ADD TO QUEUE
         </button>
       </span>

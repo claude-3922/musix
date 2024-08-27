@@ -20,12 +20,15 @@ export default async function Preview({
 
     return (
       <div
-        className={`videoContainer flex items-center justify-center w-[48vw] h-[52.5vh] mt-[2vh]`}
+        className={`videoContainer flex items-center justify-center mt-[2vh]`}
+        style={{
+          animation: "slideIn 0.06s linear",
+        }}
       >
         <video
           id="videoPlayer"
           ref={videoPlayer}
-          className="flex bg-black object-cover w-[50vw] h-[50vh] hover:ring rounded-xl"
+          className="flex bg-black object-cover max-w-[80vw] max-h-[70vh] hover:ring rounded-xl"
           src={vidEnabled ? vidSrc : ""}
           poster={songData.vid.thumbnail}
           onTimeUpdate={() => {
@@ -48,21 +51,4 @@ const syncVideoToAudio = (audio: HTMLAudioElement, video: HTMLVideoElement) => {
     video.currentTime = audio.currentTime;
     console.log(`Video time changed`);
   }
-};
-
-const getBestThumbnail = (songId: string) => {
-  let returnVal = `/def_vid_thumbnail.jpg`;
-  fetch(`https://img.youtube.com/vi/${songId}/maxresdefault.jpg`)
-    .then((res) => {
-      if (res.status !== 404) {
-        returnVal = `https://img.youtube.com/vi/${songId}/maxresdefault.jpg`;
-      } else {
-        returnVal = `https://img.youtube.com/vi/${songId}/0.jpg`;
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-
-  return returnVal;
 };

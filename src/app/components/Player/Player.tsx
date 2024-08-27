@@ -61,6 +61,27 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
       return data;
     };
 
+    const loadStartHandler = () => {
+      setAudioLoading(true);
+    };
+
+    const playReadyHandler = () => {
+      setAudioLoading(false);
+      audioPlayer.play();
+    };
+
+    const songEndedHandler = async () => {
+      if (!audioPlayer.loop) {
+        const songToPlay = (await queueDB.queue.toArray())[0] || null;
+
+        await queueDB.history.add(songToPlay);
+
+        songState.set(songToPlay);
+
+        await queueDB.queue.where("vid.id").equals(songToPlay.vid.id).delete();
+      }
+    };
+
     const loadFromData = async (
       data: SongData,
       audioPlayer: HTMLAudioElement
@@ -73,17 +94,20 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
       audioPlayer.volume = Number(
         JSON.parse(sessionStorage.getItem("volume") || "1")
       );
-      audioPlayer.onloadstart = () => {
-        setAudioLoading(true);
-      };
-      audioPlayer.oncanplay = () => {
-        setAudioLoading(false);
-        audioPlayer.play();
-      };
+
+      audioPlayer.addEventListener("loadstart", loadStartHandler);
+      audioPlayer.addEventListener("canplay", playReadyHandler);
+      audioPlayer.addEventListener("ended", songEndedHandler);
     };
 
     loadFromData(data, audioPlayer);
-  }, [audioPlayer, data]);
+
+    return () => {
+      audioPlayer.removeEventListener("loadstart", loadStartHandler);
+      audioPlayer.removeEventListener("canplay", playReadyHandler);
+      audioPlayer.removeEventListener("ended", songEndedHandler);
+    };
+  }, [audioPlayer, data, songState]);
 
   if (songData && audioPlayer) {
     const { vid, owner, playerInfo } = songData;

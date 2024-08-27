@@ -8,7 +8,7 @@ body {
 
 main {
   scrollbar-width: auto;
-  scrollbar-color: gray #181a18;
+  scrollbar-color: #181a18 #1e201e;
 }
 
 @keyframes titleAnim {
@@ -17,6 +17,16 @@ main {
   }
   100% {
     transform: translateX(-100%);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0%);
   }
 }
 
