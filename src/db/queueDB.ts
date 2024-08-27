@@ -33,8 +33,11 @@ class QueueDatabase extends Dexie {
 
   async setNowPlaying(song: SongData): Promise<void> {
     try {
-      await this.nowPlaying.clear();
-      await this.nowPlaying.add({ id: 1, ...song });
+      if (await this.getNowPlaying()) {
+        await this.nowPlaying.update(1, song);
+      } else {
+        await this.nowPlaying.add({ id: 1, ...song });
+      }
     } catch (error) {
       console.log("Error setting nowPlaying: ", error);
     }

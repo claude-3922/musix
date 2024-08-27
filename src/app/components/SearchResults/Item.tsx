@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable jsx-a11y/alt-text */
+import { queueDB } from "@/db/queueDB";
 import { formatSongDuration } from "@/util/format";
 import { pSBC } from "@/util/pSBC";
 import { SongData } from "@/util/types/SongData";
@@ -38,6 +39,8 @@ export default function Item({ data, songState, playerState }: ItemProps) {
           onClick={() => {
             songState.set(data);
             playerState.set(true);
+
+            queueDB.history.add(data);
           }}
         >
           PLAY

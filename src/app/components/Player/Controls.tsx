@@ -87,19 +87,22 @@ export default function Controls({
         <button
           className="mr-[0.75rem] opacity-85 hover:opacity-100"
           onClick={async () => {
-            const nowPlaying = await queueDB.getNowPlaying();
-            if (nowPlaying) await queueDB.queue.add(nowPlaying);
-
-            const historySongCount = await queueDB.history.count();
-            const prevSong =
-              (await queueDB.history.get(historySongCount)) || null;
+            const historyArray = await queueDB.history.toArray();
+            const nowPlaying = historyArray[historyArray.length - 1];
+            const prevSong = historyArray[historyArray.length - 2];
 
             if (!prevSong) {
               return (audioPlayer.currentTime = 0);
             }
-            songState.set(prevSong);
 
-            await queueDB.history.delete(historySongCount);
+            await queueDB.queue.add(nowPlaying);
+
+            await queueDB.history
+              .where("vid.id")
+              .equals(nowPlaying.vid.id)
+              .delete();
+
+            songState.set(prevSong);
           }}
         >
           <img src="/icons/previous.svg" height={28} width={28}></img>
@@ -172,7 +175,24 @@ export default function Controls({
             </svg>
           )}
         </button>
-        <button className="mr-[0.75rem] opacity-85 hover:opacity-100">
+        <button
+          className="mr-[0.75rem] opacity-85 hover:opacity-100"
+          onClick={async () => {
+            const songToPlay = (await queueDB.queue.toArray())[0] || null;
+
+            if (!songToPlay) {
+              return songState.set(songToPlay);
+            }
+            await queueDB.history.add(songToPlay);
+
+            songState.set(songToPlay);
+
+            await queueDB.queue
+              .where("vid.id")
+              .equals(songToPlay.vid.id)
+              .delete();
+          }}
+        >
           <img src="/icons/next.svg" height={28} width={28}></img>
         </button>
       </span>

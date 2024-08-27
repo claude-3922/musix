@@ -39,60 +39,50 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
 
   const [songData, setSongData] = useState<SongData | null>(null);
   const [audioLoading, setAudioLoading] = useState(true);
+
   useEffect(() => {
     if (!data || !audioPlayer) return;
-
-    let completeData: SongData | null = null;
 
     const completeColors = async (
       incompleteData: SongData,
       videoId: string
-    ) => {
-      let data = incompleteData;
+    ): Promise<SongData> => {
+      let data = { ...incompleteData };
       if (!data.playerInfo.accentColors || !data.playerInfo.topColor) {
-        const res = await fetch(`/data/colors?id=${data.vid.id || videoId}`);
-        const colors = await res.json();
-        data.playerInfo.accentColors = colors.accentColors;
-        data.playerInfo.topColor = colors.topColor;
+        try {
+          const res = await fetch(`/data/colors?id=${data.vid.id || videoId}`);
+          const colors = await res.json();
+          data.playerInfo.accentColors = colors.accentColors;
+          data.playerInfo.topColor = colors.topColor;
+        } catch (error) {
+          console.error("Error fetching colors:", error);
+        }
       }
-
       return data;
     };
+
     const loadFromData = async (
       data: SongData,
       audioPlayer: HTMLAudioElement
     ) => {
-      let fullData = await completeColors(data, data.vid.id);
+      const fullData = await completeColors(data, data.vid.id);
       setSongData(fullData);
-
-      completeData = fullData;
+      queueDB.setNowPlaying(fullData);
 
       audioPlayer.load();
-
-      await queueDB.setNowPlaying(fullData);
+      audioPlayer.volume = Number(
+        JSON.parse(sessionStorage.getItem("volume") || "1")
+      );
+      audioPlayer.onloadstart = () => {
+        setAudioLoading(true);
+      };
+      audioPlayer.oncanplay = () => {
+        setAudioLoading(false);
+        audioPlayer.play();
+      };
     };
-
-    setSongData(null);
-
-    audioPlayer.volume = Number(
-      JSON.parse(sessionStorage.getItem("volume") || "1")
-    );
 
     loadFromData(data, audioPlayer);
-
-    audioPlayer.onloadstart = () => {
-      setAudioLoading(true);
-    };
-
-    audioPlayer.oncanplay = () => {
-      setAudioLoading(false);
-
-      audioPlayer.play();
-    };
-
-    return () => {
-      if (!data) return;
-    };
   }, [audioPlayer, data]);
 
   if (songData && audioPlayer) {
