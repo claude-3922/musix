@@ -1,7 +1,13 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import React, { ChangeEvent, CSSProperties, useRef, useState } from "react";
+import React, {
+  ChangeEvent,
+  CSSProperties,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { SongData } from "@/util/types/SongData";
 import { formatSongDuration } from "@/util/format";
 
@@ -13,24 +19,24 @@ import { queueDB } from "@/db/queueDB";
 interface ControlsProps {
   data: SongData;
   audioPlayer: HTMLAudioElement;
-  isAudioLoading: boolean;
   songState: StateManager<SongData | null>;
+  playerTime: StateManager<number>;
+  playerPaused: StateManager<boolean>;
+  playerLoading: boolean;
 }
 
 export default function Controls({
   data,
   audioPlayer,
-  isAudioLoading,
+  playerLoading,
   songState,
+  playerTime,
+  playerPaused,
 }: ControlsProps) {
   const { vid, playerInfo } = data;
-
-  const [playing, setPlaying] = useState(true);
-  const [audioTime, setAudioTime] = useState(0);
-
   const seekBar = useRef<HTMLInputElement | null>(null);
 
-  const handleSeekChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const seekChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     audioPlayer.currentTime = Number(e.target.value);
 
     let videoPlayer = document.getElementById(
@@ -42,37 +48,40 @@ export default function Controls({
     }
   };
 
-  audioPlayer.onplay = () => {
-    setPlaying(true);
+  const previousHandler = async () => {
+    const historyArray = await queueDB.history.toArray();
+    const nowPlaying = historyArray[historyArray.length - 1];
+    const prevSong = historyArray[historyArray.length - 2];
 
-    let videoPlayer = document.getElementById(
-      "videoPlayer"
-    ) as HTMLVideoElement;
-
-    if (videoPlayer) {
-      videoPlayer.play();
+    if (!prevSong) {
+      return (audioPlayer.currentTime = 0);
     }
+
+    await queueDB.queue.add(nowPlaying);
+
+    await queueDB.history.where("vid.id").equals(nowPlaying.vid.id).delete();
+
+    songState.set(prevSong);
   };
 
-  audioPlayer.onpause = () => {
-    setPlaying(false);
+  const nextHandler = async () => {
+    const songToPlay = (await queueDB.queue.toArray())[0] || null;
 
-    let videoPlayer = document.getElementById(
-      "videoPlayer"
-    ) as HTMLVideoElement;
-
-    if (videoPlayer) {
-      videoPlayer.pause();
+    if (!songToPlay) {
+      return songState.set(songToPlay);
     }
+    await queueDB.history.add(songToPlay);
+
+    songState.set(songToPlay);
+
+    await queueDB.queue.where("vid.id").equals(songToPlay.vid.id).delete();
   };
 
-  audioPlayer.ontimeupdate = () => {
-    setAudioTime(audioPlayer.currentTime);
-
+  useEffect(() => {
     if (seekBar.current) {
-      seekBar.current.value = audioPlayer.currentTime.toString();
+      seekBar.current.value = playerTime.get.toString();
     }
-  };
+  }, [playerTime.get]);
 
   const lighterAccent = pSBC(0.4, playerInfo.topColor);
 
@@ -86,24 +95,7 @@ export default function Controls({
       <span className="flex flex-row justify-center items-center h-[2vw]">
         <button
           className="mr-[0.75rem] opacity-85 hover:opacity-100"
-          onClick={async () => {
-            const historyArray = await queueDB.history.toArray();
-            const nowPlaying = historyArray[historyArray.length - 1];
-            const prevSong = historyArray[historyArray.length - 2];
-
-            if (!prevSong) {
-              return (audioPlayer.currentTime = 0);
-            }
-
-            await queueDB.queue.add(nowPlaying);
-
-            await queueDB.history
-              .where("vid.id")
-              .equals(nowPlaying.vid.id)
-              .delete();
-
-            songState.set(prevSong);
-          }}
+          onClick={previousHandler}
         >
           <img src="/icons/previous.svg" height={28} width={28}></img>
         </button>
@@ -114,7 +106,7 @@ export default function Controls({
             audioPlayer.paused ? audioPlayer.play() : audioPlayer.pause();
           }}
         >
-          {isAudioLoading ? (
+          {playerLoading ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="2.5vw"
@@ -143,7 +135,7 @@ export default function Controls({
               }
             `}</style>
             </svg>
-          ) : playing ? (
+          ) : !playerPaused.get ? (
             <svg
               id="playBackButton"
               xmlns="http://www.w3.org/2000/svg"
@@ -177,28 +169,14 @@ export default function Controls({
         </button>
         <button
           className="mr-[0.75rem] opacity-85 hover:opacity-100"
-          onClick={async () => {
-            const songToPlay = (await queueDB.queue.toArray())[0] || null;
-
-            if (!songToPlay) {
-              return songState.set(songToPlay);
-            }
-            await queueDB.history.add(songToPlay);
-
-            songState.set(songToPlay);
-
-            await queueDB.queue
-              .where("vid.id")
-              .equals(songToPlay.vid.id)
-              .delete();
-          }}
+          onClick={nextHandler}
         >
           <img src="/icons/next.svg" height={28} width={28}></img>
         </button>
       </span>
       <span className="flex flex-row items-center justify-center">
         <span className="flex text-sm w-[5vw] overflow-hidden justify-center">
-          {formatSongDuration(audioTime)}
+          {formatSongDuration(playerTime.get)}
         </span>
 
         <input
@@ -209,7 +187,7 @@ export default function Controls({
           min={0}
           max={vid.duration}
           step={1}
-          onChange={handleSeekChange}
+          onChange={seekChangeHandler}
           style={seekBarStyle}
         />
 

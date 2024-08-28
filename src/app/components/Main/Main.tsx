@@ -3,7 +3,7 @@ import { SongData } from "@/util/types/SongData";
 import { StateManager } from "@/util/types/StateManager";
 import { useLiveQuery } from "dexie-react-hooks";
 import React, { useEffect, useState } from "react";
-import Item from "../SearchResults/Item";
+import Item from "../SearchResults/SearchItemSong";
 
 interface MainProps {
   songState: StateManager<SongData | null>;

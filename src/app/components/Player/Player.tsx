@@ -13,6 +13,7 @@ import React, {
   createRef,
   Suspense,
   useMemo,
+  useCallback,
 } from "react";
 import Thumbnail from "./Thumbnail";
 import Controls from "./Controls";
@@ -39,6 +40,21 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
 
   const [songData, setSongData] = useState<SongData | null>(null);
   const [audioLoading, setAudioLoading] = useState(true);
+
+  const playerTime = useStateManager<number>(0);
+  const playerPaused = useStateManager<boolean>(false);
+
+  const timeUpdateHandler = () => {
+    playerTime.set(audioPlayer?.currentTime || 0);
+  };
+
+  const pauseHandler = () => {
+    playerPaused.set(true);
+  };
+
+  const playHandler = () => {
+    playerPaused.set(false);
+  };
 
   useEffect(() => {
     if (!data || !audioPlayer) return;
@@ -71,18 +87,20 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
     };
 
     const songEndedHandler = async () => {
-      if (!audioPlayer.loop) {
-        const songToPlay = (await queueDB.queue.toArray())[0] || null;
+      if (audioPlayer.loop) return;
 
-        await queueDB.history.add(songToPlay);
+      const queue = queueDB.queue.toCollection();
+      const songToPlay = await queue.first();
 
-        songState.set(songToPlay);
+      if (!songToPlay) return;
+      await queueDB.history.add(songToPlay);
 
-        await queueDB.queue.where("vid.id").equals(songToPlay.vid.id).delete();
-      }
+      songState.set(songToPlay);
+
+      await queueDB.queue.where("vid.id").equals(songToPlay.vid.id).delete();
     };
 
-    const loadFromData = async (
+    const initPlayer = async (
       data: SongData,
       audioPlayer: HTMLAudioElement
     ) => {
@@ -100,7 +118,7 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
       audioPlayer.addEventListener("ended", songEndedHandler);
     };
 
-    loadFromData(data, audioPlayer);
+    initPlayer(data, audioPlayer);
 
     return () => {
       audioPlayer.removeEventListener("loadstart", loadStartHandler);
@@ -109,8 +127,22 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
     };
   }, [audioPlayer, data, songState]);
 
+  useEffect(() => {
+    let videoPlayer = document.getElementById(
+      "videoPlayer"
+    ) as HTMLVideoElement;
+
+    if (videoPlayer) {
+      playerPaused.get ? videoPlayer.pause() : videoPlayer.play();
+    }
+  }, [playerPaused.get]);
+
   if (songData && audioPlayer) {
     const { vid, owner, playerInfo } = songData;
+
+    audioPlayer.addEventListener("timeupdate", timeUpdateHandler);
+    audioPlayer.addEventListener("pause", pauseHandler);
+    audioPlayer.addEventListener("play", playHandler);
 
     const darkerAccent = pSBC(-0.925, playerInfo.topColor, "#1E201E");
 
@@ -131,7 +163,9 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
             data={{ vid, owner, playerInfo }}
             songState={songState}
             audioPlayer={audioPlayer}
-            isAudioLoading={audioLoading}
+            playerTime={playerTime}
+            playerPaused={playerPaused}
+            playerLoading={audioLoading}
           />
         </div>
 

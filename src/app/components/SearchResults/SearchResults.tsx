@@ -1,8 +1,10 @@
 import { SongData } from "@/util/types/SongData";
 import React, { useEffect, useState } from "react";
-import Item from "./Item";
+
 import SearchResultsLoading from "./SearchResultsLoading";
 import { StateManager } from "@/util/types/StateManager";
+import SearchItemSong from "./SearchItemSong";
+import useStateManager from "@/app/hooks/StateManager";
 
 interface SearchResultsProps {
   query: string;
@@ -18,6 +20,7 @@ export default function SearchResults({
   playerState,
 }: SearchResultsProps) {
   const [results, setResults] = useState<SongData[] | null>(null);
+  const dropdownOpen = useStateManager<boolean>(false);
 
   useEffect(() => {
     setResults(null);
@@ -44,11 +47,12 @@ export default function SearchResults({
             </button>
 
             {results.map((r, i) => (
-              <Item
+              <SearchItemSong
                 key={i}
                 data={r}
                 songState={songState}
                 playerState={playerState}
+                dropdownState={dropdownOpen}
               />
             ))}
           </div>
