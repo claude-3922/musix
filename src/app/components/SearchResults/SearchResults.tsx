@@ -20,7 +20,8 @@ export default function SearchResults({
   playerState,
 }: SearchResultsProps) {
   const [results, setResults] = useState<SongData[] | null>(null);
-  const dropdownOpen = useStateManager<boolean>(false);
+  //const numDropdowns = useStateManager<number>(0);
+  const dropdownItemId = useStateManager<string | null>(null);
 
   useEffect(() => {
     setResults(null);
@@ -37,8 +38,8 @@ export default function SearchResults({
   if (results) {
     if (results.length > 0) {
       return (
-        <div className="flex items-start bg-custom_black rounded-[4px] justify-center w-[100vw] h-[77.5vh] my-[2vh] overflow-y-scroll">
-          <div className="w-[100vw]">
+        <div className="flex items-start bg-custom_black rounded-[4px] justify-center w-[100vw] h-[80.5vh] my-[1vh] overflow-y-scroll">
+          <div className="">
             <button
               className="border-2 mx-[2vw] my-[2vh]"
               onClick={() => searchResultState.set(false)}
@@ -52,7 +53,7 @@ export default function SearchResults({
                 data={r}
                 songState={songState}
                 playerState={playerState}
-                dropdownState={dropdownOpen}
+                dropdownItemId={dropdownItemId}
               />
             ))}
           </div>

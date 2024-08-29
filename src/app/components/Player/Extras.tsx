@@ -37,13 +37,7 @@ export default function Extras({
         : (volumeSlider.current.value = `${audioPlayer.volume}`);
     }
 
-    sessionStorage.setItem("volume", JSON.stringify(audioPlayer.volume));
-  };
-
-  audioPlayer.onplay = () => {
-    if (volumeSlider.current) {
-      volumeSlider.current.value = `${audioPlayer.volume}`;
-    }
+    localStorage.setItem("volume", JSON.stringify(audioPlayer.volume));
   };
 
   return (
@@ -107,7 +101,7 @@ export default function Extras({
       <button
         className="mr-[1.125rem] opacity-85 hover:opacity-100"
         onClick={() => {
-          setLooped((p) => !p);
+          setLooped(!looped);
           audioPlayer.loop = !looped; //Need a ! because state won't update until rerender
         }}
       >
@@ -144,30 +138,15 @@ export default function Extras({
             previewState.set(!previewState.get);
           }}
         >
-          {previewState.get ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="28"
-              height="28"
-              fill={lighterAccent ?? "gray"}
-              className="playNoFill"
-              viewBox="0 0 16 16"
-            >
-              <path d="M0 12V4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2m6.79-6.907A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814z" />
-            </svg>
-          ) : (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="28"
-              height="28"
-              fill="white"
-              className="playNoFill"
-              viewBox="0 0 16 16"
-            >
-              <path d="M6.79 5.093A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814z" />
-              <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1z" />
-            </svg>
-          )}
+          <img
+            src="icons/arrow_up.svg"
+            height={26}
+            width={26}
+            style={{
+              transform: previewState.get ? "rotate(180deg)" : "",
+              transition: "transform 0.125s ease-in-out",
+            }}
+          />
         </button>
       </span>
     </div>

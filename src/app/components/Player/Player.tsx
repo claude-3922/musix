@@ -41,6 +41,12 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
 
   const playHandler = () => {
     playerPaused.set(false);
+
+    if (audioPlayer) {
+      audioPlayer.volume = Number(
+        JSON.parse(localStorage.getItem("volume") || "1")
+      );
+    }
   };
 
   useEffect(() => {
@@ -97,7 +103,7 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
 
       audioPlayer.load();
       audioPlayer.volume = Number(
-        JSON.parse(sessionStorage.getItem("volume") || "1")
+        JSON.parse(localStorage.getItem("volume") || "1")
       );
 
       audioPlayer.addEventListener("loadstart", loadStartHandler);
@@ -135,7 +141,7 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
 
     return (
       <div
-        className={`text-white flex flex-row items-center justify-between w-[100vw] h-[6vw] px-[1vw] mx-[1vw] rounded-xl`}
+        className={`text-white flex flex-row items-center justify-between w-[100vw] h-[6vw] px-[1vw] mx-[0.5vw] rounded-[4px]`}
         style={{
           backgroundColor: darkerAccent ?? "gray",
         }}

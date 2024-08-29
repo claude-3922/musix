@@ -18,7 +18,7 @@ export default function Preview({
     const vidSrc = `/media?id=${songData.vid.id}&vid=1`;
 
     return (
-      <div className="flex items-center bg-custom_black rounded-[4px] justify-center w-[100vw] h-[77.5vh] my-[2vh] overflow-y-scroll">
+      <div className="flex items-center bg-custom_black rounded-[4px] justify-center w-[100vw] h-[80.5vh] my-[1vh] overflow-y-scroll">
         <div
           className={`videoContainer flex items-center justify-center mt-[2vh]`}
         >

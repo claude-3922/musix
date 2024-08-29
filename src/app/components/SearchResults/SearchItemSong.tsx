@@ -5,19 +5,20 @@ import { formatSongDuration } from "@/util/format";
 
 import { SongData } from "@/util/types/SongData";
 import { StateManager } from "@/util/types/StateManager";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface SearchItemSongProps {
   data: SongData;
   songState: StateManager<SongData | null>;
   playerState: StateManager<boolean>;
-  dropdownState: StateManager<boolean>;
+  dropdownItemId: StateManager<string | null>;
 }
 
 export default function SearchItemSong({
   data,
   songState,
   playerState,
+  dropdownItemId,
 }: SearchItemSongProps) {
   const { vid, owner } = data;
 
@@ -75,9 +76,36 @@ export default function SearchItemSong({
       </span>
       <span className="flex flex-col justify-center items-center w-[20vw] h-[12vh]">
         <button
-          className="relative hover:bg-black/20 rounded-full w-[3vw] h-[3vw]"
-          onClick={() => {}}
-        ></button>
+          type="button"
+          className="flex items-center justify-center relative hover:bg-black/20 rounded-full w-[3vw] h-[3vw]"
+          onClick={() => {
+            if (dropdownItemId && dropdownItemId.get === data.vid.id) {
+              dropdownItemId.set(null);
+            } else {
+              dropdownItemId.set(data.vid.id);
+            }
+          }}
+        >
+          <img src="/icons/dots_vertical.svg"></img>
+          {dropdownItemId && dropdownItemId.get === data.vid.id && (
+            <div className="absolute z-[1] rounded-[4px] top-[3vw] right-[3vw] w-[10vw] h-[10vw] bg-black/70">
+              <div className="flex flex-col items-between justify-center divide-y w-[10vw] h-[10vw] whitespace-nowrap overflow-hidden">
+                <button className="hover:bg-white/20" onClick={playHandler}>
+                  PLAY NOW
+                </button>
+                <button className="hover:bg-white/20" onClick={queueAddHandler}>
+                  ADD TO QUEUE
+                </button>
+                <button
+                  className="hover:bg-white/20"
+                  onClick={() => alert("This doesn't do anything rn")}
+                >
+                  ADD TO PLAYLIST
+                </button>
+              </div>
+            </div>
+          )}
+        </button>
       </span>
     </div>
   );

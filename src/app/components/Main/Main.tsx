@@ -17,7 +17,7 @@ export default function Main({ songState, playerState }: MainProps) {
     useState(false);
 
   return (
-    <div className="flex items-start bg-custom_black rounded-[4px] justify-center w-[100vw] h-[77.5vh] my-[2vh] overflow-y-scroll">
+    <div className="flex items-start bg-custom_black rounded-[4px] justify-center w-[100vw] h-[80.5vh] my-[1vh] overflow-y-scroll">
       <div
         className={`videoContainer flex flex-col w-[100vw] h-[100vh] mt-[2vh] overflow:hidden bg-black/20`}
       >
@@ -45,7 +45,7 @@ export default function Main({ songState, playerState }: MainProps) {
                 data={s}
                 songState={songState}
                 playerState={playerState}
-                dropdownState={null as any}
+                dropdownItemId={null as any}
               />
             ))
           ) : (
@@ -53,13 +53,15 @@ export default function Main({ songState, playerState }: MainProps) {
           )}
         </div>
 
-        <button
-          type="button"
-          className="w-[10vw] mx-[4vw] my-[1vh] text-lg px-[2vw] py-[1vh] border-2 rounded-full"
-          onClick={() => setQueueItemContainerExpand((p) => !p)}
-        >
-          {queueItemContainerExpand ? "Hide All" : "Show All"}
-        </button>
+        {queue && queue.length > 1 && (
+          <button
+            type="button"
+            className="w-[10vw] mx-[4vw] my-[1vh] text-lg px-[2vw] py-[1vh] border-2 rounded-full"
+            onClick={() => setQueueItemContainerExpand((p) => !p)}
+          >
+            {queueItemContainerExpand ? "Hide All" : "Show All"}
+          </button>
+        )}
       </div>
     </div>
   );
