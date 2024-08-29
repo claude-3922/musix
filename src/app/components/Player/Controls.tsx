@@ -1,13 +1,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import React, {
-  ChangeEvent,
-  CSSProperties,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { ChangeEvent, CSSProperties, useEffect, useRef } from "react";
 import { SongData } from "@/util/types/SongData";
 import { formatSongDuration } from "@/util/format";
 

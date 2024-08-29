@@ -2,15 +2,8 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, {
-  ForwardedRef,
-  forwardRef,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React from "react";
 
-import { pSBC } from "@/util/pSBC";
 import { SongData } from "@/util/types/SongData";
 
 interface ThumbnailProps {
@@ -18,9 +11,7 @@ interface ThumbnailProps {
 }
 
 export default function Thumbnail({ songData }: ThumbnailProps) {
-  const { vid, owner, playerInfo } = songData;
-
-  const lighterAccent = pSBC(0.1, playerInfo.topColor);
+  const { vid } = songData;
 
   return (
     <div className="flex justify-start items-center">

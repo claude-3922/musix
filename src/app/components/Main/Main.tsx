@@ -2,8 +2,8 @@ import { queueDB } from "@/db/queueDB";
 import { SongData } from "@/util/types/SongData";
 import { StateManager } from "@/util/types/StateManager";
 import { useLiveQuery } from "dexie-react-hooks";
-import React, { useEffect, useState } from "react";
-import Item from "../SearchResults/SearchItemSong";
+import React, { useState } from "react";
+import SearchItemSong from "../SearchResults/SearchItemSong";
 
 interface MainProps {
   songState: StateManager<SongData | null>;
@@ -40,11 +40,12 @@ export default function Main({ songState, playerState }: MainProps) {
         >
           {queue ? (
             queue.map((s, i) => (
-              <Item
+              <SearchItemSong
                 key={i}
                 data={s}
                 songState={songState}
                 playerState={playerState}
+                dropdownState={null as any}
               />
             ))
           ) : (

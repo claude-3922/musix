@@ -2,19 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import hexRgb from "hex-rgb";
-
-import React, {
-  useContext,
-  useState,
-  useRef,
-  ChangeEvent,
-  useEffect,
-  createRef,
-  Suspense,
-  useMemo,
-  useCallback,
-} from "react";
+import React, { useState, useEffect } from "react";
 import Thumbnail from "./Thumbnail";
 import Controls from "./Controls";
 import Extras from "./Extras";
@@ -25,8 +13,7 @@ import { SongData } from "@/util/types/SongData";
 
 import { StateManager } from "@/util/types/StateManager";
 import { queueDB } from "@/db/queueDB";
-import { useLiveQuery } from "dexie-react-hooks";
-import { resolve } from "path";
+
 import useStateManager from "@/app/hooks/StateManager";
 
 interface PlayerProps {

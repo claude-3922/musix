@@ -6,7 +6,7 @@ interface TitleProps {
 }
 
 export default function Title({ data }: TitleProps) {
-  const { vid, owner, playerInfo } = data;
+  const { vid, owner } = data;
 
   return (
     <div className="flex flex-col items-start justify-center">

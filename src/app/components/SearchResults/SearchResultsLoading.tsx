@@ -1,5 +1,5 @@
 import { StateManager } from "@/util/types/StateManager";
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 interface SearchResultsLoadingProps {
   searchResultState: StateManager<boolean>;

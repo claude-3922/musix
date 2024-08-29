@@ -1,6 +1,5 @@
 import { SongData } from "@/util/types/SongData";
-import React, { useEffect, useRef, useState } from "react";
-import PreviewLoading from "./PreviewLoading";
+import React, { useRef } from "react";
 
 interface PreviewProps {
   vidEnabled: boolean;

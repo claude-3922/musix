@@ -17,7 +17,7 @@ export default function Extras({
   audioPlayer,
   previewState,
 }: ExtrasProps) {
-  const { vid, playerInfo, owner } = data;
+  const { playerInfo } = data;
   const [showLikeFill, setShowLikeFill] = useState(false);
   const [looped, setLooped] = useState(false);
   const [muted, setMuted] = useState(false);

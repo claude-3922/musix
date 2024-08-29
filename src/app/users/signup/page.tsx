@@ -4,6 +4,8 @@ import { pSBC } from "@/util/pSBC";
 import React, { useRef, useState } from "react";
 import { FormAlert } from "../signin/page";
 
+import { permanentRedirect } from "next/navigation";
+
 export default function SignUp() {
   const password = useRef<HTMLInputElement | null>(null);
   const confirmation = useRef<HTMLInputElement | null>(null);
@@ -42,6 +44,9 @@ export default function SignUp() {
         type: "SUCCESS",
         message: "Account creation successful. You can now login.",
       });
+
+      setSubmitted(true);
+      permanentRedirect("/users/signin");
     } else {
       setAlert({
         show: true,

@@ -1,16 +1,14 @@
 "use client";
 
-import { Suspense, useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Player } from "./components/Player/Player";
-import PlayerLoading from "./components/Player/PlayerLoading";
+
 import Preview from "./components/Preview/Preview";
 
 import Main from "./components/Main/Main";
 import SearchResults from "./components/SearchResults/SearchResults";
-import SearchResultsLoading from "./components/SearchResults/SearchResultsLoading";
 import { SongData } from "@/util/types/SongData";
-import PreviewLoading from "./components/Preview/PreviewLoading";
-import { StateManager } from "@/util/types/StateManager";
+
 import useStateManager from "./hooks/StateManager";
 import { AnimatePresence, motion } from "framer-motion";
 

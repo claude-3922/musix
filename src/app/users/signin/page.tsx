@@ -1,8 +1,7 @@
 "use client";
 import { pSBC } from "@/util/pSBC";
 import { permanentRedirect } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import { useFormStatus } from "react-dom";
+import React, { useState } from "react";
 
 export interface FormAlert {
   type?: "SUCCESS" | "WARNING" | "FAILURE";

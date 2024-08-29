@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { queueDB } from "@/db/queueDB";
 import { formatSongDuration } from "@/util/format";
-import { pSBC } from "@/util/pSBC";
+
 import { SongData } from "@/util/types/SongData";
 import { StateManager } from "@/util/types/StateManager";
 import React, { useState } from "react";
@@ -18,12 +18,10 @@ export default function SearchItemSong({
   data,
   songState,
   playerState,
-  dropdownState,
 }: SearchItemSongProps) {
-  const { vid, owner, playerInfo } = data;
+  const { vid, owner } = data;
 
   const [buttonOnThumbnail, setButtonOnThumbnail] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const playHandler = async () => {
     songState.set(data);
