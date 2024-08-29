@@ -4,6 +4,7 @@ import { StateManager } from "@/util/types/StateManager";
 import { useLiveQuery } from "dexie-react-hooks";
 import React, { useState } from "react";
 import SearchItemSong from "../SearchResults/SearchItemSong";
+import ExpandableList from "../Util/ExpandableList";
 
 interface MainProps {
   songState: StateManager<SongData | null>;
@@ -29,13 +30,14 @@ export default function Main({ songState, playerState }: MainProps) {
           <h1 className="text-2xl">Up Next</h1>
         </div>
 
-        <div
-          className="mx-[4vw] my-[1vh] overflow-y-hidden"
-          style={{
-            height: queueItemContainerExpand
-              ? `${queue ? queue.length * 13 : 12}vh`
-              : "12vh",
-            transition: "height 0.125s ease-in-out",
+        <ExpandableList
+          beforeCount={1}
+          afterCount={queue?.length || 0}
+          beforeHeight="13vh"
+          afterHeight={`${queue ? queue.length * 13 : 13}vh`}
+          customExpandButtonProps={{
+            className:
+              "w-[8vw] hover:bg-white/20 py-[0.5vh] border-2 rounded-full mx-[2vw]",
           }}
         >
           {queue ? (
@@ -51,17 +53,7 @@ export default function Main({ songState, playerState }: MainProps) {
           ) : (
             <p>NONE</p>
           )}
-        </div>
-
-        {queue && queue.length > 1 && (
-          <button
-            type="button"
-            className="w-[10vw] mx-[4vw] my-[1vh] text-lg px-[2vw] py-[1vh] border-2 rounded-full"
-            onClick={() => setQueueItemContainerExpand((p) => !p)}
-          >
-            {queueItemContainerExpand ? "Hide All" : "Show All"}
-          </button>
-        )}
+        </ExpandableList>
       </div>
     </div>
   );
