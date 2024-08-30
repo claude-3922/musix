@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Player } from "./components/Player/Player";
 
 import Preview from "./components/Preview/Preview";
@@ -21,15 +21,52 @@ export default function Home() {
   const previewState = useStateManager<boolean>(false);
   const searchResultState = useStateManager<boolean>(false);
 
-  const audioPlayer = useRef<HTMLAudioElement | null>(null);
+  const [audioPlayer, setAudioPlayer] = useState<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    if (!audioPlayer) return;
+
+    let audioContext: AudioContext | null = null;
+    let source: MediaElementAudioSourceNode | null = null;
+    let convolver: ConvolverNode | null = null;
+
+    async function init(player: HTMLAudioElement) {
+      audioContext = new window.AudioContext();
+      source = audioContext.createMediaElementSource(player);
+      convolver = audioContext.createConvolver();
+
+      const res = await fetch(`/sounds/reverb_ir.wav`);
+      const undecodedAudio = await res.arrayBuffer();
+      const decodedAudio = await audioContext.decodeAudioData(undecodedAudio);
+
+      convolver.buffer = decodedAudio;
+
+      source.connect(convolver);
+      convolver.connect(audioContext.destination);
+    }
+
+    init(audioPlayer);
+
+    return () => {
+      if (convolver) convolver.disconnect();
+      if (source) source.disconnect();
+      if (audioContext) audioContext.close().catch(console.log);
+    };
+  }, [audioPlayer]);
 
   return (
     <>
-      <audio
-        id="audioPlayer"
-        ref={audioPlayer}
-        src={songState.get ? `/media?id=${songState.get.vid.id}&vid=0` : ``}
-      />
+      {songState.get ? (
+        <audio
+          id="audioPlayer"
+          ref={(el) => setAudioPlayer(el)}
+          src={`/media?id=${songState.get.vid.id}&vid=0`}
+          preload="auto"
+        />
+      ) : (
+        ""
+      )}
+
       <div className="flex flex-col items-center justify-between">
         <nav className="flex flex-row items-center justify-between">
           <input
@@ -76,7 +113,7 @@ export default function Home() {
                 <Preview
                   songData={songState.get}
                   vidEnabled={vid}
-                  audioPlayer={audioPlayer.current || null}
+                  audioPlayer={audioPlayer || null}
                 />
               </motion.div>
             ) : searchResultState.get ? (
@@ -95,7 +132,7 @@ export default function Home() {
         <div className="flex items-center justify-center w-[100vw]">
           {playerState.get && (
             <Player
-              audioPlayer={audioPlayer.current || null}
+              audioPlayer={audioPlayer || null}
               songState={songState}
               previewState={previewState}
             />

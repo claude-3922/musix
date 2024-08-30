@@ -76,7 +76,11 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
 
     const playReadyHandler = () => {
       setAudioLoading(false);
+
       audioPlayer.play();
+
+      audioPlayer.playbackRate = 0.8;
+      audioPlayer.preservesPitch = false;
     };
 
     const songEndedHandler = async () => {

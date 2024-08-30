@@ -6,8 +6,5 @@ export interface PlaylistMetadata {
   owner: {
     title?: string;
     url?: string;
-    thumbnail?: string;
   };
-  length: number;
-  totalDuration: number;
 }

@@ -42,7 +42,7 @@ export default function SearchItemSong({
   };
 
   return (
-    <div className="flex justify-between items-center w-[80vw] h-[12vh] rounded-xl mb-[1vh] mx-[1vw] bg-custom_gray/20">
+    <div className="flex justify-between items-center w-[80vw] h-[12vh] rounded-[4px] mb-[1vh] mx-[1vw] bg-custom_gray/20">
       <span
         className="flex justify-start items-center"
         onMouseOver={() => setButtonOnThumbnail(true)}

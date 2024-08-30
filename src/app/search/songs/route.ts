@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import ytsr from "@distube/ytsr";
+import Youtube from "youtube-sr";
 
 import { durationSeconds } from "@/util/format";
 
 import { SongData } from "@/util/types/SongData";
+import { sortSongDurations } from "@/util/sort";
 
 export async function POST(req: NextRequest) {
   let query: string | null = null;
@@ -27,31 +28,35 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "No id provided" }, { status: 403 });
   }
 
-  const res = await ytsr(query, { limit: count, safeSearch: false });
+  const res = await Youtube.search(query, {
+    limit: count,
+    safeSearch: true,
+    type: "video",
+  });
   if (!res) {
     console.log(" INFO /search/songs 'No songs found'");
-    return NextResponse.json({ message: "No songs foun" }, { status: 404 });
+    return NextResponse.json({ message: "No songs found" }, { status: 404 });
   }
 
   let songArray: SongData[] = [];
 
-  const vids = res.items.filter((item) => !item.isLive);
+  const vids = res.filter((item) => !item.live);
 
   for (let i = 0; i < vids.length; ++i) {
     const v = vids[i];
 
     const songData: SongData = {
       vid: {
-        id: v.id,
+        id: v.id || "NOT_FOUND",
         url: v.url,
-        title: v.name,
-        thumbnail: v.thumbnail,
-        duration: durationSeconds(v.duration),
+        title: v.title || "NOT_FOUND",
+        thumbnail: v.thumbnail?.url || "/def_vid_thumbnail.jpg",
+        duration: v.duration / 1000,
       },
       owner: {
-        title: v.author?.name || "NOT_FOUND",
-        url: v.author?.url || "NOT_FOUND",
-        thumbnail: v.author?.bestAvatar.url || "/def_user_thumbnail.jpg",
+        title: v.channel?.name || "NOT_FOUND",
+        url: v.channel?.url || "NOT_FOUND",
+        thumbnail: v.channel?.icon.url || "/def_user_thumbnail.jpg",
       },
       playerInfo: {
         accentColors: undefined,
@@ -69,6 +74,8 @@ export async function POST(req: NextRequest) {
   songArray = songArray.filter(
     (song) => song.vid.title.toLowerCase() !== topResult.vid.title.toLowerCase()
   );
+
+  sortSongDurations(songArray);
 
   return NextResponse.json(
     {
