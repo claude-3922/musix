@@ -35,7 +35,7 @@ export default function Home() {
       source = audioContext.createMediaElementSource(player);
       convolver = audioContext.createConvolver();
 
-      const res = await fetch(`/sounds/reverb_ir.wav`);
+      const res = await fetch(`/sounds/reverb_ir3.wav`);
       const undecodedAudio = await res.arrayBuffer();
       const decodedAudio = await audioContext.decodeAudioData(undecodedAudio);
 
