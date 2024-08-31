@@ -10,14 +10,12 @@ import React, { useEffect, useState } from "react";
 interface SearchItemSongProps {
   data: SongData;
   songState: StateManager<SongData | null>;
-  playerState: StateManager<boolean>;
   dropdownItemId: StateManager<string | null>;
 }
 
 export default function SearchItemSong({
   data,
   songState,
-  playerState,
   dropdownItemId,
 }: SearchItemSongProps) {
   const { vid, owner } = data;
@@ -26,7 +24,6 @@ export default function SearchItemSong({
 
   const playHandler = async () => {
     songState.set(data);
-    playerState.set(true);
 
     const historyArray = await queueDB.history.toArray();
     const duplicate = historyArray.find((song) => song.vid.id === data.vid.id);

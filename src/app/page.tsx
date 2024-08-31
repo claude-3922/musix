@@ -17,7 +17,7 @@ export default function Home() {
   const [vid, setVid] = useState<boolean>(false);
 
   const songState = useStateManager<SongData | null>(null);
-  const playerState = useStateManager<boolean>(false);
+
   const previewState = useStateManager<boolean>(false);
   const searchResultState = useStateManager<boolean>(false);
 
@@ -64,7 +64,7 @@ export default function Home() {
           preload="auto"
         />
       ) : (
-        ""
+        <></>
       )}
 
       <div className="flex flex-col items-center justify-between">
@@ -121,22 +121,21 @@ export default function Home() {
                 query={query}
                 searchResultState={searchResultState}
                 songState={songState}
-                playerState={playerState}
               />
             ) : (
-              <Main playerState={playerState} songState={songState} />
+              <Main songState={songState} />
             )}
           </AnimatePresence>
         </main>
 
         <div className="flex items-center justify-center w-[100vw]">
-          {playerState.get && (
+          {
             <Player
               audioPlayer={audioPlayer || null}
               songState={songState}
               previewState={previewState}
             />
-          )}
+          }
         </div>
       </div>
     </>

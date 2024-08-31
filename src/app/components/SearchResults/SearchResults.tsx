@@ -3,7 +3,6 @@
 import { SongData } from "@/util/types/SongData";
 import React, { ReactNode, useEffect, useState } from "react";
 
-import SearchResultsLoading from "./SearchResultsLoading";
 import { StateManager } from "@/util/types/StateManager";
 import SearchItemSong from "./SearchItem/Song";
 import useStateManager from "@/app/hooks/StateManager";
@@ -14,7 +13,6 @@ interface SearchResultsProps {
   query: string;
   searchResultState: StateManager<boolean>;
   songState: StateManager<SongData | null>;
-  playerState: StateManager<boolean>;
 }
 
 interface SongSearchResult {
@@ -30,7 +28,6 @@ export default function SearchResults({
   query,
   searchResultState,
   songState,
-  playerState,
 }: SearchResultsProps) {
   const [songs, setSongs] = useState<SongSearchResult | null>(null);
   const [playlists, setPlaylists] = useState<PlaylistSearchResult | null>(null);
@@ -96,14 +93,13 @@ export default function SearchResults({
             <SearchItemSong
               data={songs.topResult as SongData}
               songState={songState}
-              playerState={playerState}
               dropdownItemId={dropdownItemId}
             />
           </div>
         ) : (
           <div className="my-[1vh]">
             <h1 className="mx-[2vw] text-2xl mb-[1vh]">-</h1>
-            <div className="animate-pulse rounded-xl w-[80vw] h-[12vh] mb-[1vh] mx-[1vw] bg-custom_gray/20" />
+            <div className="animate-pulse rounded-[4px] w-[80vw] h-[12vh] mb-[1vh] mx-[1vw] bg-custom_gray/20" />
           </div>
         )}
 
@@ -125,7 +121,6 @@ export default function SearchResults({
                   key={i}
                   data={r}
                   songState={songState}
-                  playerState={playerState}
                   dropdownItemId={dropdownItemId}
                 />
               ))}
@@ -137,7 +132,7 @@ export default function SearchResults({
             {Array.from({ length: 3 }, (_, i) => (
               <div
                 key={i}
-                className="animate-pulse rounded-xl w-[80vw] h-[12vh] mb-[1vh] mx-[1vw] bg-custom_gray/20"
+                className="animate-pulse rounded-[4px] w-[80vw] h-[12vh] mb-[1vh] mx-[1vw] bg-custom_gray/20"
               />
             ))}
           </div>

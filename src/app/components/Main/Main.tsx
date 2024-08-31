@@ -8,10 +8,9 @@ import ExpandableList from "../Util/ExpandableList";
 
 interface MainProps {
   songState: StateManager<SongData | null>;
-  playerState: StateManager<boolean>;
 }
 
-export default function Main({ songState, playerState }: MainProps) {
+export default function Main({ songState }: MainProps) {
   const queue = useLiveQuery(() => queueDB.queue.toArray());
 
   const [queueItemContainerExpand, setQueueItemContainerExpand] =
@@ -46,7 +45,6 @@ export default function Main({ songState, playerState }: MainProps) {
                 key={i}
                 data={s}
                 songState={songState}
-                playerState={playerState}
                 dropdownItemId={null as any}
               />
             ))

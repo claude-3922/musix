@@ -15,6 +15,7 @@ import { StateManager } from "@/util/types/StateManager";
 import { queueDB } from "@/db/queueDB";
 
 import useStateManager from "@/app/hooks/StateManager";
+import PlayerEmpty from "./PlayerEmpty";
 
 interface PlayerProps {
   audioPlayer: HTMLAudioElement | null;
@@ -134,46 +135,48 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
     }
   }, [playerPaused.get]);
 
-  if (songData && audioPlayer) {
-    const { vid, owner, playerInfo } = songData;
-
-    audioPlayer.addEventListener("timeupdate", timeUpdateHandler);
-    audioPlayer.addEventListener("pause", pauseHandler);
-    audioPlayer.addEventListener("play", playHandler);
-
-    const darkerAccent = pSBC(-0.925, playerInfo.topColor, "#1E201E");
-
-    return (
-      <div
-        className={`text-white flex flex-row items-center justify-between w-[100vw] h-[6vw] px-[1vw] mx-[0.5vw] rounded-[4px]`}
-        style={{
-          backgroundColor: darkerAccent ?? "gray",
-        }}
-      >
-        <div className="flex justify-start items-center w-[30vw]">
-          <Thumbnail songData={{ vid, owner, playerInfo }} />
-          <Title data={{ vid, owner, playerInfo }} />
-        </div>
-
-        <div className="flex flex-col justify-evenly w-[40vw] h-[5vw] items-center">
-          <Controls
-            data={{ vid, owner, playerInfo }}
-            songState={songState}
-            audioPlayer={audioPlayer}
-            playerTime={playerTime}
-            playerPaused={playerPaused}
-            playerLoading={audioLoading}
-          />
-        </div>
-
-        <Extras
-          data={{ vid, owner, playerInfo }}
-          audioPlayer={audioPlayer}
-          previewState={previewState}
-        />
-      </div>
-    );
-  } else {
+  if (!audioPlayer) {
+    return <PlayerEmpty />;
+  } else if (!songData) {
     return <PlayerLoading />;
   }
+
+  const { vid, owner, playerInfo } = songData;
+
+  audioPlayer.addEventListener("timeupdate", timeUpdateHandler);
+  audioPlayer.addEventListener("pause", pauseHandler);
+  audioPlayer.addEventListener("play", playHandler);
+
+  const darkerAccent = pSBC(-0.925, playerInfo.topColor, "#1E201E");
+
+  return (
+    <div
+      className={`text-white flex flex-row items-center justify-between w-[100vw] h-[6vw] px-[1vw] mx-[0.5vw] rounded-[4px]`}
+      style={{
+        backgroundColor: darkerAccent ?? "gray",
+      }}
+    >
+      <div className="flex justify-start items-center w-[30vw]">
+        <Thumbnail songData={{ vid, owner, playerInfo }} />
+        <Title data={{ vid, owner, playerInfo }} />
+      </div>
+
+      <div className="flex flex-col justify-evenly w-[40vw] h-[5vw] items-center">
+        <Controls
+          data={{ vid, owner, playerInfo }}
+          songState={songState}
+          audioPlayer={audioPlayer}
+          playerTime={playerTime}
+          playerPaused={playerPaused}
+          playerLoading={audioLoading}
+        />
+      </div>
+
+      <Extras
+        data={{ vid, owner, playerInfo }}
+        audioPlayer={audioPlayer}
+        previewState={previewState}
+      />
+    </div>
+  );
 }
