@@ -33,16 +33,10 @@ export default function Home() {
     async function init(player: HTMLAudioElement) {
       audioContext = new window.AudioContext();
       source = audioContext.createMediaElementSource(player);
-      convolver = audioContext.createConvolver();
 
-      const res = await fetch(`/sounds/reverb_ir3.wav`);
-      const undecodedAudio = await res.arrayBuffer();
-      const decodedAudio = await audioContext.decodeAudioData(undecodedAudio);
+      convolver = null;
 
-      convolver.buffer = decodedAudio;
-
-      source.connect(convolver);
-      convolver.connect(audioContext.destination);
+      source.connect(audioContext.destination);
     }
 
     init(audioPlayer);
@@ -100,7 +94,7 @@ export default function Home() {
           </label>
         </nav>
 
-        <main className="overflow-hidden">
+        <main className="relative overflow-hidden">
           <AnimatePresence mode="wait">
             {previewState.get ? (
               <motion.div

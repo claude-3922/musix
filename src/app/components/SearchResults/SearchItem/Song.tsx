@@ -2,10 +2,11 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { queueDB } from "@/db/queueDB";
 import { formatSongDuration } from "@/util/format";
+import { isOverflown } from "@/util/generalUtil";
 
 import { SongData } from "@/util/types/SongData";
 import { StateManager } from "@/util/types/StateManager";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface SearchItemSongProps {
   data: SongData;
@@ -21,6 +22,7 @@ export default function SearchItemSong({
   const { vid, owner } = data;
 
   const [buttonOnThumbnail, setButtonOnThumbnail] = useState(false);
+  //const dropdownMenu = useRef<HTMLDivElement | null>(null);
 
   const playHandler = async () => {
     songState.set(data);
@@ -72,9 +74,9 @@ export default function SearchItemSong({
         </span>
       </span>
       <span className="flex flex-col justify-center items-center w-[20vw] h-[12vh]">
-        <button
-          type="button"
-          className="flex items-center justify-center relative hover:bg-black/20 rounded-full w-[3vw] h-[3vw]"
+        <div
+          //type="button"
+          className="flex items-center justify-center relative rounded-full hover:cursor-pointer"
           onClick={() => {
             if (dropdownItemId && dropdownItemId.get === data.vid.id) {
               dropdownItemId.set(null);
@@ -83,18 +85,27 @@ export default function SearchItemSong({
             }
           }}
         >
-          <img src="/icons/dots_vertical.svg"></img>
+          <img
+            className="w-[1.5vw] h-[1.5vw] hover:scale-110"
+            src="/icons/dots_vertical.svg"
+          ></img>
           {dropdownItemId && dropdownItemId.get === data.vid.id && (
-            <div className="absolute z-[1] rounded-[4px] top-[3vw] right-[3vw] w-[10vw] h-[10vw] bg-black/70">
-              <div className="flex flex-col items-between justify-center divide-y w-[10vw] h-[10vw] whitespace-nowrap overflow-hidden">
-                <button className="hover:bg-white/20" onClick={playHandler}>
-                  PLAY NOW
+            <div className="absolute z-[1] rounded-[4px] top-[3vw] right-[3vw] w-[10vw] h-[10vw] bg-custom_black/70">
+              <div className="flex flex-col items-between justify-center divide-y w-[10vw] h-[10vw] whitespace-nowrap overflow-y-hidden">
+                <button
+                  className="h-[5vh] hover:bg-white/20"
+                  onClick={playHandler}
+                >
+                  <h1 className="">PLAY</h1>
                 </button>
-                <button className="hover:bg-white/20" onClick={queueAddHandler}>
+                <button
+                  className="h-[5vh] hover:bg-white/20"
+                  onClick={queueAddHandler}
+                >
                   ADD TO QUEUE
                 </button>
                 <button
-                  className="hover:bg-white/20"
+                  className="h-[5vh] hover:bg-white/20"
                   onClick={() => alert("This doesn't do anything rn")}
                 >
                   ADD TO PLAYLIST
@@ -102,7 +113,7 @@ export default function SearchItemSong({
               </div>
             </div>
           )}
-        </button>
+        </div>
       </span>
     </div>
   );

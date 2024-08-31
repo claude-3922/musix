@@ -8,6 +8,7 @@ import SearchItemSong from "./SearchItem/Song";
 import useStateManager from "@/app/hooks/StateManager";
 import { PlaylistMetadata } from "@/util/types/PlaylistMetadata";
 import ExpandableList from "../Util/ExpandableList";
+import SearchItemPlaylist from "./SearchItem/Playlist";
 
 interface SearchResultsProps {
   query: string;
@@ -58,7 +59,7 @@ export default function SearchResults({
         method: "POST",
         body: JSON.stringify({
           query: query,
-          count: 10,
+          count: 6,
         }),
       });
       if (playlistRes.status === 200) {
@@ -113,7 +114,7 @@ export default function SearchResults({
               afterHeight={`${songs.songs.length * 13}vh`}
               customExpandButtonProps={{
                 className:
-                  "w-[8vw] hover:bg-white/20 py-[0.5vh] border-2 rounded-full mx-[1.5vw]",
+                  "text-sm w-[6vw] hover:bg-white/20 py-[0.5vh] border-2 rounded-full mx-[2vw]",
               }}
             >
               {songs.songs.map((r, i) => (
@@ -139,26 +140,39 @@ export default function SearchResults({
         )}
 
         {playlists ? (
-          <div className="my-[1vh]">
+          <div className="my-[3vh]">
             <h1 className="mx-[2vw] text-2xl mb-[1vh]">PLAYLISTS</h1>
             <ExpandableList
-              beforeCount={3}
-              beforeHeight={`${3 * 13}vh`}
+              beforeCount={2}
+              beforeHeight={`${2 * 13}vh`}
               afterCount={playlists.playlists.length}
               afterHeight={`${playlists.playlists.length * 13}vh`}
               customExpandButtonProps={{
                 className:
-                  "w-[8vw] hover:bg-white/20 py-[0.5vh] border-2 rounded-full mx-[1.5vw]",
+                  "text-sm w-[6vw] hover:bg-white/20 py-[0.5vh] border-2 rounded-full mx-[2vw]",
               }}
               className="overflow-y-scroll"
             >
               {playlists.playlists.map((r, i) => (
-                <div key={i}>{r.title}</div>
+                <SearchItemPlaylist
+                  key={i}
+                  data={r}
+                  songState={songState}
+                  dropdownItemId={dropdownItemId}
+                />
               ))}
             </ExpandableList>
           </div>
         ) : (
-          ""
+          <div className="my-[1vh]">
+            <h1 className="mx-[2vw] text-2xl mb-[1vh]">-</h1>
+            {Array.from({ length: 2 }, (_, i) => (
+              <div
+                key={i}
+                className="animate-pulse rounded-[4px] w-[80vw] h-[12vh] mb-[1vh] mx-[1vw] bg-custom_gray/20"
+              />
+            ))}
+          </div>
         )}
       </div>
     </div>

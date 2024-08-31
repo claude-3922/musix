@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Rubik } from "next/font/google";
+import { Raleway } from "next/font/google";
 import "./globals.css";
 
-const font = Rubik({
+const font = Raleway({
   weight: "400",
   subsets: ["latin"],
 });
