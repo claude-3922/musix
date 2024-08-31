@@ -26,7 +26,7 @@ export default function Main({ songState }: MainProps) {
         </div>
 
         <div className="mx-[4vw] my-[1vh]">
-          <h1 className="text-2xl">Up Next</h1>
+          <h1 className="text-2xl">SKIBIDI SIGMA Fanum Tax baby gronk</h1>
         </div>
 
         <ExpandableList
