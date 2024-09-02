@@ -42,7 +42,7 @@ export default function Extras({
 
   return (
     <div
-      className="flex flex-row justify-end items-center w-[26vw] h-[4vw]"
+      className="flex flex-row justify-end items-center w-[30vw] h-[4vw]"
       onMouseOver={() => setShowVolumeBar(true)}
       onMouseOut={() => setShowVolumeBar(false)}
     >

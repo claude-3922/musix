@@ -79,9 +79,7 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
       setAudioLoading(false);
 
       audioPlayer.play();
-
-      audioPlayer.playbackRate = 0.85;
-      audioPlayer.preservesPitch = false;
+      previewState.set(true);
     };
 
     const songEndedHandler = async () => {
@@ -147,16 +145,15 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
   audioPlayer.addEventListener("pause", pauseHandler);
   audioPlayer.addEventListener("play", playHandler);
 
-  const darkerAccent = pSBC(-0.9, playerInfo.topColor, "#191919");
-  const darkerDarkerAccent = pSBC(-0.94, playerInfo.topColor, "#191919");
-  const darkestDarkerAccent = pSBC(-0.97, playerInfo.topColor, "#191919");
+  const darkerAccent = pSBC(0.9, playerInfo.topColor, "#191919");
+  const darkerDarkerAccent = pSBC(0.94, playerInfo.topColor, "#191919");
+  const darkestDarkerAccent = pSBC(0.97, playerInfo.topColor, "#191919");
 
   return (
     <div
-      className={`text-white flex flex-row items-center justify-between w-[100vw] h-[6.07vw] px-[1vw] rounded-[4px]`}
+      className={`text-white flex flex-row items-center justify-between w-[100vw] h-[6.07vw] px-[1vw]`}
       style={{
         background: `linear-gradient(90deg, ${darkestDarkerAccent} 0%, ${darkerDarkerAccent} 15%, ${darkerAccent} 50%, ${darkerDarkerAccent} 85%, ${darkestDarkerAccent} 100%)`,
-        transition: "all 0.5s ease-in-out",
       }}
     >
       <div className="flex justify-start items-center w-[30vw]">

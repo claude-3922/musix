@@ -63,12 +63,12 @@ export default function Controls({
 
   return (
     <>
-      <span className="flex flex-row justify-center items-center h-[3vh]">
+      <span className="flex flex-row justify-between items-center">
         <button
-          className="mr-[0.75rem] opacity-85 hover:opacity-100"
+          className="mr-[0.75rem] hover:scale-110 transition:transform"
           onClick={previousHandler}
         >
-          <img className="h-[2.5vw] w-[2.5vw]" src="/icons/previous.svg"></img>
+          <img className="h-[2vw] w-[2vw]" src="/icons/previous.svg"></img>
         </button>
 
         <button
@@ -113,7 +113,7 @@ export default function Controls({
               width="2.5vw"
               height="2.5vw"
               fill="white"
-              className="playBackButton"
+              className="playBackButton hover:scale-110 transition:transform"
               viewBox="0 0 16 16"
             >
               <path
@@ -128,7 +128,7 @@ export default function Controls({
               width="2.5vw"
               height="2.5vw"
               fill="white"
-              className="playBackButton"
+              className="playBackButton hover:scale-110 transition:transform"
               viewBox="0 0 16 16"
             >
               <path
@@ -138,14 +138,17 @@ export default function Controls({
             </svg>
           )}
         </button>
-        <button className="opacity-85 hover:opacity-100" onClick={nextHandler}>
+        <button
+          className="hover:scale-110 transition:transform"
+          onClick={nextHandler}
+        >
           <img
-            className="mr-[0.75rem] h-[2.5vw] w-[2.5vw]"
+            className="mr-[0.75rem] h-[2vw] w-[2vw]"
             src="/icons/next.svg"
           ></img>
         </button>
       </span>
-      <span className="flex flex-row items-center justify-center h-[3vh]">
+      <span className="flex flex-row items-center justify-center">
         <span className="flex flex-row">
           <span className="flex text-sm w-[5vw] overflow-hidden justify-center">
             {formatSongDuration(playerTime.get)}

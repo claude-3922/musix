@@ -32,11 +32,11 @@ main {
   display: none;
 }
 
-.scrollbarHide::-webkit-scrollbar {
+.scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
 
-.scrollbarHide {
+.scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }

@@ -15,7 +15,7 @@ export default function Main({ songState }: MainProps) {
   const queue = useLiveQuery(() => queueDB.queue.toArray());
 
   return (
-    <div className="flex items-start bg-custom_black rounded-[4px] justify-center w-[100vw] h-[83.25vh] overflow-y-scroll">
+    <div className="flex items-start bg-custom_black justify-center w-[100vw] h-[83.25vh] overflow-y-scroll">
       <div
         className={`videoContainer flex flex-col w-[100vw] h-[100vh] mt-[2vh] overflow:hidden bg-black/20`}
       >
