@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Thumbnail from "./Thumbnail";
 import Controls from "./Controls";
 import Extras from "./Extras";
@@ -31,6 +31,8 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
 
   const playerTime = useStateManager<number>(0);
   const playerPaused = useStateManager<boolean>(false);
+
+  const previewStateRef = useRef<StateManager<boolean>>(previewState);
 
   const timeUpdateHandler = () => {
     playerTime.set(audioPlayer?.currentTime || 0);
@@ -79,7 +81,7 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
       setAudioLoading(false);
 
       audioPlayer.play();
-      previewState.set(true);
+      previewStateRef.current.set(true);
     };
 
     const songEndedHandler = async () => {
@@ -145,9 +147,10 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
   audioPlayer.addEventListener("pause", pauseHandler);
   audioPlayer.addEventListener("play", playHandler);
 
-  const darkerAccent = pSBC(0.9, playerInfo.topColor, "#191919");
-  const darkerDarkerAccent = pSBC(0.94, playerInfo.topColor, "#191919");
-  const darkestDarkerAccent = pSBC(0.97, playerInfo.topColor, "#191919");
+  const accents = [0.97, 0.94, 0.9].map((percentage) =>
+    pSBC(percentage, playerInfo.topColor, "#191919")
+  );
+  const [darkestDarkerAccent, darkerDarkerAccent, darkerAccent] = accents;
 
   return (
     <div
