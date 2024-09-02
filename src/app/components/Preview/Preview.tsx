@@ -20,12 +20,12 @@ export default function Preview({
     const vidSrc = `/media?id=${songData.vid.id}&vid=1`;
 
     const darkerAccent = pSBC(0.9, playerInfo.topColor, "#191919");
-    const darkerDarkerAccent = pSBC(0.96, playerInfo.topColor, "#191919");
+    const darkerDarkerAccent = pSBC(0.98, playerInfo.topColor, "#191919");
     const darkestDarkerAccent = pSBC(0.99, playerInfo.topColor, "#191919");
 
     return (
       <div
-        className="scrollbar-hide flex items-center justify-center w-[100vw] h-[83.25vh] overflow-y-hidden bg-gradient-to-b from-current to-[#191919]"
+        className="scrollbar-hide flex flex-col items-center justify-center w-[100vw] h-[83.25vh] overflow-y-hidden"
         style={{
           background: `linear-gradient(135deg, 
           ${darkestDarkerAccent} 0%, 
@@ -35,6 +35,13 @@ export default function Preview({
           ${darkestDarkerAccent} 100%)`,
         }}
       >
+        <div className="flex items-center justify-center">
+          <button className="my-[1vh] mx-[0.5vw] w-[2vw] h-[2vw]">
+            <img src="icons/playFill.svg" />
+          </button>
+          <button className="my-[1vh] mx-[0.5vw]">LYRICS</button>
+          <button className="my-[1vh] mx-[0.5vw]">QUEUE</button>
+        </div>
         <video
           id="videoPlayer"
           ref={videoPlayer}

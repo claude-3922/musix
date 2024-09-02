@@ -194,6 +194,7 @@ export default function Controls({
                 videoPlayer.currentTime = newTime;
               }
             }}
+            songDuration={vid.duration}
           />
 
           <span className="flex text-sm w-[5vw] overflow-hidden justify-center">

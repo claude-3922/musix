@@ -1,3 +1,4 @@
+import { formatSongDuration } from "@/util/format";
 import React, {
   HTMLAttributes,
   useEffect,
@@ -21,6 +22,8 @@ interface SeekBarProps {
   thumbStyles?: CSSProperties;
 
   onSeek?: (newValue: number) => void;
+
+  songDuration?: number;
 }
 
 export default function SeekBar({
@@ -32,6 +35,7 @@ export default function SeekBar({
   thumbRadius_pixels,
   thumbStyles,
   onSeek,
+  songDuration,
 }: SeekBarProps) {
   const seekbarContainer = useRef<HTMLSpanElement | null>(null);
   const progressBar = useRef<HTMLSpanElement | null>(null);
@@ -57,17 +61,35 @@ export default function SeekBar({
     }
   }, [progressPercentage, thumbRadius_pixels]);
 
-  const seekHandler = (event: MouseEvent<HTMLSpanElement>) => {
+  const calculatePercentageFromMousePos = (mousePosX: number) => {
     if (seekbarContainer.current) {
-      const newPercentage =
-        ((event.clientX - seekbarContainer.current.offsetLeft) /
+      return (
+        ((mousePosX - seekbarContainer.current.offsetLeft) /
           seekbarContainer.current.offsetWidth) *
-        100;
-      setCurrent(newPercentage);
+        100
+      );
+    }
+
+    return null;
+  };
+
+  const seekHandler = (event: MouseEvent<HTMLSpanElement>) => {
+    const newPerc = calculatePercentageFromMousePos(event.clientX);
+
+    if (newPerc) {
+      setCurrent(newPerc);
 
       if (onSeek) {
-        onSeek(newPercentage);
+        onSeek(newPerc);
       }
+    }
+  };
+
+  const getDurationAtCurrentPos = (e: MouseEvent<HTMLSpanElement>) => {
+    if (songDuration) {
+      const mousePerc = calculatePercentageFromMousePos(e.clientX);
+
+      return mousePerc ? (mousePerc * songDuration) / 100 : 0;
     }
   };
 
@@ -75,11 +97,17 @@ export default function SeekBar({
     <>
       <span
         className="flex items-center relative hover:cursor-pointer"
-        onClick={(e) => {
-          e.preventDefault();
-          seekHandler(e);
+        onMouseUp={seekHandler}
+        onMouseOver={(e) => {
+          setShowThumb(true);
         }}
-        onMouseOver={() => setShowThumb(true)}
+        onMouseMove={(e) => {
+          if (seekbarContainer.current) {
+            seekbarContainer.current.title = `${formatSongDuration(
+              getDurationAtCurrentPos(e) as any
+            )}`;
+          }
+        }}
         onMouseOut={() => setShowThumb(false)}
         style={{ paddingTop: height, paddingBottom: height }}
         ref={seekbarContainer}

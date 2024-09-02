@@ -156,7 +156,7 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
     <div
       className={`text-white flex flex-row items-center justify-between w-[100vw] h-[6.07vw] px-[1vw]`}
       style={{
-        background: `linear-gradient(90deg, ${darkestDarkerAccent} 0%, ${darkerDarkerAccent} 15%, ${darkerAccent} 50%, ${darkerDarkerAccent} 85%, ${darkestDarkerAccent} 100%)`,
+        background: `linear-gradient(90deg, ${darkestDarkerAccent} 0%, ${darkerDarkerAccent} 25%, ${darkerAccent} 50%, ${darkerDarkerAccent} 75%, ${darkestDarkerAccent} 100%)`,
       }}
     >
       <div className="flex justify-start items-center w-[30vw]">
