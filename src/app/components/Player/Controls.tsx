@@ -9,6 +9,7 @@ import { pSBC } from "@/util/pSBC";
 
 import { StateManager } from "@/util/types/StateManager";
 import { queueDB } from "@/db/queueDB";
+import SeekBar from "../Util/SeekBar";
 
 interface ControlsProps {
   data: SongData;
@@ -28,19 +29,6 @@ export default function Controls({
   playerPaused,
 }: ControlsProps) {
   const { vid, playerInfo } = data;
-  const seekBar = useRef<HTMLInputElement | null>(null);
-
-  const seekChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    audioPlayer.currentTime = Number(e.target.value);
-
-    let videoPlayer = document.getElementById(
-      "videoPlayer"
-    ) as HTMLVideoElement;
-
-    if (videoPlayer) {
-      videoPlayer.currentTime = Number(e.target.value);
-    }
-  };
 
   const previousHandler = async () => {
     const historyArray = await queueDB.history.toArray();
@@ -71,27 +59,16 @@ export default function Controls({
     await queueDB.queue.where("vid.id").equals(songToPlay.vid.id).delete();
   };
 
-  useEffect(() => {
-    if (seekBar.current) {
-      seekBar.current.value = playerTime.get.toString();
-    }
-  }, [playerTime.get]);
-
   const lighterAccent = pSBC(0.4, playerInfo.topColor);
-
-  const seekBarStyle = {
-    accentColor: lighterAccent,
-    backgroundColor: "white",
-  } as CSSProperties;
 
   return (
     <>
-      <span className="flex flex-row justify-center items-center h-[2vw]">
+      <span className="flex flex-row justify-center items-center h-[3vh]">
         <button
           className="mr-[0.75rem] opacity-85 hover:opacity-100"
           onClick={previousHandler}
         >
-          <img src="/icons/previous.svg" height={28} width={28}></img>
+          <img className="h-[2.5vw] w-[2.5vw]" src="/icons/previous.svg"></img>
         </button>
 
         <button
@@ -161,19 +138,20 @@ export default function Controls({
             </svg>
           )}
         </button>
-        <button
-          className="mr-[0.75rem] opacity-85 hover:opacity-100"
-          onClick={nextHandler}
-        >
-          <img src="/icons/next.svg" height={28} width={28}></img>
+        <button className="opacity-85 hover:opacity-100" onClick={nextHandler}>
+          <img
+            className="mr-[0.75rem] h-[2.5vw] w-[2.5vw]"
+            src="/icons/next.svg"
+          ></img>
         </button>
       </span>
-      <span className="flex flex-row items-center justify-center">
-        <span className="flex text-sm w-[5vw] overflow-hidden justify-center">
-          {formatSongDuration(playerTime.get)}
-        </span>
+      <span className="flex flex-row items-center justify-center h-[3vh]">
+        <span className="flex flex-row">
+          <span className="flex text-sm w-[5vw] overflow-hidden justify-center">
+            {formatSongDuration(playerTime.get)}
+          </span>
 
-        <input
+          {/* <input
           id="seekBar"
           className="w-[30vw] h-[0.25vw] rounded-[10px]"
           ref={seekBar}
@@ -183,10 +161,41 @@ export default function Controls({
           step={1}
           onChange={seekChangeHandler}
           style={seekBarStyle}
-        />
+        /> */}
 
-        <span className="flex text-sm w-[5vw] overflow-hidden justify-center">
-          {formatSongDuration(vid.duration)}
+          <SeekBar
+            containerStyles={{
+              backgroundColor: "#2D312C",
+              borderRadius: "10vw",
+            }}
+            progressStyles={{
+              backgroundColor:
+                `${pSBC(0.5, lighterAccent, "#2D312C")}` || "white",
+              borderRadius: "10vw",
+            }}
+            height="0.25vw"
+            width="30vw"
+            progressPercentage={(playerTime.get / vid.duration) * 100}
+            thumbRadius_pixels={16}
+            thumbStyles={{
+              backgroundColor: `${pSBC(0.5, lighterAccent, "#2D312C")}`,
+            }}
+            onSeek={(newPercentage) => {
+              const newTime = (newPercentage * vid.duration) / 100;
+              audioPlayer.currentTime = newTime;
+              let videoPlayer = document.getElementById(
+                "videoPlayer"
+              ) as HTMLVideoElement;
+
+              if (videoPlayer) {
+                videoPlayer.currentTime = newTime;
+              }
+            }}
+          />
+
+          <span className="flex text-sm w-[5vw] overflow-hidden justify-center">
+            {formatSongDuration(vid.duration)}
+          </span>
         </span>
       </span>
     </>

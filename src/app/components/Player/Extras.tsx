@@ -129,26 +129,6 @@ export default function Extras({
           </svg>
         )}
       </button>
-      <span
-        className={`flex justify-center items-center w-[2rem] h-[2rem] overflow-hidden`}
-      >
-        <button
-          className=" opacity-85 hover:opacity-100"
-          onClick={() => {
-            previewState.set(!previewState.get);
-          }}
-        >
-          <img
-            src="icons/arrow_up.svg"
-            height={26}
-            width={26}
-            style={{
-              transform: previewState.get ? "rotate(180deg)" : "",
-              transition: "transform 0.125s ease-in-out",
-            }}
-          />
-        </button>
-      </span>
     </div>
   );
 }

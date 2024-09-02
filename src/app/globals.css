@@ -31,3 +31,12 @@ main {
 ::-ms-clear {
   display: none;
 }
+
+.scrollbarHide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbarHide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

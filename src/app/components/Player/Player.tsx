@@ -79,6 +79,9 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
       setAudioLoading(false);
 
       audioPlayer.play();
+
+      audioPlayer.playbackRate = 0.85;
+      audioPlayer.preservesPitch = false;
     };
 
     const songEndedHandler = async () => {
@@ -150,18 +153,21 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
 
   return (
     <div
-      className={`text-white flex flex-row items-center justify-between w-[100vw] h-[6vw] px-[1vw] mx-[0.5vw] rounded-[4px]`}
+      className={`text-white flex flex-row items-center justify-between w-[100vw] h-[6.07vw] px-[1vw] rounded-[4px]`}
       style={{
         background: `linear-gradient(90deg, ${darkestDarkerAccent} 0%, ${darkerDarkerAccent} 15%, ${darkerAccent} 50%, ${darkerDarkerAccent} 85%, ${darkestDarkerAccent} 100%)`,
-        transition: "background 0.5s ease-in-out",
+        transition: "all 0.5s ease-in-out",
       }}
     >
       <div className="flex justify-start items-center w-[30vw]">
-        <Thumbnail songData={{ vid, owner, playerInfo }} />
+        <Thumbnail
+          songData={{ vid, owner, playerInfo }}
+          previewState={previewState}
+        />
         <Title data={{ vid, owner, playerInfo }} />
       </div>
 
-      <div className="flex flex-col justify-evenly w-[40vw] h-[5vw] items-center">
+      <div className="flex flex-col justify-center w-[40vw] h-[6.07vw] items-center">
         <Controls
           data={{ vid, owner, playerInfo }}
           songState={songState}

@@ -74,7 +74,7 @@ export default function SearchResults({
 
   return (
     <div
-      className="flex items-start bg-custom_black rounded-[4px] justify-center w-[100vw] h-[80.5vh] my-[1vh] overflow-y-scroll"
+      className="flex items-start bg-custom_black rounded-[4px] justify-center w-[100vw] h-[83.25vh] overflow-y-scroll"
       onClick={() => {
         if (dropdownItemId.get) {
           dropdownItemId.set(null);

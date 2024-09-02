@@ -2,9 +2,10 @@ import { queueDB } from "@/db/queueDB";
 import { SongData } from "@/util/types/SongData";
 import { StateManager } from "@/util/types/StateManager";
 import { useLiveQuery } from "dexie-react-hooks";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SearchItemSong from "../SearchResults/SearchItem/Song";
 import ExpandableList from "../Util/ExpandableList";
+import SeekBar from "../Util/SeekBar";
 
 interface MainProps {
   songState: StateManager<SongData | null>;
@@ -13,11 +14,8 @@ interface MainProps {
 export default function Main({ songState }: MainProps) {
   const queue = useLiveQuery(() => queueDB.queue.toArray());
 
-  const [queueItemContainerExpand, setQueueItemContainerExpand] =
-    useState(false);
-
   return (
-    <div className="flex items-start bg-custom_black rounded-[4px] justify-center w-[100vw] h-[80.5vh] my-[1vh] overflow-y-scroll">
+    <div className="flex items-start bg-custom_black rounded-[4px] justify-center w-[100vw] h-[83.25vh] overflow-y-scroll">
       <div
         className={`videoContainer flex flex-col w-[100vw] h-[100vh] mt-[2vh] overflow:hidden bg-black/20`}
       >
