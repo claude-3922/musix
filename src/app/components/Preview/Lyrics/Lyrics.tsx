@@ -38,7 +38,7 @@ export default function Lyrics({ title }: LyricsProps) {
   if (lyrics.length === 0) setLyrics("No lyrics found.");
 
   return (
-    <div className="flex flex-col items-center justify-start py-[3vh] h-[36vw] px-[10vw] bg-white/10 rounded-[4px] overflow-y-scroll whitespace-pre-line text-2xl scrollbar-hide tracking-wide">
+    <div className="lyrics flex flex-col items-center justify-start py-[3vh] h-[36vw] px-[10vw] bg-white/10 rounded-[4px] overflow-y-scroll whitespace-pre-line text-2xl scrollbar-hide tracking-wide">
       {lyrics}
     </div>
   );
