@@ -73,17 +73,9 @@ export default function SearchResults({
     init();
   }, [query]);
 
-  let darkerAccent = null;
-  let darkerDarkerAccent = null;
-  let darkestDarkerAccent = null;
-
-  if (songState.get) {
-    const { playerInfo } = songState.get;
-
-    darkerAccent = pSBC(0.9, playerInfo.topColor, "#191919");
-    darkerDarkerAccent = pSBC(0.98, playerInfo.topColor, "#191919");
-    darkestDarkerAccent = pSBC(0.99, playerInfo.topColor, "#191919");
-  }
+  const darkerAccent = pSBC(-0.5, "#191919");
+  const darkerDarkerAccent = pSBC(-0.7, "#191919");
+  const darkestDarkerAccent = pSBC(-0.99, "#191919");
 
   return (
     <div
@@ -92,6 +84,14 @@ export default function SearchResults({
         if (dropdownItemId.get) {
           dropdownItemId.set(null);
         }
+      }}
+      style={{
+        background: `linear-gradient(135deg, 
+        ${darkestDarkerAccent} 0%, 
+        ${darkerDarkerAccent} 30%, 
+        ${darkerAccent} 50%, 
+        ${darkerDarkerAccent} 70%, 
+        ${darkestDarkerAccent} 100%)`,
       }}
     >
       <div>

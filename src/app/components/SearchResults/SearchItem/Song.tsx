@@ -52,7 +52,7 @@ export default function SearchItemSong({
 
   return (
     <div
-      className="flex justify-between items-center w-[80vw] h-[12vh] rounded-[4px] mb-[1vh] mx-[1vw] bg-white/10"
+      className="flex justify-between items-center w-[80vw] h-[12vh] rounded-[4px] mb-[1vh] mx-[1vw] bg-white/10 hover:cursor-pointer hover:bg-white/15"
       onContextMenu={(e) => {
         setDropdownPos({
           left: `${e.clientX - 20}px`,
@@ -63,14 +63,19 @@ export default function SearchItemSong({
           toggleDropdown();
         }
       }}
+      onClick={(e) => {
+        if (e.detail === 2) {
+          playHandler();
+        }
+      }}
     >
-      <span
-        className="flex justify-start items-center"
-        onMouseOver={() => setButtonOnThumbnail(true)}
-        onMouseOut={() => setButtonOnThumbnail(false)}
-      >
+      <span className="flex justify-start items-center">
         <span className="flex flex-col justify-center items-center w-[8vw] h-[12vh]">
-          <span className="relative">
+          <span
+            className="relative"
+            onMouseOver={() => setButtonOnThumbnail(true)}
+            onMouseOut={() => setButtonOnThumbnail(false)}
+          >
             <img
               className="object-cover rounded-[2px] w-[5vw] h-[5vw]"
               src={vid.thumbnail}
