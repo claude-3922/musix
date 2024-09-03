@@ -17,6 +17,7 @@
     "dexie-react-hooks": "^1.1.7",
     "fake-indexeddb": "^6.0.0",
     "framer-motion": "^11.3.30",
+    "genius-lyrics": "^4.4.7",
     "mongoose": "^8.5.4",
     "next": "14.2.5",
     "rc-slider": "^11.1.5",

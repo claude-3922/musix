@@ -6,9 +6,9 @@ import React from "react";
 
 export default function PlayerEmpty() {
   return (
-    <div className="flex items-center justify-between w-[100vw] h-[6vw]">
+    <div className="flex items-center justify-between w-[100vw] h-[6.07vw]">
       <div
-        className={`text-white flex flex-row items-center justify-between w-[100vw] h-[6vw] px-[1vw] mx-[0.5vw] rounded-[4px] bg-custom_gray/20`}
+        className={`text-white flex flex-row items-center justify-between w-[100vw] h-[6.07vw] px-[1vw] bg-white/10`}
       >
         <div className="flex justify-center">
           <div className="flex justify-start items-center w-[30vw]">

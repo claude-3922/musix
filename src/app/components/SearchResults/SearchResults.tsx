@@ -9,6 +9,7 @@ import useStateManager from "@/app/hooks/StateManager";
 import { PlaylistMetadata } from "@/util/types/PlaylistMetadata";
 import ExpandableList from "../Util/ExpandableList";
 import SearchItemPlaylist from "./SearchItem/Playlist";
+import { pSBC } from "@/util/pSBC";
 
 interface SearchResultsProps {
   query: string;
@@ -72,10 +73,22 @@ export default function SearchResults({
     init();
   }, [query]);
 
+  let darkerAccent = null;
+  let darkerDarkerAccent = null;
+  let darkestDarkerAccent = null;
+
+  if (songState.get) {
+    const { playerInfo } = songState.get;
+
+    darkerAccent = pSBC(0.9, playerInfo.topColor, "#191919");
+    darkerDarkerAccent = pSBC(0.98, playerInfo.topColor, "#191919");
+    darkestDarkerAccent = pSBC(0.99, playerInfo.topColor, "#191919");
+  }
+
   return (
     <div
-      className="flex items-start bg-custom_black justify-center w-[100vw] h-[83.25vh] overflow-y-scroll"
-      onClick={() => {
+      className="flex items-start justify-center w-[100vw] h-[83.25vh] overflow-y-scroll bg-custom_black/10"
+      onClick={(e) => {
         if (dropdownItemId.get) {
           dropdownItemId.set(null);
         }
@@ -100,7 +113,7 @@ export default function SearchResults({
         ) : (
           <div className="my-[1vh]">
             <h1 className="mx-[2vw] text-2xl mb-[1vh]">-</h1>
-            <div className="animate-pulse rounded-[4px] w-[80vw] h-[12vh] mb-[1vh] mx-[1vw] bg-custom_gray/20" />
+            <div className="animate-pulse rounded-[4px] w-[80vw] h-[12vh] mb-[1vh] mx-[1vw] bg-white/10" />
           </div>
         )}
 
@@ -133,7 +146,7 @@ export default function SearchResults({
             {Array.from({ length: 3 }, (_, i) => (
               <div
                 key={i}
-                className="animate-pulse rounded-[4px] w-[80vw] h-[12vh] mb-[1vh] mx-[1vw] bg-custom_gray/20"
+                className="animate-pulse rounded-[4px] w-[80vw] h-[12vh] mb-[1vh] mx-[1vw] bg-white/10"
               />
             ))}
           </div>
@@ -169,7 +182,7 @@ export default function SearchResults({
             {Array.from({ length: 2 }, (_, i) => (
               <div
                 key={i}
-                className="animate-pulse rounded-[4px] w-[80vw] h-[12vh] mb-[1vh] mx-[1vw] bg-custom_gray/20"
+                className="animate-pulse rounded-[4px] w-[80vw] h-[12vh] mb-[1vh] mx-[1vw] bg-white/10"
               />
             ))}
           </div>

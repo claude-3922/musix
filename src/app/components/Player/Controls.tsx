@@ -142,10 +142,7 @@ export default function Controls({
           className="hover:scale-110 transition:transform"
           onClick={nextHandler}
         >
-          <img
-            className="mr-[0.75rem] h-[2vw] w-[2vw]"
-            src="/icons/next.svg"
-          ></img>
+          <img className="mr-[1vw] h-[2vw] w-[2vw]" src="/icons/next.svg"></img>
         </button>
       </span>
       <span className="flex flex-row items-center justify-center">

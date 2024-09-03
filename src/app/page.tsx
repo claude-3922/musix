@@ -49,7 +49,7 @@ export default function Home() {
   }, [audioPlayer]);
 
   return (
-    <>
+    <div onContextMenu={(e) => e.preventDefault()}>
       {songState.get ? (
         <audio
           id="audioPlayer"
@@ -67,7 +67,7 @@ export default function Home() {
             id=""
             name="searchQuery"
             onChange={(e) => (e.target.id = e.target.value)}
-            className="border-2 p-2 bg-custom_black"
+            className="border-2 p-2 bg-white/10"
             type="text"
             placeholder="search a song"
           />
@@ -98,7 +98,7 @@ export default function Home() {
           <AnimatePresence mode="wait">
             {previewState.get ? (
               <motion.div
-                key="preview"
+                key="previewWindow"
                 initial={{ y: "100%", opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: "100%", opacity: 0 }}
@@ -123,15 +123,13 @@ export default function Home() {
         </main>
 
         <div className="flex items-center justify-center w-[100vw]">
-          {
-            <Player
-              audioPlayer={audioPlayer || null}
-              songState={songState}
-              previewState={previewState}
-            />
-          }
+          <Player
+            audioPlayer={audioPlayer || null}
+            songState={songState}
+            previewState={previewState}
+          />
         </div>
       </div>
-    </>
+    </div>
   );
 }
