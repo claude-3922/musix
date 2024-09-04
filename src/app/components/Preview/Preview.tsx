@@ -80,7 +80,7 @@ export default function Preview({
           <button
             key={id}
             onClick={() => setActiveTab(id)}
-            className={`my-[1vh] mx-[0.5vw] ${id === 1 ? "p-[0.5vw]" : ""}`}
+            className={`my-[2vh] mx-[0.5vw] ${id === 1 ? "p-[0.5vw]" : ""}`}
             style={{
               borderBottom: activeTab === id ? "solid 2px white" : "none",
             }}
