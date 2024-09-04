@@ -111,14 +111,20 @@ export default function SeekBar({
     <>
       <span
         className="no-select flex items-center relative hover:cursor-pointer"
+        onClick={(e) => {
+          if (!isSeeking) {
+            seekHandler(e);
+          }
+        }}
         onMouseDown={() => {
           setIsSeeking(true);
           if (onMouseDragStart && seekbarContainer.current && thumb.current) {
             onMouseDragStart(seekbarContainer.current, thumb.current);
           }
         }}
-        onMouseUp={() => {
+        onMouseUp={(e) => {
           setIsSeeking(false);
+
           if (onMouseDragEnd && seekbarContainer.current && thumb.current) {
             onMouseDragEnd(seekbarContainer.current, thumb.current);
           }

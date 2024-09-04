@@ -44,7 +44,7 @@ export default function Lyrics({ title, accent }: LyricsProps) {
 
   return (
     <div
-      className="lyrics flex flex-col items-center justify-start w-[70vw] h-[36vw] px-[10vw] bg-white/10 rounded-[4px] overflow-y-scroll whitespace-pre-line text-2xl scrollbar-hide tracking-wide"
+      className="lyrics flex flex-col items-center justify-start w-[70vw] h-[36vw] py-[3vh] px-[10vw] bg-white/10 rounded-[4px] overflow-y-scroll whitespace-pre-line text-2xl scrollbar-hide tracking-wide"
       style={{
         border: `none`,
       }}
