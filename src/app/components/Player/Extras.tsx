@@ -51,7 +51,7 @@ export default function Extras({
         {showVolumeBar && (
           <SeekBar
             width="7vw"
-            height="0.5vh"
+            height="0.25vw"
             containerStyles={{
               borderRadius: "10vw",
               backgroundColor: "rgba(255, 255, 255, 0.1)",
@@ -62,12 +62,25 @@ export default function Extras({
               borderRadius: "10vw",
             }}
             progressPercentage={audioPlayer.volume * 100}
-            thumbRadius_pixels={0}
+            thumbRadius_pixels={16}
             thumbStyles={{
               backgroundColor: `${pSBC(0.5, lighterAccent, "#000000")}`,
             }}
             onSeek={(newPercentage) => {
-              audioPlayer.volume = newPercentage / 100;
+              const newVolume = newPercentage / 100;
+              if (newVolume <= 1 && newVolume >= 0)
+                audioPlayer.volume = newVolume;
+            }}
+            onMouseDragStart={(_, thumb) => {
+              thumb.style.outline = `2px solid ${pSBC(
+                0.5,
+                lighterAccent,
+                "#2D312C"
+              )}`;
+              thumb.style.outlineOffset = `2px`;
+            }}
+            onMouseDragEnd={(_, thumb) => {
+              thumb.style.outline = `none`;
             }}
           />
         )}

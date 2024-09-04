@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { loadingSpinner } from "../../Player/Controls";
 
 interface LyricsProps {
   title: string;
@@ -33,7 +34,9 @@ export default function Lyrics({ title, accent }: LyricsProps) {
 
   if (fetching) {
     return (
-      <div className="animate-pulse flex flex-col items-center justify-start py-[3vh] h-[36vw] w-[70vw] bg-white/10 rounded-[4px] overflow-y-scroll whitespace-pre-line text-2xl scrollbar-hide"></div>
+      <div className="flex flex-col items-center justify-center py-[3vh] h-[36vw] w-[70vw] bg-white/10 rounded-[4px] overflow-y-scroll whitespace-pre-line text-2xl scrollbar-hide">
+        {loadingSpinner("5vw", "5vw")}
+      </div>
     );
   }
 
@@ -41,7 +44,7 @@ export default function Lyrics({ title, accent }: LyricsProps) {
 
   return (
     <div
-      className="lyrics flex flex-col items-center justify-start py-[3vh] h-[36vw] px-[10vw] bg-white/10 rounded-[4px] overflow-y-scroll whitespace-pre-line text-2xl scrollbar-hide tracking-wide"
+      className="lyrics flex flex-col items-center justify-start w-[70vw] h-[36vw] px-[10vw] bg-white/10 rounded-[4px] overflow-y-scroll whitespace-pre-line text-2xl scrollbar-hide tracking-wide"
       style={{
         border: `none`,
       }}

@@ -36,15 +36,6 @@ export default function Preview({
 
   const { vid, playerInfo } = songData;
 
-  const backgroundStyle = {
-    background: `linear-gradient(135deg, 
-      ${pSBC(0.01, "#000000")} 0%, 
-      ${pSBC(0.02, "#000000")} 30%, 
-      ${pSBC(0.03, "#000000")} 50%, 
-      ${pSBC(0.02, "#000000")} 70%, 
-      ${pSBC(0.01, "#000000")} 100%)`,
-  };
-
   const tabs = [
     {
       id: 1,
@@ -73,7 +64,14 @@ export default function Preview({
   return (
     <div
       className="scrollbar-hide flex flex-col items-center justify-center w-[100vw] h-[83.25vh] overflow-y-hidden"
-      style={backgroundStyle}
+      style={{
+        background: `linear-gradient(135deg, 
+        ${pSBC(0.01, "#000000")} 0%, 
+        ${pSBC(0.02, "#000000")} 30%, 
+        ${pSBC(0.03, "#000000")} 50%, 
+        ${pSBC(0.02, "#000000")} 70%, 
+        ${pSBC(0.01, "#000000")} 100%)`,
+      }}
     >
       <div className="flex items-center justify-center">
         {tabs.map(({ id }) => (

@@ -124,6 +124,17 @@ export default function Controls({
                 videoPlayer.currentTime = newTime;
               }
             }}
+            onMouseDragStart={(_, thumb) => {
+              thumb.style.outline = `2px solid ${pSBC(
+                0.5,
+                lighterAccent,
+                "#2D312C"
+              )}`;
+              thumb.style.outlineOffset = `2px`;
+            }}
+            onMouseDragEnd={(_, thumb) => {
+              thumb.style.outline = `none`;
+            }}
             songDuration={vid.duration}
           />
 

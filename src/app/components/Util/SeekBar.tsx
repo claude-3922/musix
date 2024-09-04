@@ -22,6 +22,8 @@ interface SeekBarProps {
   thumbStyles?: CSSProperties;
 
   onSeek?: (newValue: number) => void;
+  onMouseDragStart?: (seekbar: HTMLSpanElement, thumb: HTMLSpanElement) => void;
+  onMouseDragEnd?: (seekbar: HTMLSpanElement, thumb: HTMLSpanElement) => void;
 
   songDuration?: number;
 }
@@ -35,6 +37,8 @@ export default function SeekBar({
   thumbRadius_pixels,
   thumbStyles,
   onSeek,
+  onMouseDragStart,
+  onMouseDragEnd,
   songDuration,
 }: SeekBarProps) {
   const seekbarContainer = useRef<HTMLSpanElement | null>(null);
@@ -45,9 +49,18 @@ export default function SeekBar({
   const [thumbPositionX, setThumbPositionX] = useState(0);
   const [showThumb, setShowThumb] = useState(false);
 
+  const [isSeeking, setIsSeeking] = useState(false);
+
   useEffect(() => {
     setCurrent(progressPercentage);
+  }, [progressPercentage]);
 
+  useEffect(() => {
+    if (current > 100) {
+      return setCurrent(100);
+    } else if (current < 0) {
+      return setCurrent(0);
+    }
     if (progressBar.current && seekbarContainer.current && thumb.current) {
       const progressBarSize =
         progressBar.current.offsetLeft + progressBar.current.offsetWidth;
@@ -59,7 +72,7 @@ export default function SeekBar({
 
       setThumbPositionX(thumbPosX);
     }
-  }, [progressPercentage, thumbRadius_pixels]);
+  }, [current, thumbRadius_pixels]);
 
   const calculatePercentageFromMousePos = (mousePosX: number) => {
     if (seekbarContainer.current) {
@@ -98,19 +111,39 @@ export default function SeekBar({
     <>
       <span
         className="no-select flex items-center relative hover:cursor-pointer"
-        onMouseUp={seekHandler}
+        onMouseDown={() => {
+          setIsSeeking(true);
+          if (onMouseDragStart && seekbarContainer.current && thumb.current) {
+            onMouseDragStart(seekbarContainer.current, thumb.current);
+          }
+        }}
+        onMouseUp={() => {
+          setIsSeeking(false);
+          if (onMouseDragEnd && seekbarContainer.current && thumb.current) {
+            onMouseDragEnd(seekbarContainer.current, thumb.current);
+          }
+        }}
         onMouseOver={(e) => {
           setShowThumb(true);
         }}
         onMouseMove={(e) => {
+          if (isSeeking) {
+            return seekHandler(e);
+          }
+
           if (seekbarContainer.current && songDuration) {
             seekbarContainer.current.title = `${formatSongDuration(
               getDurationAtCurrentPos(e, songDuration) as any
             )}`;
           }
         }}
-        onMouseOut={() => setShowThumb(false)}
-        style={{ paddingTop: height, paddingBottom: height }}
+        onMouseOut={() => {
+          setShowThumb(false);
+        }}
+        style={{
+          paddingTop: height,
+          paddingBottom: height,
+        }}
         ref={seekbarContainer}
       >
         <span
