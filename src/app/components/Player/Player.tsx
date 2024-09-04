@@ -77,11 +77,15 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
       setAudioLoading(true);
     };
 
+    const waitingHandler = () => {
+      setAudioLoading(true);
+    };
+
     const playReadyHandler = () => {
       setAudioLoading(false);
 
       audioPlayer.play();
-      previewStateRef.current.set(true);
+      //previewStateRef.current.set(true);
     };
 
     const songEndedHandler = async () => {
@@ -114,6 +118,7 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
       audioPlayer.addEventListener("loadstart", loadStartHandler);
       audioPlayer.addEventListener("canplay", playReadyHandler);
       audioPlayer.addEventListener("ended", songEndedHandler);
+      audioPlayer.addEventListener("waiting", waitingHandler);
     };
 
     initPlayer(data, audioPlayer);
@@ -122,6 +127,7 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
       audioPlayer.removeEventListener("loadstart", loadStartHandler);
       audioPlayer.removeEventListener("canplay", playReadyHandler);
       audioPlayer.removeEventListener("ended", songEndedHandler);
+      audioPlayer.removeEventListener("waiting", waitingHandler);
     };
   }, [audioPlayer, data, songState]);
 
@@ -147,16 +153,17 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
   audioPlayer.addEventListener("pause", pauseHandler);
   audioPlayer.addEventListener("play", playHandler);
 
-  const accents = [0.97, 0.94, 0.9].map((percentage) =>
-    pSBC(percentage, playerInfo.topColor, "#191919")
-  );
-  const [darkestDarkerAccent, darkerDarkerAccent, darkerAccent] = accents;
-
   return (
     <div
-      className={`text-white flex flex-row items-center justify-between w-[100vw] h-[6.07vw] px-[1vw]`}
+      className={`no-select text-white flex flex-row items-center justify-between w-[100vw] h-[6.07vw] px-[1vw]`}
       style={{
-        background: `linear-gradient(90deg, ${darkestDarkerAccent} 0%, ${darkerDarkerAccent} 25%, ${darkerAccent} 50%, ${darkerDarkerAccent} 75%, ${darkestDarkerAccent} 100%)`,
+        background: `linear-gradient(90deg, ${pSBC(0.01, "#000000")} 0%, ${pSBC(
+          0.02,
+          "#000000"
+        )} 25%, ${pSBC(0.03, "#000000")} 50%, ${pSBC(
+          0.02,
+          "#000000"
+        )} 75%, ${pSBC(0.01, "#000000")} 100%)`,
       }}
     >
       <div className="flex justify-start items-center w-[30vw]">

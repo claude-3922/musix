@@ -59,7 +59,7 @@ export default function Controls({
     await queueDB.queue.where("vid.id").equals(songToPlay.vid.id).delete();
   };
 
-  const lighterAccent = pSBC(0.4, playerInfo.topColor);
+  const lighterAccent = playerInfo.topColor;
 
   return (
     <>
@@ -77,66 +77,11 @@ export default function Controls({
             audioPlayer.paused ? audioPlayer.play() : audioPlayer.pause();
           }}
         >
-          {playerLoading ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="2.5vw"
-              height="2.5vw"
-              viewBox="0 0 50 50"
-              style={{
-                transformOrigin: "center",
-                animation: "spin 1s linear infinite",
-              }}
-            >
-              <circle
-                cx="25"
-                cy="25"
-                r="20"
-                stroke="white"
-                strokeWidth="4"
-                fill="none"
-                strokeLinecap="round"
-                strokeDasharray="90, 150"
-                strokeDashoffset="0"
-              />
-              <style>{`
-              @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-              }
-            `}</style>
-            </svg>
-          ) : !playerPaused.get ? (
-            <svg
-              id="playBackButton"
-              xmlns="http://www.w3.org/2000/svg"
-              width="2.5vw"
-              height="2.5vw"
-              fill="white"
-              className="playBackButton hover:scale-110 transition:transform"
-              viewBox="0 0 16 16"
-            >
-              <path
-                className="pause"
-                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M6.25 5C5.56 5 5 5.56 5 6.25v3.5a1.25 1.25 0 1 0 2.5 0v-3.5C7.5 5.56 6.94 5 6.25 5m3.5 0c-.69 0-1.25.56-1.25 1.25v3.5a1.25 1.25 0 1 0 2.5 0v-3.5C11 5.56 10.44 5 9.75 5"
-              />
-            </svg>
-          ) : (
-            <svg
-              id="playBackButton"
-              xmlns="http://www.w3.org/2000/svg"
-              width="2.5vw"
-              height="2.5vw"
-              fill="white"
-              className="playBackButton hover:scale-110 transition:transform"
-              viewBox="0 0 16 16"
-            >
-              <path
-                className="play"
-                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M6.79 5.093A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814z"
-              />
-            </svg>
-          )}
+          {playerLoading
+            ? loadingSpinner("2.5vw", "2.5vw")
+            : !playerPaused.get
+            ? pauseButton
+            : playButton}
         </button>
         <button
           className="hover:scale-110 transition:transform"
@@ -151,26 +96,14 @@ export default function Controls({
             {formatSongDuration(playerTime.get)}
           </span>
 
-          {/* <input
-          id="seekBar"
-          className="w-[30vw] h-[0.25vw] rounded-[10px]"
-          ref={seekBar}
-          type="range"
-          min={0}
-          max={vid.duration}
-          step={1}
-          onChange={seekChangeHandler}
-          style={seekBarStyle}
-        /> */}
-
           <SeekBar
             containerStyles={{
-              backgroundColor: "#2D312C",
+              backgroundColor: `rgba(255, 255, 255, 0.1)`,
               borderRadius: "10vw",
             }}
             progressStyles={{
               backgroundColor:
-                `${pSBC(0.5, lighterAccent, "#2D312C")}` || "white",
+                `${pSBC(0.5, lighterAccent, "#000000")}` || "white",
               borderRadius: "10vw",
             }}
             height="0.25vw"
@@ -202,3 +135,68 @@ export default function Controls({
     </>
   );
 }
+
+export const loadingSpinner = (height: string, width: string) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={width}
+    height={height}
+    viewBox="0 0 50 50"
+    style={{
+      transformOrigin: "center",
+      animation: "spin 1s linear infinite",
+    }}
+  >
+    <circle
+      cx="25"
+      cy="25"
+      r="20"
+      stroke="white"
+      strokeWidth="4"
+      fill="none"
+      strokeLinecap="round"
+      strokeDasharray="90, 150"
+      strokeDashoffset="0"
+    />
+    <style>{`
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+`}</style>
+  </svg>
+);
+
+const playButton = (
+  <svg
+    id="playBackButton"
+    xmlns="http://www.w3.org/2000/svg"
+    width="2.5vw"
+    height="2.5vw"
+    fill="white"
+    className="playBackButton hover:scale-110 transition:transform"
+    viewBox="0 0 16 16"
+  >
+    <path
+      className="play"
+      d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M6.79 5.093A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814z"
+    />
+  </svg>
+);
+
+const pauseButton = (
+  <svg
+    id="playBackButton"
+    xmlns="http://www.w3.org/2000/svg"
+    width="2.5vw"
+    height="2.5vw"
+    fill="white"
+    className="playBackButton hover:scale-110 transition:transform"
+    viewBox="0 0 16 16"
+  >
+    <path
+      className="pause"
+      d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M6.25 5C5.56 5 5 5.56 5 6.25v3.5a1.25 1.25 0 1 0 2.5 0v-3.5C7.5 5.56 6.94 5 6.25 5m3.5 0c-.69 0-1.25.56-1.25 1.25v3.5a1.25 1.25 0 1 0 2.5 0v-3.5C11 5.56 10.44 5 9.75 5"
+    />
+  </svg>
+);

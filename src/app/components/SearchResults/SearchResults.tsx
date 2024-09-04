@@ -73,9 +73,9 @@ export default function SearchResults({
     init();
   }, [query]);
 
-  const darkerAccent = pSBC(0.01, "#000000");
+  const darkerAccent = pSBC(0.03, "#000000");
   const darkerDarkerAccent = pSBC(0.02, "#000000");
-  const darkestDarkerAccent = pSBC(0.03, "#000000");
+  const darkestDarkerAccent = pSBC(0.01, "#000000");
 
   return (
     <div

@@ -85,26 +85,27 @@ export default function SeekBar({
     }
   };
 
-  const getDurationAtCurrentPos = (e: MouseEvent<HTMLSpanElement>) => {
-    if (songDuration) {
-      const mousePerc = calculatePercentageFromMousePos(e.clientX);
+  const getDurationAtCurrentPos = (
+    e: MouseEvent<HTMLSpanElement>,
+    duration: number
+  ) => {
+    const mousePerc = calculatePercentageFromMousePos(e.clientX);
 
-      return mousePerc ? (mousePerc * songDuration) / 100 : 0;
-    }
+    return mousePerc ? (mousePerc * duration) / 100 : 0;
   };
 
   return (
     <>
       <span
-        className="flex items-center relative hover:cursor-pointer"
+        className="no-select flex items-center relative hover:cursor-pointer"
         onMouseUp={seekHandler}
         onMouseOver={(e) => {
           setShowThumb(true);
         }}
         onMouseMove={(e) => {
-          if (seekbarContainer.current) {
+          if (seekbarContainer.current && songDuration) {
             seekbarContainer.current.title = `${formatSongDuration(
-              getDurationAtCurrentPos(e) as any
+              getDurationAtCurrentPos(e, songDuration) as any
             )}`;
           }
         }}
@@ -131,7 +132,6 @@ export default function SeekBar({
               zIndex: 1,
               height: height,
               width: `${current}%`,
-              transition: "width 0.02s linear",
             }}
           ></span>
         </span>
@@ -142,7 +142,7 @@ export default function SeekBar({
             width: `${thumbRadius_pixels}px`,
             height: `${thumbRadius_pixels}px`,
             opacity: showThumb ? "100%" : "0%",
-            transition: "left 0.125s linear",
+            transition: "opacity 0.125s linear",
             ...thumbStyles,
             position: "absolute",
             zIndex: 2,

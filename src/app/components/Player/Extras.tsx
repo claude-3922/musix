@@ -5,6 +5,7 @@ import React, { useRef, useState } from "react";
 import { SongData } from "@/util/types/SongData";
 import { pSBC } from "@/util/pSBC";
 import { StateManager } from "@/util/types/StateManager";
+import SeekBar from "../Util/SeekBar";
 
 interface ExtrasProps {
   data: SongData;
@@ -25,7 +26,7 @@ export default function Extras({
 
   const volumeSlider = useRef<HTMLInputElement | null>(null);
 
-  const lighterAccent = pSBC(0.4, playerInfo.topColor);
+  const lighterAccent = playerInfo.topColor;
 
   audioPlayer.onvolumechange = () => {
     const isMuted = audioPlayer.volume === 0;
@@ -46,24 +47,34 @@ export default function Extras({
       onMouseOver={() => setShowVolumeBar(true)}
       onMouseOut={() => setShowVolumeBar(false)}
     >
-      <input
-        type="range"
-        className="bg-white w-[7vw] h-[0.5vh] rounded-[10px] mr-[1.125rem] opacity-85 "
-        style={{
-          accentColor: lighterAccent ?? "gray",
-        }}
-        ref={volumeSlider}
-        min={0}
-        max={1}
-        step={0.05}
-        onChange={(e) => {
-          audioPlayer.volume = Number(e.target.value);
-        }}
-        hidden={showVolumeBar ? false : true}
-      />
+      <span className="mr-[1vw]">
+        {showVolumeBar && (
+          <SeekBar
+            width="7vw"
+            height="0.5vh"
+            containerStyles={{
+              borderRadius: "10vw",
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
+            }}
+            progressStyles={{
+              backgroundColor:
+                `${pSBC(0.5, lighterAccent, "#000000")}` || "white",
+              borderRadius: "10vw",
+            }}
+            progressPercentage={audioPlayer.volume * 100}
+            thumbRadius_pixels={0}
+            thumbStyles={{
+              backgroundColor: `${pSBC(0.5, lighterAccent, "#000000")}`,
+            }}
+            onSeek={(newPercentage) => {
+              audioPlayer.volume = newPercentage / 100;
+            }}
+          />
+        )}
+      </span>
 
       <button
-        className="mr-[1.125rem] opacity-85 hover:opacity-100"
+        className="mr-[1.5vw] hover:scale-110"
         onClick={() => {
           const isMuted = audioPlayer.volume === 0;
           isMuted ? (audioPlayer.volume = 1) : (audioPlayer.volume = 0);
@@ -77,7 +88,7 @@ export default function Extras({
       </button>
 
       <button
-        className="mr-[1.125rem] opacity-85 hover:opacity-100"
+        className="mr-[1.5vw] hover:scale-110"
         onClick={() => setShowLikeFill((p) => !p)}
       >
         {showLikeFill ? (
@@ -85,7 +96,7 @@ export default function Extras({
             xmlns="http://www.w3.org/2000/svg"
             width="18"
             height="18"
-            fill={`${lighterAccent}`}
+            fill={`${pSBC(0.5, lighterAccent, "#000000")}`}
             className="bi bi-heart-fill"
             viewBox="0 0 16 16"
           >
@@ -99,7 +110,7 @@ export default function Extras({
         )}
       </button>
       <button
-        className="mr-[1.125rem] opacity-85 hover:opacity-100"
+        className="mr-[1.5vw] hover:scale-110"
         onClick={() => {
           setLooped(!looped);
           audioPlayer.loop = !looped; //Need a ! because state won't update until rerender
@@ -110,7 +121,7 @@ export default function Extras({
             xmlns="http://www.w3.org/2000/svg"
             width="22"
             height="22"
-            fill={`${lighterAccent}`}
+            fill={`${pSBC(0.5, lighterAccent, "#000000")}`}
             className="bi bi-repeat"
             viewBox="0 0 16 16"
           >

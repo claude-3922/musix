@@ -5,6 +5,12 @@ import { SongData } from "@/util/types/SongData";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import Lyrics from "./Lyrics/Lyrics";
+import { useLiveQuery } from "dexie-react-hooks";
+import { queueDB } from "@/db/queueDB";
+import Queue from "./Queue/Queue";
+import History from "./Queue/History";
+import useStateManager from "@/app/hooks/StateManager";
+import Video from "./Video/Video";
 
 interface PreviewProps {
   vidEnabled: boolean;
@@ -17,177 +23,95 @@ export default function Preview({
   songData,
   audioPlayer,
 }: PreviewProps) {
-  const videoPlayer = useRef<HTMLVideoElement | null>(null);
-
   const [activeTab, setActiveTab] = useState(1);
   const [previousTab, setPreviousTab] = useState(activeTab);
+  const videoPlayerState = useStateManager<HTMLVideoElement | null>(null);
 
-  useEffect(() => {
-    setPreviousTab(activeTab);
-  }, [activeTab]);
+  useEffect(() => setPreviousTab(activeTab), [activeTab]);
 
-  if (audioPlayer && songData) {
-    const { vid, owner, playerInfo } = songData;
-    const vidSrc = `/media?id=${songData.vid.id}&vid=1`;
+  const queue = useLiveQuery(() => queueDB.queue.toArray());
+  const history = useLiveQuery(() => queueDB.history.toArray());
 
-    const animationIntensity = 300;
+  if (!audioPlayer || !songData) return null;
 
-    const darkerAccent = pSBC(0.9, playerInfo.topColor, "#191919");
-    const darkerDarkerAccent = pSBC(0.97, playerInfo.topColor, "#191919");
-    const darkestDarkerAccent = pSBC(0.99, playerInfo.topColor, "#191919");
+  const { vid, playerInfo } = songData;
 
-    return (
-      <div
-        className="scrollbar-hide flex flex-col items-center justify-center w-[100vw] h-[83.25vh] overflow-y-hidden"
-        style={{
-          background: `linear-gradient(135deg, 
-          ${darkestDarkerAccent} 0%, 
-          ${darkerDarkerAccent} 30%, 
-          ${darkerAccent} 50%, 
-          ${darkerDarkerAccent} 70%, 
-          ${darkestDarkerAccent} 100%)`,
-        }}
-      >
-        <div className="flex items-center justify-center">
+  const backgroundStyle = {
+    background: `linear-gradient(135deg, 
+      ${pSBC(0.01, "#000000")} 0%, 
+      ${pSBC(0.02, "#000000")} 30%, 
+      ${pSBC(0.03, "#000000")} 50%, 
+      ${pSBC(0.02, "#000000")} 70%, 
+      ${pSBC(0.01, "#000000")} 100%)`,
+  };
+
+  const tabs = [
+    {
+      id: 1,
+      component: (
+        <Video
+          songData={songData}
+          enabled={vidEnabled}
+          audioPlayer={audioPlayer}
+          videoPlayer={videoPlayerState}
+        />
+      ),
+    },
+    {
+      id: 2,
+      component: (
+        <Lyrics
+          title={`${songData.owner.title} - ${vid.title}`}
+          accent={pSBC(0.5, playerInfo.topColor, "#000000") || "white"}
+        />
+      ),
+    },
+    { id: 3, component: <Queue items={queue || []} /> },
+    { id: 4, component: <History items={history || []} /> },
+  ];
+
+  return (
+    <div
+      className="scrollbar-hide flex flex-col items-center justify-center w-[100vw] h-[83.25vh] overflow-y-hidden"
+      style={backgroundStyle}
+    >
+      <div className="flex items-center justify-center">
+        {tabs.map(({ id }) => (
           <button
-            onClick={() => setActiveTab(1)}
-            className="flex items-center justify-center my-[2vh] mx-[0.5vw] p-[0.5vw]"
+            key={id}
+            onClick={() => setActiveTab(id)}
+            className={`my-[1vh] mx-[0.5vw] ${id === 1 ? "p-[0.5vw]" : ""}`}
             style={{
-              borderBottom: activeTab === 1 ? "solid 2px white" : "none",
+              borderBottom: activeTab === id ? "solid 2px white" : "none",
             }}
           >
-            <img className="w-[2vw] h-[2vw]" src="icons/playFill.svg" />
+            {id === 1 ? (
+              <img className="w-[2vw] h-[2vw]" src="icons/playFill.svg" />
+            ) : (
+              `TAB ${id}`
+            )}
           </button>
-          <button
-            onClick={() => setActiveTab(2)}
-            className="my-[1vh] mx-[0.5vw]"
-            style={{
-              borderBottom: activeTab === 2 ? "solid 2px white" : "none",
-            }}
-          >
-            LYRICS
-          </button>
-          <button
-            onClick={() => setActiveTab(3)}
-            className="my-[1vh] mx-[0.5vw]"
-            style={{
-              borderBottom: activeTab === 3 ? "solid 2px white" : "none",
-            }}
-          >
-            QUEUE
-          </button>
-        </div>
-        {activeTab === 1 && (
-          <motion.div
-            key="preview"
-            initial={{
-              x:
-                activeTab > previousTab
-                  ? animationIntensity
-                  : -animationIntensity,
-              opacity: 0,
-            }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{
-              x:
-                activeTab > previousTab
-                  ? -animationIntensity
-                  : animationIntensity,
-              opacity: 0,
-            }}
-            transition={{ duration: 0.125 }}
-          >
-            <video
-              id="videoPlayer"
-              ref={videoPlayer}
-              className="h-[36vw] object-cover hover:ring rounded-[4px]"
-              src={vidEnabled ? vidSrc : ""}
-              poster={songData.vid.thumbnail}
-              onTimeUpdate={() => {
-                if (videoPlayer.current) {
-                  syncVideoToAudio(audioPlayer, videoPlayer.current);
-                }
-              }}
-              onClick={() => {
-                audioPlayer.paused ? audioPlayer.play() : audioPlayer.pause();
-              }}
-              autoPlay={audioPlayer.paused ? false : true}
-            />
-          </motion.div>
-        )}
-        {activeTab === 2 && (
-          <motion.div
-            key="lyrics"
-            initial={{
-              x:
-                activeTab > previousTab
-                  ? animationIntensity
-                  : -animationIntensity,
-              opacity: 0,
-            }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{
-              x:
-                activeTab > previousTab
-                  ? -animationIntensity
-                  : animationIntensity,
-              opacity: 0,
-            }}
-            transition={{ duration: 0.125 }}
-          >
-            <Lyrics title={`${songData.owner.title} - ${songData.vid.title}`} />
-          </motion.div>
-        )}
-        {activeTab === 3 && (
-          <motion.div
-            key="queue"
-            initial={{
-              x:
-                activeTab > previousTab
-                  ? animationIntensity
-                  : -animationIntensity,
-              opacity: 0,
-            }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{
-              x:
-                activeTab > previousTab
-                  ? -animationIntensity
-                  : animationIntensity,
-              opacity: 0,
-            }}
-            transition={{ duration: 0.125 }}
-          ></motion.div>
-        )}
-        {activeTab === 4 && (
-          <motion.div
-            key="history"
-            initial={{
-              x:
-                activeTab > previousTab
-                  ? animationIntensity
-                  : -animationIntensity,
-              opacity: 0,
-            }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{
-              x:
-                activeTab > previousTab
-                  ? -animationIntensity
-                  : animationIntensity,
-              opacity: 0,
-            }}
-            transition={{ duration: 0.125 }}
-          ></motion.div>
-        )}
+        ))}
       </div>
-    );
-  }
+      <AnimatePresence mode="wait">
+        {tabs.map(
+          ({ id, component }) =>
+            activeTab === id && (
+              <motion.div
+                key={id}
+                initial={{
+                  x: activeTab > previousTab ? 300 : -300,
+                  opacity: 0,
+                }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: activeTab > previousTab ? -300 : 300, opacity: 0 }}
+                transition={{ duration: 0.125 }}
+              >
+                {component}
+              </motion.div>
+            )
+        )}
+      </AnimatePresence>
+    </div>
+  );
 }
-
-const syncVideoToAudio = (audio: HTMLAudioElement, video: HTMLVideoElement) => {
-  if (Math.abs(audio.currentTime - video.currentTime) >= 0.25) {
-    video.currentTime = audio.currentTime;
-    console.log(`Video time changed`);
-  }
-};

@@ -26,30 +26,6 @@ export default function Main({ songState }: MainProps) {
         <div className="mx-[4vw] my-[1vh]">
           <h1 className="text-2xl">SKIBIDI SIGMA Fanum Tax baby gronk</h1>
         </div>
-
-        <ExpandableList
-          beforeCount={1}
-          afterCount={queue?.length || 0}
-          beforeHeight="13vh"
-          afterHeight={`${queue ? queue.length * 13 : 13}vh`}
-          customExpandButtonProps={{
-            className:
-              "w-[8vw] hover:bg-white/20 py-[0.5vh] border-2 rounded-full mx-[2vw]",
-          }}
-        >
-          {queue ? (
-            queue.map((s, i) => (
-              <SearchItemSong
-                key={i}
-                data={s}
-                songState={songState}
-                dropdownItemId={null as any}
-              />
-            ))
-          ) : (
-            <p>NONE</p>
-          )}
-        </ExpandableList>
       </div>
     </div>
   );
