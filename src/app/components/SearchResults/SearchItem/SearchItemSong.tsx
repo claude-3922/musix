@@ -8,6 +8,8 @@ import { detectMouseButton } from "@/util/input";
 import { SongData } from "@/util/types/SongData";
 import { StateManager } from "@/util/types/StateManager";
 import React, { useEffect, useRef, useState } from "react";
+import { heartFill, heartNoFill } from "../../Player/Extras";
+import { pSBC } from "@/util/pSBC";
 
 interface SearchItemSongProps {
   data: SongData;
@@ -23,8 +25,9 @@ export default function SearchItemSong({
   const { vid, owner } = data;
 
   const [buttonOnThumbnail, setButtonOnThumbnail] = useState(false);
+  const [liked, setLiked] = useState(false);
   const [dropdownPos, setDropdownPos] = useState({ left: "0px", top: "0px" });
-  //const dropdownMenu = useRef<HTMLDivElement | null>(null);
+  const [playlistDropdown, setPlaylistsDropdown] = useState(false);
 
   const playHandler = async () => {
     songState.set(data);
@@ -50,6 +53,16 @@ export default function SearchItemSong({
     }
   };
 
+  const dropdownMenuBg = `linear-gradient(to top, ${pSBC(
+    0.98,
+    "#ffffff",
+    "#000000"
+  )}, ${pSBC(0.96, "#ffffff", "#000000")}, ${pSBC(
+    0.98,
+    "#ffffff",
+    "#000000"
+  )})`;
+
   return (
     <div
       className="flex justify-between items-center w-[80vw] h-[12vh] rounded-[4px] mb-[1vh] mx-[1vw] bg-white/10 hover:cursor-pointer hover:bg-white/15"
@@ -58,10 +71,8 @@ export default function SearchItemSong({
           left: `${e.clientX - 20}px`,
           top: `${e.clientY - 20}px`,
         });
-        if (e.button === 2) {
-          console.log("RIGHT CLCKED ON SEARCH ITEM SONG");
-          toggleDropdown();
-        }
+
+        toggleDropdown();
       }}
       onClick={(e) => {
         if (e.detail === 2) {
@@ -100,8 +111,11 @@ export default function SearchItemSong({
           <p className="text-sm mt-[1vh]">{formatSongDuration(vid.duration)}</p>
         </span>
       </span>
-      <span className="flex flex-col justify-center items-center w-[20vw] h-[12vh]">
-        <div
+      <span className="flex flex-row gap-4 justify-center items-center w-[20vw] h-[12vh]">
+        <span onClick={() => setLiked((p) => !p)} className="hover:scale-110">
+          {liked ? heartFill("#ffffff") : heartNoFill}
+        </span>
+        <span
           //type="button"
           className="flex items-center justify-center relative rounded-full hover:cursor-pointer"
           onClick={(e) => {
@@ -116,34 +130,54 @@ export default function SearchItemSong({
             className="w-[1.5vw] h-[1.5vw] hover:scale-110"
             src="/icons/dots_vertical.svg"
           ></img>
-        </div>
+        </span>
         {dropdownItemId && dropdownItemId.get === data.vid.id && (
           <div
-            className="absolute z-[1] rounded-[4px] w-[10vw] h-[10vw] bg-gray-950/100"
+            className="absolute z-[1] rounded-[4px] w-[10vw] h-[10vw]"
             style={{
+              background: dropdownMenuBg,
               left: dropdownPos.left,
               top: dropdownPos.top,
             }}
           >
-            <div className="flex flex-col items-between justify-center divide-y w-[10vw] h-[10vw] whitespace-nowrap overflow-y-hidden">
-              <button
-                className="h-[5vh] hover:bg-white/20"
+            <div className="flex flex-col items-between justify-center w-[10vw] h-[10vw] whitespace-nowrap overflow-y-hidden divide-y">
+              <span
+                className="flex items-center justify-start h-[5vh] hover:bg-white/20"
                 onClick={playHandler}
               >
-                <h1 className="">PLAY</h1>
-              </button>
-              <button
-                className="h-[5vh] hover:bg-white/20"
+                <h1 className="">Play</h1>
+              </span>
+              <span
+                className="flex items-center justify-start h-[5vh] hover:bg-white/20"
                 onClick={queueAddHandler}
               >
-                ADD TO QUEUE
-              </button>
-              <button
-                className="h-[5vh] hover:bg-white/20"
+                Add to queue
+              </span>
+              <span
+                className="flex items-center justify-start h-[5vh] hover:bg-white/20"
                 onClick={() => alert("This doesn't do anything rn")}
+                onMouseOver={() => setPlaylistsDropdown(true)}
+                onMouseOut={() => setPlaylistsDropdown(false)}
               >
-                ADD TO PLAYLIST
-              </button>
+                Add to playlist
+                {playlistDropdown && (
+                  <div
+                    className="absolute z-[2] left-[75%] top-[75%] rounded-[4px] w-[12vw] h-[10vw]"
+                    style={{
+                      background: dropdownMenuBg,
+                    }}
+                  >
+                    <div className="flex flex-col items-between justify-center w-[12vw] h-[10vw] whitespace-nowrap overflow-y-hidden divide-y">
+                      <span
+                        className="flex items-center justify-start h-[5vh] hover:bg-white/20"
+                        onClick={queueAddHandler}
+                      >
+                        <p>{"You don't have any."}</p>
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </span>
             </div>
           </div>
         )}

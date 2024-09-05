@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json(
     {
-      playlists: playlistArray,
+      data: playlistArray,
     },
     { status: 200 }
   );

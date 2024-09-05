@@ -3,7 +3,7 @@ import { SongData } from "@/util/types/SongData";
 import { StateManager } from "@/util/types/StateManager";
 import { useLiveQuery } from "dexie-react-hooks";
 import React, { useEffect, useState } from "react";
-import SearchItemSong from "../SearchResults/SearchItem/Song";
+import SearchItemSong from "../SearchResults/SearchItem/SearchItemSong";
 import ExpandableList from "../Util/ExpandableList";
 import SeekBar from "../Util/SeekBar";
 

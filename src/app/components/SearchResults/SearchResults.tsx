@@ -4,12 +4,15 @@ import { SongData } from "@/util/types/SongData";
 import React, { ReactNode, useEffect, useState } from "react";
 
 import { StateManager } from "@/util/types/StateManager";
-import SearchItemSong from "./SearchItem/Song";
+import SearchItemSong from "./SearchItem/SearchItemSong";
 import useStateManager from "@/app/hooks/StateManager";
 import { PlaylistMetadata } from "@/util/types/PlaylistMetadata";
 import ExpandableList from "../Util/ExpandableList";
-import SearchItemPlaylist from "./SearchItem/Playlist";
+import SearchItemPlaylist from "./SearchItem/SearchItemPlaylist";
 import { pSBC } from "@/util/pSBC";
+import { Channel } from "youtube-sr";
+import { ChannelMetadata } from "@/util/types/ChannelMetadata";
+import TopResult from "./SearchItem/TopResult";
 
 interface SearchResultsProps {
   query: string;
@@ -17,13 +20,9 @@ interface SearchResultsProps {
   songState: StateManager<SongData | null>;
 }
 
-interface SongSearchResult {
-  topResult?: SongData | PlaylistMetadata;
-  songs: SongData[];
-}
-
-interface PlaylistSearchResult {
-  playlists: PlaylistMetadata[];
+interface TopResult {
+  type: "video" | "playlist" | "channel";
+  data: SongData | PlaylistMetadata | ChannelMetadata;
 }
 
 export default function SearchResults({
@@ -31,8 +30,9 @@ export default function SearchResults({
   searchResultState,
   songState,
 }: SearchResultsProps) {
-  const [songs, setSongs] = useState<SongSearchResult | null>(null);
-  const [playlists, setPlaylists] = useState<PlaylistSearchResult | null>(null);
+  const [topResult, setTopResult] = useState<TopResult | null>(null);
+  const [songs, setSongs] = useState<SongData[] | null>(null);
+  const [playlists, setPlaylists] = useState<PlaylistMetadata[] | null>(null);
 
   const dropdownItemId = useStateManager<string | null>(null);
 
@@ -41,6 +41,17 @@ export default function SearchResults({
     setPlaylists(null);
 
     async function init() {
+      const topRes = await fetch(`/search/top`, {
+        method: "POST",
+        body: JSON.stringify({
+          query: query,
+        }),
+      });
+      if (topRes.status === 200) {
+        const data: TopResult = await topRes.json();
+        setTopResult(data);
+      }
+
       const songRes = await fetch(`/search/songs`, {
         method: "POST",
         body: JSON.stringify({
@@ -49,11 +60,8 @@ export default function SearchResults({
         }),
       });
       if (songRes.status === 200) {
-        const data: SongSearchResult = await songRes.json();
-        setSongs({
-          topResult: data.topResult,
-          songs: data.songs,
-        });
+        const data = await songRes.json();
+        setSongs(data.data as SongData[]);
       }
 
       const playlistRes = await fetch(`/search/playlists`, {
@@ -64,10 +72,8 @@ export default function SearchResults({
         }),
       });
       if (playlistRes.status === 200) {
-        const data: PlaylistSearchResult = await playlistRes.json();
-        setPlaylists({
-          playlists: data.playlists,
-        });
+        const data = await playlistRes.json();
+        setPlaylists(data.data as PlaylistMetadata[]);
       }
     }
     init();
@@ -101,13 +107,12 @@ export default function SearchResults({
         >
           <img className="h-[1.5vw] w-[1.5vw]" src="/icons/home.svg" />
         </button>
-        {songs ? (
+        {topResult ? (
           <div className="my-[3vh]">
-            <h1 className="mx-[2vw] text-2xl mb-[1vh]">TOP RESULT</h1>
-            <SearchItemSong
-              data={songs.topResult as SongData}
-              songState={songState}
-              dropdownItemId={dropdownItemId}
+            <TopResult
+              type={topResult.type}
+              data={topResult.data}
+              //dropdownItemId={dropdownItemId}
             />
           </div>
         ) : (
@@ -123,14 +128,14 @@ export default function SearchResults({
             <ExpandableList
               beforeCount={3}
               beforeHeight={`${3 * 13}vh`}
-              afterCount={songs.songs.length}
-              afterHeight={`${songs.songs.length * 13}vh`}
+              afterCount={songs.length}
+              afterHeight={`${songs.length * 13}vh`}
               customExpandButtonProps={{
                 className:
                   "text-sm w-[6vw] hover:bg-white/20 py-[0.5vh] border-2 rounded-full mx-[2vw]",
               }}
             >
-              {songs.songs.map((r, i) => (
+              {songs.map((r, i) => (
                 <SearchItemSong
                   key={i}
                   data={r}
@@ -158,15 +163,15 @@ export default function SearchResults({
             <ExpandableList
               beforeCount={2}
               beforeHeight={`${2 * 13}vh`}
-              afterCount={playlists.playlists.length}
-              afterHeight={`${playlists.playlists.length * 13}vh`}
+              afterCount={playlists.length}
+              afterHeight={`${playlists.length * 13}vh`}
               customExpandButtonProps={{
                 className:
                   "text-sm w-[6vw] hover:bg-white/20 py-[0.5vh] border-2 rounded-full mx-[2vw]",
               }}
               className="overflow-y-scroll"
             >
-              {playlists.playlists.map((r, i) => (
+              {playlists.map((r, i) => (
                 <SearchItemPlaylist
                   key={i}
                   data={r}

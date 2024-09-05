@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(
     {
       topResult: topResult,
-      songs: songArray,
+      data: songArray,
     },
     { status: 200 }
   );
