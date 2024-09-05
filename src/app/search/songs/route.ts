@@ -67,19 +67,10 @@ export async function POST(req: NextRequest) {
     songArray[i] = songData;
   }
 
-  const topResult =
-    songArray.find(
-      (song) => song.vid.title.toLowerCase() === query.toLowerCase()
-    ) || songArray[0];
-  songArray = songArray.filter(
-    (song) => song.vid.title.toLowerCase() !== topResult.vid.title.toLowerCase()
-  );
-
   sortSongDurations(songArray);
 
   return NextResponse.json(
     {
-      topResult: topResult,
       data: songArray,
     },
     { status: 200 }

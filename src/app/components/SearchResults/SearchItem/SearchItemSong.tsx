@@ -27,23 +27,7 @@ export default function SearchItemSong({
   const [buttonOnThumbnail, setButtonOnThumbnail] = useState(false);
   const [liked, setLiked] = useState(false);
   const [dropdownPos, setDropdownPos] = useState({ left: "0px", top: "0px" });
-  const [playlistDropdown, setPlaylistsDropdown] = useState(false);
-
-  const playHandler = async () => {
-    songState.set(data);
-
-    const historyArray = await queueDB.history.toArray();
-    const duplicate = historyArray.find((song) => song.vid.id === data.vid.id);
-    if (duplicate) {
-      await queueDB.history.where("vid.id").equals(data.vid.id).delete();
-    }
-
-    await queueDB.history.add(data);
-  };
-
-  const queueAddHandler = async () => {
-    await queueDB.queue.add(data);
-  };
+  const [playlistDropdown, setPlaylistDropdown] = useState(false);
 
   const toggleDropdown = () => {
     if (dropdownItemId && dropdownItemId.get === data.vid.id) {
@@ -65,7 +49,7 @@ export default function SearchItemSong({
 
   return (
     <div
-      className="flex justify-between items-center w-[80vw] h-[12vh] rounded-[4px] mb-[1vh] mx-[1vw] bg-white/10 hover:cursor-pointer hover:bg-white/15"
+      className="flex justify-between items-center w-[80vw] h-[12vh] rounded-[4px] mb-[1vh] mx-[1vw] bg-white/10 "
       onContextMenu={(e) => {
         setDropdownPos({
           left: `${e.clientX - 20}px`,
@@ -73,11 +57,6 @@ export default function SearchItemSong({
         });
 
         toggleDropdown();
-      }}
-      onClick={(e) => {
-        if (e.detail === 2) {
-          playHandler();
-        }
       }}
     >
       <span className="flex justify-start items-center">
@@ -94,7 +73,7 @@ export default function SearchItemSong({
             {buttonOnThumbnail && (
               <div
                 className="absolute z-[1] bg-black/40 w-[5vw] h-[5vw] top-[0] right-[0] hover:cursor-pointer"
-                onClick={playHandler}
+                onClick={async () => await playHandler(songState, data)}
               >
                 <img
                   className="absolute h-[2.5vw] z-[2] opacity-90 top-[25%] right-[25%]"
@@ -143,21 +122,21 @@ export default function SearchItemSong({
             <div className="flex flex-col items-between justify-center w-[10vw] h-[10vw] whitespace-nowrap overflow-y-hidden divide-y">
               <span
                 className="flex items-center justify-start h-[5vh] hover:bg-white/20"
-                onClick={playHandler}
+                onClick={async () => await playHandler(songState, data)}
               >
                 <h1 className="">Play</h1>
               </span>
               <span
                 className="flex items-center justify-start h-[5vh] hover:bg-white/20"
-                onClick={queueAddHandler}
+                onClick={async () => await queueAddHandler(data)}
               >
                 Add to queue
               </span>
               <span
                 className="flex items-center justify-start h-[5vh] hover:bg-white/20"
                 onClick={() => alert("This doesn't do anything rn")}
-                onMouseOver={() => setPlaylistsDropdown(true)}
-                onMouseOut={() => setPlaylistsDropdown(false)}
+                onMouseOver={() => setPlaylistDropdown(true)}
+                onMouseOut={() => setPlaylistDropdown(false)}
               >
                 Add to playlist
                 {playlistDropdown && (
@@ -168,10 +147,7 @@ export default function SearchItemSong({
                     }}
                   >
                     <div className="flex flex-col items-between justify-center w-[12vw] h-[10vw] whitespace-nowrap overflow-y-hidden divide-y">
-                      <span
-                        className="flex items-center justify-start h-[5vh] hover:bg-white/20"
-                        onClick={queueAddHandler}
-                      >
+                      <span className="flex items-center justify-start h-[5vh] hover:bg-white/20">
                         <p>{"You don't have any."}</p>
                       </span>
                     </div>
@@ -185,3 +161,22 @@ export default function SearchItemSong({
     </div>
   );
 }
+
+export const playHandler = async (
+  songState: StateManager<SongData | null>,
+  data: SongData
+) => {
+  songState.set(data);
+
+  const historyArray = await queueDB.history.toArray();
+  const duplicate = historyArray.find((song) => song.vid.id === data.vid.id);
+  if (duplicate) {
+    await queueDB.history.where("vid.id").equals(data.vid.id).delete();
+  }
+
+  await queueDB.history.add(data);
+};
+
+export const queueAddHandler = async (data: SongData) => {
+  await queueDB.queue.add(data);
+};

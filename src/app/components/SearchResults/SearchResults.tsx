@@ -112,7 +112,8 @@ export default function SearchResults({
             <TopResult
               type={topResult.type}
               data={topResult.data}
-              //dropdownItemId={dropdownItemId}
+              dropdownItemId={dropdownItemId}
+              songState={songState}
             />
           </div>
         ) : (
@@ -135,14 +136,20 @@ export default function SearchResults({
                   "text-sm w-[6vw] hover:bg-white/20 py-[0.5vh] border-2 rounded-full mx-[2vw]",
               }}
             >
-              {songs.map((r, i) => (
-                <SearchItemSong
-                  key={i}
-                  data={r}
-                  songState={songState}
-                  dropdownItemId={dropdownItemId}
-                />
-              ))}
+              {songs
+                .filter((v) =>
+                  topResult?.type === "video"
+                    ? v.vid.id !== (topResult.data as SongData).vid.id
+                    : true
+                )
+                .map((r, i) => (
+                  <SearchItemSong
+                    key={i}
+                    data={r}
+                    songState={songState}
+                    dropdownItemId={dropdownItemId}
+                  />
+                ))}
             </ExpandableList>
           </div>
         ) : (
