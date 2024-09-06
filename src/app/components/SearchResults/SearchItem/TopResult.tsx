@@ -8,21 +8,26 @@ import { SongData } from "@/util/types/SongData";
 import { StateManager } from "@/util/types/StateManager";
 import React, { useState } from "react";
 import { playHandler, queueAddHandler } from "./SearchItemSong";
+import Dropdown, { DropdownPos, toggleDropdown } from "../../Util/Dropdown";
+import OverlayIcon from "../../Util/OverlayIcon";
 
 interface TopResultProps {
   type: "video" | "playlist" | "channel";
   data: SongData | PlaylistMetadata | ChannelMetadata;
-  dropdownItemId: StateManager<string | null>;
   songState: StateManager<SongData | null>;
+
+  dropdownId: StateManager<string | null>;
+  dropdownPos: StateManager<DropdownPos>;
 }
 
 export default function TopResult({
   type,
   data,
-  dropdownItemId,
   songState,
+
+  dropdownId,
+  dropdownPos,
 }: TopResultProps) {
-  const [dropdownPos, setDropdownPos] = useState({ left: "0px", top: "0px" });
   const [playlistDropdown, setPlaylistDropdown] = useState(false);
   const [addedToQueue, setAddedToQueue] = useState(false);
 
@@ -31,13 +36,10 @@ export default function TopResult({
       ? (data as SongData).vid.id
       : (data as PlaylistMetadata | ChannelMetadata).id;
 
-  const toggleDropdown = () => {
-    if (dropdownItemId && dropdownItemId.get === currentItemId) {
-      dropdownItemId.set(null);
-    } else {
-      dropdownItemId.set(currentItemId);
-    }
-  };
+  const currentItemThumbanailURL =
+    type === "video"
+      ? (data as SongData).vid.thumbnail
+      : (data as PlaylistMetadata | ChannelMetadata).thumbnail || "";
 
   const dropdownMenuBg = `linear-gradient(to top, ${pSBC(
     0.98,
@@ -53,37 +55,36 @@ export default function TopResult({
     <div
       className="flex items-center rounded-[4px] h-[20vh] w-[80vw] bg-white/10 mx-[1vw] "
       onContextMenu={(e) => {
-        setDropdownPos({
-          left: `${e.clientX - 20}px`,
-          top: `${e.clientY - 20}px`,
-        });
-
-        toggleDropdown();
+        toggleDropdown(
+          e.clientX - 20,
+          e.clientY - 20,
+          currentItemId,
+          dropdownId,
+          dropdownPos
+        );
       }}
     >
-      <span className="relative w-[15vw] h-[15vh] rounded-[4px] overflow-hidden mx-[1vw]">
-        {type === "video" ? (
-          <img
-            className="w-[15vw] h-[15vh] rounded-[4px] object-cover"
-            src={(data as SongData).vid.thumbnail}
-          ></img>
-        ) : type === "playlist" ? (
-          <img
-            className="w-[15vw] h-[15vh] rounded-[4px] object-cover"
-            src={(data as PlaylistMetadata).thumbnail}
-          ></img>
-        ) : (
-          <img
-            className="w-[15vw] h-[15vh] rounded-[4px] object-cover"
-            src={(data as ChannelMetadata).thumbnail}
-          ></img>
-        )}
-        {type === "video" && (
-          <p className="absolute z-[1] right-[0%] bottom-[0%] text-sm bg-black/80 px-[0.5vw] py-[0.25vh]  text-white/90">
-            {formatSongDuration((data as SongData).vid.duration)}
-          </p>
-        )}
-      </span>
+      <OverlayIcon
+        thumbnailURL={currentItemThumbanailURL}
+        width={"15vw"}
+        height={"15vh"}
+        iconStyle={{
+          borderRadius: "4px",
+          overflow: "hidden",
+          margin: "0vw 1vw",
+        }}
+        onClick={async () => {
+          if (type === "video") {
+            await playHandler(songState, data as SongData);
+          }
+        }}
+      >
+        <img
+          src="/icons/playFill.svg"
+          style={{ width: "4vw", height: "4vw", opacity: 0.8 }}
+        />
+      </OverlayIcon>
+
       <span className="flex flex-col gap-4 items-start justify-center">
         <span>
           <h1 className="text-lg w-[60ch] overflow-hidden whitespace-nowrap">
@@ -126,11 +127,13 @@ export default function TopResult({
               //type="button"
               className="flex items-center justify-center relative rounded-full hover:cursor-pointer"
               onClick={(e) => {
-                setDropdownPos({
-                  left: `${e.clientX - 20}px`,
-                  top: `${e.clientY - 20}px`,
-                });
-                toggleDropdown();
+                toggleDropdown(
+                  e.clientX - 20,
+                  e.clientY - 20,
+                  currentItemId,
+                  dropdownId,
+                  dropdownPos
+                );
               }}
             >
               <img
@@ -138,61 +141,14 @@ export default function TopResult({
                 src="/icons/dots_vertical.svg"
               ></img>
             </span>
-            {dropdownItemId && dropdownItemId.get === currentItemId && (
-              <div
-                className="absolute z-[1] rounded-[4px] w-[10vw] h-[10vw]"
-                style={{
-                  background: dropdownMenuBg,
-                  left: dropdownPos.left,
-                  top: dropdownPos.top,
-                }}
-              >
-                <div className="flex flex-col items-between justify-center w-[10vw] h-[10vw] whitespace-nowrap overflow-y-hidden divide-y">
-                  <span
-                    className="flex items-center justify-start h-[5vh] hover:bg-white/20"
-                    onClick={async () => {
-                      if (type === "video")
-                        await playHandler(songState, data as SongData);
-                    }}
-                  >
-                    <h1 className="">Play</h1>
-                  </span>
-                  <span
-                    className="flex items-center justify-start h-[5vh] hover:bg-white/20"
-                    onClick={async () => {
-                      if (type === "video") {
-                        await queueAddHandler(data as SongData);
-                        setAddedToQueue(true);
-                      }
-                    }}
-                  >
-                    {addedToQueue ? "Added to queue" : "Add to queue"}
-                  </span>
-                  <span
-                    className="flex items-center justify-start h-[5vh] hover:bg-white/20"
-                    onClick={() => alert("This doesn't do anything rn")}
-                    onMouseOver={() => setPlaylistDropdown(true)}
-                    onMouseOut={() => setPlaylistDropdown(false)}
-                  >
-                    Add to playlist
-                    {playlistDropdown && (
-                      <div
-                        className="absolute z-[2] left-[75%] top-[75%] rounded-[4px] w-[12vw] h-[10vw]"
-                        style={{
-                          background: dropdownMenuBg,
-                        }}
-                      >
-                        <div className="flex flex-col items-between justify-center w-[12vw] h-[10vw] whitespace-nowrap overflow-y-hidden divide-y">
-                          <span className="flex items-center justify-start h-[5vh] hover:bg-white/20">
-                            <p>{"You don't have any."}</p>
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                  </span>
-                </div>
-              </div>
-            )}
+
+            <Dropdown
+              id={dropdownId.get || undefined}
+              pos={dropdownPos.get}
+              dropdownStyle={{ background: dropdownMenuBg }}
+              width={"10vw"}
+              height={"8vw"}
+            ></Dropdown>
           </span>
         </span>
       </span>

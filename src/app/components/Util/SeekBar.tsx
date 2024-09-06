@@ -131,14 +131,14 @@ export default function SeekBar({
         }}
         onMouseOver={(e) => {
           setShowThumb(true);
+          if (seekbarContainer.current && songDuration) {
+            seekbarContainer.current.title = `${formatSongDuration(
+              getDurationAtCurrentPos(e, songDuration)
+            )}`;
+          }
         }}
         onMouseMove={(e) => {
           if (isSeeking && e.buttons === 1) {
-            if (seekbarContainer.current && songDuration) {
-              seekbarContainer.current.title = `${formatSongDuration(
-                getDurationAtCurrentPos(e, songDuration) as any
-              )}`;
-            }
             return seekHandler(e);
           }
         }}

@@ -10,32 +10,27 @@ import { StateManager } from "@/util/types/StateManager";
 import React, { useEffect, useRef, useState } from "react";
 import { heartFill, heartNoFill } from "../../Player/Extras";
 import { pSBC } from "@/util/pSBC";
+import Dropdown, { DropdownPos } from "../../Util/Dropdown";
+import { toggleDropdown } from "../../Util/Dropdown";
+import OverlayIcon from "../../Util/OverlayIcon";
 
 interface SearchItemSongProps {
   data: SongData;
   songState: StateManager<SongData | null>;
-  dropdownItemId: StateManager<string | null>;
+
+  dropdownId: StateManager<string | null>;
+  dropdownPos: StateManager<DropdownPos>;
 }
 
 export default function SearchItemSong({
   data,
   songState,
-  dropdownItemId,
+  dropdownId,
+  dropdownPos,
 }: SearchItemSongProps) {
   const { vid, owner } = data;
 
-  const [buttonOnThumbnail, setButtonOnThumbnail] = useState(false);
   const [liked, setLiked] = useState(false);
-  const [dropdownPos, setDropdownPos] = useState({ left: "0px", top: "0px" });
-  const [playlistDropdown, setPlaylistDropdown] = useState(false);
-
-  const toggleDropdown = () => {
-    if (dropdownItemId && dropdownItemId.get === data.vid.id) {
-      dropdownItemId.set(null);
-    } else {
-      dropdownItemId.set(data.vid.id);
-    }
-  };
 
   const dropdownMenuBg = `linear-gradient(to top, ${pSBC(
     0.98,
@@ -51,38 +46,35 @@ export default function SearchItemSong({
     <div
       className="flex justify-between items-center w-[80vw] h-[12vh] rounded-[4px] mb-[1vh] mx-[1vw] bg-white/10 "
       onContextMenu={(e) => {
-        setDropdownPos({
-          left: `${e.clientX - 20}px`,
-          top: `${e.clientY - 20}px`,
-        });
-
-        toggleDropdown();
+        toggleDropdown(
+          e.clientX - 20,
+          e.clientY - 20,
+          data.vid.id,
+          dropdownId,
+          dropdownPos
+        );
       }}
     >
       <span className="flex justify-start items-center">
-        <span className="flex flex-col justify-center items-center w-[8vw] h-[12vh]">
-          <span
-            className="relative"
-            onMouseOver={() => setButtonOnThumbnail(true)}
-            onMouseOut={() => setButtonOnThumbnail(false)}
-          >
-            <img
-              className="object-cover rounded-[2px] w-[5vw] h-[5vw]"
-              src={vid.thumbnail}
-            />
-            {buttonOnThumbnail && (
-              <div
-                className="absolute z-[1] bg-black/40 w-[5vw] h-[5vw] top-[0] right-[0] hover:cursor-pointer"
-                onClick={async () => await playHandler(songState, data)}
-              >
-                <img
-                  className="absolute h-[2.5vw] z-[2] opacity-90 top-[25%] right-[25%]"
-                  src="/icons/playFill.svg"
-                />
-              </div>
-            )}
-          </span>
-        </span>
+        <OverlayIcon
+          thumbnailURL={vid.thumbnail}
+          width={"5vw"}
+          height={"5vw"}
+          iconStyle={{
+            borderRadius: "4px",
+            overflow: "hidden",
+            margin: "0vw 1vw",
+          }}
+          onClick={async () => {
+            await playHandler(songState, data as SongData);
+          }}
+        >
+          <img
+            src="/icons/playFill.svg"
+            style={{ width: "2.5vw", height: "2.5vw", opacity: 0.8 }}
+          />
+        </OverlayIcon>
+
         <span className="flex flex-col items-start justify-center w-[60vw] h-[12vh]  overflow-hidden whitespace-nowrap">
           <h1>{vid.title}</h1>
 
@@ -98,11 +90,13 @@ export default function SearchItemSong({
           //type="button"
           className="flex items-center justify-center relative rounded-full hover:cursor-pointer"
           onClick={(e) => {
-            setDropdownPos({
-              left: `${e.clientX - 20}px`,
-              top: `${e.clientY - 20}px`,
-            });
-            toggleDropdown();
+            toggleDropdown(
+              e.clientX - 20,
+              e.clientY - 20,
+              data.vid.id,
+              dropdownId,
+              dropdownPos
+            );
           }}
         >
           <img
@@ -110,53 +104,13 @@ export default function SearchItemSong({
             src="/icons/dots_vertical.svg"
           ></img>
         </span>
-        {dropdownItemId && dropdownItemId.get === data.vid.id && (
-          <div
-            className="absolute z-[1] rounded-[4px] w-[10vw] h-[10vw]"
-            style={{
-              background: dropdownMenuBg,
-              left: dropdownPos.left,
-              top: dropdownPos.top,
-            }}
-          >
-            <div className="flex flex-col items-between justify-center w-[10vw] h-[10vw] whitespace-nowrap overflow-y-hidden divide-y">
-              <span
-                className="flex items-center justify-start h-[5vh] hover:bg-white/20"
-                onClick={async () => await playHandler(songState, data)}
-              >
-                <h1 className="">Play</h1>
-              </span>
-              <span
-                className="flex items-center justify-start h-[5vh] hover:bg-white/20"
-                onClick={async () => await queueAddHandler(data)}
-              >
-                Add to queue
-              </span>
-              <span
-                className="flex items-center justify-start h-[5vh] hover:bg-white/20"
-                onClick={() => alert("This doesn't do anything rn")}
-                onMouseOver={() => setPlaylistDropdown(true)}
-                onMouseOut={() => setPlaylistDropdown(false)}
-              >
-                Add to playlist
-                {playlistDropdown && (
-                  <div
-                    className="absolute z-[2] left-[75%] top-[75%] rounded-[4px] w-[12vw] h-[10vw]"
-                    style={{
-                      background: dropdownMenuBg,
-                    }}
-                  >
-                    <div className="flex flex-col items-between justify-center w-[12vw] h-[10vw] whitespace-nowrap overflow-y-hidden divide-y">
-                      <span className="flex items-center justify-start h-[5vh] hover:bg-white/20">
-                        <p>{"You don't have any."}</p>
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </span>
-            </div>
-          </div>
-        )}
+        <Dropdown
+          id={dropdownId.get || undefined}
+          pos={dropdownPos.get}
+          dropdownStyle={{ background: dropdownMenuBg }}
+          width={"10vw"}
+          height={"8vw"}
+        ></Dropdown>
       </span>
     </div>
   );

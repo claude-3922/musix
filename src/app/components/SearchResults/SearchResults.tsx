@@ -13,6 +13,7 @@ import { pSBC } from "@/util/pSBC";
 import { Channel } from "youtube-sr";
 import { ChannelMetadata } from "@/util/types/ChannelMetadata";
 import TopResult from "./SearchItem/TopResult";
+import { DropdownPos } from "../Util/Dropdown";
 
 interface SearchResultsProps {
   query: string;
@@ -34,7 +35,8 @@ export default function SearchResults({
   const [songs, setSongs] = useState<SongData[] | null>(null);
   const [playlists, setPlaylists] = useState<PlaylistMetadata[] | null>(null);
 
-  const dropdownItemId = useStateManager<string | null>(null);
+  const dropdownId = useStateManager<string | null>(null);
+  const dropdownPos = useStateManager<DropdownPos>({ x: 0, y: 0 });
 
   useEffect(() => {
     setSongs(null);
@@ -87,8 +89,8 @@ export default function SearchResults({
     <div
       className="flex items-start justify-center w-[100vw] h-[83.25vh] overflow-y-scroll bg-custom_black/10"
       onClick={(e) => {
-        if (dropdownItemId.get) {
-          dropdownItemId.set(null);
+        if (dropdownId.get) {
+          dropdownId.set(null);
         }
       }}
       style={{
@@ -112,8 +114,9 @@ export default function SearchResults({
             <TopResult
               type={topResult.type}
               data={topResult.data}
-              dropdownItemId={dropdownItemId}
               songState={songState}
+              dropdownId={dropdownId}
+              dropdownPos={dropdownPos}
             />
           </div>
         ) : (
@@ -129,8 +132,10 @@ export default function SearchResults({
             <ExpandableList
               beforeCount={3}
               beforeHeight={`${3 * 13}vh`}
-              afterCount={songs.length}
-              afterHeight={`${songs.length * 13}vh`}
+              afterCount={songs.length - (topResult?.type === "video" ? 1 : 0)}
+              afterHeight={`${
+                (songs.length - (topResult?.type === "video" ? 1 : 0)) * 13
+              }vh`}
               customExpandButtonProps={{
                 className:
                   "text-sm w-[6vw] hover:bg-white/20 py-[0.5vh] border-2 rounded-full mx-[2vw]",
@@ -147,7 +152,8 @@ export default function SearchResults({
                     key={i}
                     data={r}
                     songState={songState}
-                    dropdownItemId={dropdownItemId}
+                    dropdownId={dropdownId}
+                    dropdownPos={dropdownPos}
                   />
                 ))}
             </ExpandableList>
@@ -164,7 +170,7 @@ export default function SearchResults({
           </div>
         )}
 
-        {playlists ? (
+        {/* {{playlists ? (
           <div className="my-[3vh]">
             <h1 className="mx-[2vw] text-2xl mb-[1vh]">PLAYLISTS</h1>
             <ExpandableList
@@ -198,7 +204,7 @@ export default function SearchResults({
               />
             ))}
           </div>
-        )}
+        )}} */}
       </div>
     </div>
   );
