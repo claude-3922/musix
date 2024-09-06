@@ -32,27 +32,15 @@ export default function SearchItemSong({
 
   const [liked, setLiked] = useState(false);
 
-  const dropdownMenuBg = `linear-gradient(to top, ${pSBC(
-    0.98,
-    "#ffffff",
-    "#000000"
-  )}, ${pSBC(0.96, "#ffffff", "#000000")}, ${pSBC(
-    0.98,
-    "#ffffff",
-    "#000000"
-  )})`;
-
   return (
     <div
       className="flex justify-between items-center w-[80vw] h-[12vh] rounded-[4px] mb-[1vh] mx-[1vw] bg-white/10 "
       onContextMenu={(e) => {
-        toggleDropdown(
-          e.clientX - 20,
-          e.clientY - 20,
-          data.vid.id,
-          dropdownId,
-          dropdownPos
-        );
+        dropdownPos.set({
+          x: e.clientX - 20,
+          y: e.clientY - 20,
+        });
+        toggleDropdown(vid.id, dropdownId);
       }}
     >
       <span className="flex justify-start items-center">
@@ -90,13 +78,11 @@ export default function SearchItemSong({
           //type="button"
           className="flex items-center justify-center relative rounded-full hover:cursor-pointer"
           onClick={(e) => {
-            toggleDropdown(
-              e.clientX - 20,
-              e.clientY - 20,
-              data.vid.id,
-              dropdownId,
-              dropdownPos
-            );
+            dropdownPos.set({
+              x: e.clientX - 20,
+              y: e.clientY - 20,
+            });
+            toggleDropdown(vid.id, dropdownId);
           }}
         >
           <img
@@ -104,13 +90,6 @@ export default function SearchItemSong({
             src="/icons/dots_vertical.svg"
           ></img>
         </span>
-        <Dropdown
-          id={dropdownId.get || undefined}
-          pos={dropdownPos.get}
-          dropdownStyle={{ background: dropdownMenuBg }}
-          width={"10vw"}
-          height={"8vw"}
-        ></Dropdown>
       </span>
     </div>
   );

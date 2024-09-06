@@ -41,27 +41,15 @@ export default function TopResult({
       ? (data as SongData).vid.thumbnail
       : (data as PlaylistMetadata | ChannelMetadata).thumbnail || "";
 
-  const dropdownMenuBg = `linear-gradient(to top, ${pSBC(
-    0.98,
-    "#ffffff",
-    "#000000"
-  )}, ${pSBC(0.96, "#ffffff", "#000000")}, ${pSBC(
-    0.98,
-    "#ffffff",
-    "#000000"
-  )})`;
-
   return (
     <div
       className="flex items-center rounded-[4px] h-[20vh] w-[80vw] bg-white/10 mx-[1vw] "
       onContextMenu={(e) => {
-        toggleDropdown(
-          e.clientX - 20,
-          e.clientY - 20,
-          currentItemId,
-          dropdownId,
-          dropdownPos
-        );
+        dropdownPos.set({
+          x: e.clientX - 20,
+          y: e.clientY - 20,
+        });
+        toggleDropdown(currentItemId, dropdownId);
       }}
     >
       <OverlayIcon
@@ -127,13 +115,11 @@ export default function TopResult({
               //type="button"
               className="flex items-center justify-center relative rounded-full hover:cursor-pointer"
               onClick={(e) => {
-                toggleDropdown(
-                  e.clientX - 20,
-                  e.clientY - 20,
-                  currentItemId,
-                  dropdownId,
-                  dropdownPos
-                );
+                dropdownPos.set({
+                  x: e.clientX - 20,
+                  y: e.clientY - 20,
+                });
+                toggleDropdown(currentItemId, dropdownId);
               }}
             >
               <img
@@ -141,14 +127,6 @@ export default function TopResult({
                 src="/icons/dots_vertical.svg"
               ></img>
             </span>
-
-            <Dropdown
-              id={dropdownId.get || undefined}
-              pos={dropdownPos.get}
-              dropdownStyle={{ background: dropdownMenuBg }}
-              width={"10vw"}
-              height={"8vw"}
-            ></Dropdown>
           </span>
         </span>
       </span>

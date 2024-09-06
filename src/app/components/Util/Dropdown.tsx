@@ -3,7 +3,6 @@ import React, { useEffect } from "react";
 
 interface DropdownProps extends React.HTMLAttributes<HTMLDivElement> {
   pos: DropdownPos;
-
   width: number | string;
   height: number | string;
   dropdownStyle: React.CSSProperties;
@@ -17,7 +16,6 @@ export interface DropdownPos {
 export default function Dropdown({
   id,
   pos,
-
   width,
   height,
   dropdownStyle,
@@ -41,8 +39,8 @@ export default function Dropdown({
         alignItems: "center",
         justifyContent: "start",
         position: "absolute",
-        left: pos.x,
-        top: pos.y,
+        left: typeof pos.x === "string" ? pos.x : `${pos.x}px`,
+        top: typeof pos.y === "string" ? pos.y : `${pos.y}px`,
         zIndex: 10,
         width: typeof width === "string" ? width : `${width}px`,
         height: typeof height === "string" ? height : `${height}px`,
@@ -53,7 +51,7 @@ export default function Dropdown({
   );
 }
 
-const toggleDropdownId = (
+export const toggleDropdown = (
   id: string,
   dropdownIdState: StateManager<string | null>
 ) => {
@@ -62,18 +60,4 @@ const toggleDropdownId = (
   } else {
     dropdownIdState.set(id);
   }
-};
-
-export const toggleDropdown = (
-  posX: string | number,
-  posY: string | number,
-  id: string,
-  dropdownIdState: StateManager<string | null>,
-  dropdownPosState: StateManager<DropdownPos>
-) => {
-  dropdownPosState.set({
-    x: `${typeof posX === "string" ? posX : `${posX}px`}`,
-    y: `${typeof posY === "string" ? posY : `${posY}px`}`,
-  });
-  toggleDropdownId(id, dropdownIdState);
 };

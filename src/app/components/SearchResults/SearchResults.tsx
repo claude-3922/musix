@@ -4,7 +4,10 @@ import { SongData } from "@/util/types/SongData";
 import React, { ReactNode, useEffect, useState } from "react";
 
 import { StateManager } from "@/util/types/StateManager";
-import SearchItemSong from "./SearchItem/SearchItemSong";
+import SearchItemSong, {
+  playHandler,
+  queueAddHandler,
+} from "./SearchItem/SearchItemSong";
 import useStateManager from "@/app/hooks/StateManager";
 import { PlaylistMetadata } from "@/util/types/PlaylistMetadata";
 import ExpandableList from "../Util/ExpandableList";
@@ -13,7 +16,7 @@ import { pSBC } from "@/util/pSBC";
 import { Channel } from "youtube-sr";
 import { ChannelMetadata } from "@/util/types/ChannelMetadata";
 import TopResult from "./SearchItem/TopResult";
-import { DropdownPos } from "../Util/Dropdown";
+import Dropdown, { DropdownPos } from "../Util/Dropdown";
 
 interface SearchResultsProps {
   query: string;
@@ -37,6 +40,9 @@ export default function SearchResults({
 
   const dropdownId = useStateManager<string | null>(null);
   const dropdownPos = useStateManager<DropdownPos>({ x: 0, y: 0 });
+
+  const playlistDropdownId = useStateManager<string | null>(null);
+  const playlistDropdownPos = useStateManager<DropdownPos>({ x: 0, y: 0 });
 
   useEffect(() => {
     setSongs(null);
@@ -84,6 +90,16 @@ export default function SearchResults({
   const darkerAccent = pSBC(0.03, "#000000");
   const darkerDarkerAccent = pSBC(0.02, "#000000");
   const darkestDarkerAccent = pSBC(0.01, "#000000");
+
+  const dropdownMenuBg = `linear-gradient(to top, ${pSBC(
+    0.98,
+    "#ffffff",
+    "#000000"
+  )}, ${pSBC(0.96, "#ffffff", "#000000")}, ${pSBC(
+    0.98,
+    "#ffffff",
+    "#000000"
+  )})`;
 
   return (
     <div
@@ -169,6 +185,58 @@ export default function SearchResults({
             ))}
           </div>
         )}
+
+        <Dropdown
+          className="rounded-[4px] overflow-hidden"
+          id={dropdownId.get || undefined}
+          pos={dropdownPos.get}
+          dropdownStyle={{ background: dropdownMenuBg }}
+          width={"10vw"}
+          height={"9vw"}
+        >
+          <span
+            onClick={async () => {
+              await playHandler(
+                songState,
+                songs?.find((v) => v.vid.id === dropdownId.get) as any
+              );
+            }}
+            className="flex items-center justify-center hover:cursor-pointer hover:bg-white/35 w-[10vw] h-[3vw] "
+          >
+            Play
+          </span>
+          <span
+            onClick={async () => {
+              await queueAddHandler(
+                songs?.find((v) => v.vid.id === dropdownId.get) as any
+              );
+            }}
+            className="flex items-center justify-center hover:cursor-pointer hover:bg-white/35 w-[10vw] h-[3vw] "
+          >
+            Add to queue
+          </span>
+          <div
+            onMouseOver={(e) => {
+              playlistDropdownId.set(`playlistDropdown_${dropdownId.get}`);
+              playlistDropdownPos.set({
+                x: e.clientX - 40,
+                y: e.clientY - 40,
+              });
+            }}
+            onMouseOut={(e) => playlistDropdownId.set(null)}
+            className="flex items-center justify-center hover:cursor-pointer hover:bg-white/35 w-[10vw] h-[3vw] "
+          >
+            Add to playlist
+          </div>
+        </Dropdown>
+        <Dropdown
+          className="rounded-[4px] overflow-hidden"
+          id={playlistDropdownId.get || undefined}
+          pos={playlistDropdownPos.get}
+          dropdownStyle={{ background: dropdownMenuBg }}
+          width={"10vw"}
+          height={"9vw"}
+        ></Dropdown>
 
         {/* {{playlists ? (
           <div className="my-[3vh]">
