@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
-import { PlaylistMetadata } from "@/util/types/PlaylistMetadata";
+import { PlaylistMetadata } from "@/util/types/PlaylistData";
 import { SongData } from "@/util/types/SongData";
 import { StateManager } from "@/util/types/StateManager";
 import React, { useState } from "react";

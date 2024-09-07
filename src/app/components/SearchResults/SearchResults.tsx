@@ -9,7 +9,7 @@ import SearchItemSong, {
   queueAddHandler,
 } from "./SearchItem/SearchItemSong";
 import useStateManager from "@/app/hooks/StateManager";
-import { PlaylistMetadata } from "@/util/types/PlaylistMetadata";
+import { PlaylistMetadata } from "@/util/types/PlaylistData";
 import ExpandableList from "../Util/ExpandableList";
 import SearchItemPlaylist from "./SearchItem/SearchItemPlaylist";
 import { pSBC } from "@/util/pSBC";

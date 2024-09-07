@@ -3,7 +3,7 @@
 import { formatSongDuration } from "@/util/format";
 import { pSBC } from "@/util/pSBC";
 import { ChannelMetadata } from "@/util/types/ChannelMetadata";
-import { PlaylistMetadata } from "@/util/types/PlaylistMetadata";
+import { PlaylistMetadata } from "@/util/types/PlaylistData";
 import { SongData } from "@/util/types/SongData";
 import { StateManager } from "@/util/types/StateManager";
 import React, { useState } from "react";

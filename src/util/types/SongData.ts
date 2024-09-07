@@ -1,18 +1,13 @@
+import { AlbumMetadata } from "./AlbumData";
+import { ArtistMetadata } from "./ArtistData";
+
 export interface SongData {
-  vid: {
-    id: string;
-    url: string;
-    title: string;
-    thumbnail: string;
-    duration: number;
-  };
-  owner: {
-    title: string;
-    url: string;
-    thumbnail: string;
-  };
-  playerInfo: {
-    accentColors?: string[];
-    topColor?: string;
-  };
+  id: string;
+  url: string;
+  title: string;
+  thumbnail: string;
+  duration: number;
+  artist: ArtistMetadata;
+  album?: AlbumMetadata;
+  moreThumbnails?: string[];
 }

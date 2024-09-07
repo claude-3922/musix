@@ -1,12 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
-import Youtube from "youtube-sr";
-
-import { durationSeconds } from "@/util/format";
-
+import { AlbumData } from "@/util/types/AlbumData";
+import { ArtistData } from "@/util/types/ArtistData";
+import { PlaylistMetadata } from "@/util/types/PlaylistData";
 import { SongData } from "@/util/types/SongData";
-import { sortSongDurations } from "@/util/sort";
-import { PlaylistMetadata } from "@/util/types/PlaylistMetadata";
-import { ChannelMetadata } from "@/util/types/ChannelMetadata";
+import { NextRequest, NextResponse } from "next/server";
+
+import YTMusic from "ytmusic-api";
 
 export async function POST(req: NextRequest) {
   let query: string | null = null;
@@ -25,64 +23,145 @@ export async function POST(req: NextRequest) {
 
   if (!query || query.trim().length === 0) {
     console.log(" INFO /search/top 'No query provided'");
-    return NextResponse.json({ message: "No id provided" }, { status: 403 });
+    return NextResponse.json({ message: "No query provided" }, { status: 403 });
   }
 
-  const res = await Youtube.search(query, {
-    limit: 1,
-    safeSearch: true,
-    type: "all",
-  });
-  if (!res) {
-    console.log(" INFO /search/top 'No songs found'");
-    return NextResponse.json({ message: "No songs found" }, { status: 404 });
+  const ytMusic = await new YTMusic().initialize();
+  if (!ytMusic) {
+    console.log(" INFO /search/top 'Error while initializing YTMusic'");
+    return NextResponse.json(
+      { message: "Error while initializing YTMusic" },
+      { status: 500 }
+    );
   }
 
-  let info = res[0];
-  let data: SongData | PlaylistMetadata | ChannelMetadata;
-  if (info.type === "video") {
-    data = {
-      vid: {
-        id: info.id || "NOT_FOUND",
-        url: info.url,
-        title: info.title || "NOT_FOUND",
-        thumbnail: info.thumbnail?.url || "/def_vid_thumbnail.jpg",
-        duration: info.duration / 1000,
-      },
-      owner: {
-        title: info.channel?.name || "NOT_FOUND",
-        url: info.channel?.url || "NOT_FOUND",
-        thumbnail: info.channel?.icon.url || "/def_user_thumbnail.jpg",
-      },
-      playerInfo: {},
-    };
-  } else if (info.type === "playlist") {
-    data = {
-      id: info.id || "NOT_FOUND",
-      url: info.url || "NOT_FOUND",
-      title: info.title || "NOT_FOUND",
-      thumbnail: info.thumbnail?.url || "/def_vid_thumbnail.jpg",
-
-      owner: {
-        title: info.channel?.name || "NOT_FOUND",
-        url: info.channel?.url || "NOT_FOUND",
-        thumbnail: info.channel?.icon.url || "/def_user_thumbnail.jpg",
-      },
-    };
-  } else if (info.type === "channel") {
-    data = {
-      title: info.name || "NOT_FOUND",
-      url: info.url || "NOT_FOUND",
-      thumbnail: info.icon?.url || "/def_user_thumbnail.jpg",
-      id: info.id || "NOT_FOUND",
-    };
+  const res = await ytMusic.search(query);
+  if (!res || res.length === 0) {
+    console.log(" INFO /search/top 'No search results found'");
+    return NextResponse.json(
+      { message: "No search results found" },
+      { status: 404 }
+    );
   }
 
-  return NextResponse.json(
-    {
-      type: info.type,
-      data: data!,
-    },
-    { status: 200 }
-  );
+  const topResult =
+    res.find((r) => r.name.toLowerCase() === query.toLowerCase()) || res[0];
+
+  switch (topResult.type) {
+    case "SONG":
+      return NextResponse.json(
+        {
+          type: "SONG",
+          data: {
+            id: topResult.videoId,
+            url: `https://www.youtube.com/watch?v=${topResult.videoId}`,
+            title: topResult.name,
+            thumbnail: topResult.thumbnails.sort((a, b) => b.width - a.width)[0]
+              .url,
+            duration: topResult.duration || 0,
+            artist: {
+              name: topResult.artist.name,
+              id: topResult.artist.artistId,
+            },
+            album: {
+              name: topResult.album?.name || undefined,
+              id: topResult.album?.albumId || undefined,
+            },
+            moreThumbnails: topResult.thumbnails
+              .sort((a, b) => b.width - a.width)
+              .map((t) => t.url),
+          } as SongData,
+        },
+        { status: 200 }
+      );
+    case "VIDEO":
+      return NextResponse.json(
+        {
+          type: "VIDEO",
+          data: {
+            id: topResult.videoId,
+            url: `https://www.youtube.com/watch?v=${topResult.videoId}`,
+            title: topResult.name,
+            thumbnail: topResult.thumbnails.sort((a, b) => b.width - a.width)[0]
+              .url,
+            duration: topResult.duration || 0,
+            artist: {
+              name: topResult.artist.name,
+              id: topResult.artist.artistId,
+            },
+            moreThumbnails: topResult.thumbnails
+              .sort((a, b) => b.width - a.width)
+              .map((t) => t.url),
+          } as SongData,
+        },
+        { status: 200 }
+      );
+    case "ALBUM":
+      return NextResponse.json(
+        {
+          type: "ALBUM",
+          data: {
+            name: topResult.name,
+            id: topResult.playlistId,
+            artist: {
+              name: topResult.artist.name,
+              id: topResult.artist.artistId,
+            },
+            thumbnail: topResult.thumbnails.sort((a, b) => b.width - a.width)[0]
+              .url,
+
+            moreThumbnails: topResult.thumbnails
+              .sort((a, b) => b.width - a.width)
+              .map((t) => t.url),
+            year: topResult.year,
+          } as AlbumData,
+        },
+        { status: 200 }
+      );
+    case "ARTIST":
+      return NextResponse.json(
+        {
+          type: "ARTIST",
+          data: {
+            name: topResult.name,
+            id: topResult.artistId,
+
+            thumbnail: topResult.thumbnails.sort((a, b) => b.width - a.width)[0]
+              .url,
+
+            moreThumbnails: topResult.thumbnails
+              .sort((a, b) => b.width - a.width)
+              .map((t) => t.url),
+          } as ArtistData,
+        },
+        { status: 200 }
+      );
+    case "PLAYLIST":
+      return NextResponse.json(
+        {
+          type: "PLAYLIST",
+          data: {
+            name: topResult.name,
+            id: topResult.playlistId,
+            owner: {
+              name: topResult.artist.name,
+              id: topResult.artist.artistId,
+            },
+            thumbnail: topResult.thumbnails.sort((a, b) => b.width - a.width)[0]
+              .url,
+            moreThumbnails: topResult.thumbnails
+              .sort((a, b) => b.width - a.width)
+              .map((t) => t.url),
+          } as PlaylistMetadata,
+        },
+        { status: 200 }
+      );
+    default:
+      return NextResponse.json(
+        {
+          message: "Invalid search result type",
+        },
+        { status: 404 }
+      );
+  }
 }

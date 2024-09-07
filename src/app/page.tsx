@@ -69,7 +69,9 @@ export default function Home() {
           <input
             id=""
             name="searchQuery"
-            onChange={(e) => (e.target.id = e.target.value)}
+            onChange={(e) => {
+              e.target.id = e.target.value;
+            }}
             className="border-2 p-2 bg-white/10"
             type="text"
             placeholder="search a song"

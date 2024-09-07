@@ -1,17 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import ytsr from "@distube/ytsr";
+import YTMusic from "ytmusic-api";
 
-import { durationSeconds } from "@/util/format";
+export async function GET(req: NextRequest) {
+  const query = req.nextUrl.searchParams.get("q");
+  if (!query) return console.log("AAAA NO QUERY RAHH");
 
-import { SongData } from "@/util/types/SongData";
-import { sortSongDurations } from "@/util/sort";
-import YouTube from "youtube-sr";
-
-export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const result = await YouTube.search(body.query, {
-    limit: 1,
-    type: "all",
-  });
-  return NextResponse.json(result, { status: 200 });
+  const ytmusic = new YTMusic();
+  const yt = await ytmusic.initialize();
+  if (!yt) return console.log("NO YT");
+  const res = await yt.getArtist(query);
+  console.log(res);
+  return NextResponse.json(res);
 }
