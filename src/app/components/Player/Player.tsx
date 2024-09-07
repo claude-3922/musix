@@ -16,14 +16,15 @@ import { queueDB } from "@/db/queueDB";
 
 import useStateManager from "@/app/hooks/StateManager";
 import PlayerEmpty from "./PlayerEmpty";
+import { PAGE_STATES } from "@/util/enums/pageState";
 
 interface PlayerProps {
   audioPlayer: HTMLAudioElement | null;
   songState: StateManager<SongData | null>;
-  previewState: StateManager<boolean>;
+  pageState: StateManager<PAGE_STATES>;
 }
 
-export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
+export function Player({ audioPlayer, songState, pageState }: PlayerProps) {
   const data = songState.get;
 
   const [songData, setSongData] = useState<SongData | null>(null);
@@ -31,8 +32,6 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
 
   const playerTime = useStateManager<number>(0);
   const playerPaused = useStateManager<boolean>(false);
-
-  const previewStateRef = useRef<StateManager<boolean>>(previewState);
 
   const timeUpdateHandler = () => {
     playerTime.set(audioPlayer?.currentTime || 0);
@@ -86,6 +85,8 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
 
       audioPlayer.play();
       //previewStateRef.current.set(true);
+      audioPlayer.preservesPitch = false;
+      audioPlayer.playbackRate = 0.8;
     };
 
     const songEndedHandler = async () => {
@@ -169,7 +170,7 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
       <div className="flex justify-start items-center w-[30vw]">
         <Thumbnail
           songData={{ vid, owner, playerInfo }}
-          previewState={previewState}
+          pageState={pageState}
         />
         <Title data={{ vid, owner, playerInfo }} />
       </div>
@@ -185,11 +186,7 @@ export function Player({ audioPlayer, songState, previewState }: PlayerProps) {
         />
       </div>
 
-      <Extras
-        data={{ vid, owner, playerInfo }}
-        audioPlayer={audioPlayer}
-        previewState={previewState}
-      />
+      <Extras data={{ vid, owner, playerInfo }} audioPlayer={audioPlayer} />
     </div>
   );
 }

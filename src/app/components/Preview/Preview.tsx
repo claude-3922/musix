@@ -53,7 +53,7 @@ export default function Preview({
       component: (
         <Lyrics
           title={`${songData.owner.title} - ${vid.title}`}
-          accent={pSBC(0.5, playerInfo.topColor, "#000000") || "white"}
+          accent={pSBC(0.5, playerInfo.topColor, "#000000") || "black"}
         />
       ),
     },

@@ -11,12 +11,15 @@ import { SongData } from "@/util/types/SongData";
 
 import useStateManager from "./hooks/StateManager";
 import { AnimatePresence, motion } from "framer-motion";
+import { PAGE_STATES } from "@/util/enums/pageState";
 
 export default function Home() {
   const [query, setQuery] = useState<string>("");
   const [vid, setVid] = useState<boolean>(false);
 
   const songState = useStateManager<SongData | null>(null);
+
+  const pageState = useStateManager<PAGE_STATES>(PAGE_STATES.Main);
 
   const previewState = useStateManager<boolean>(false);
   const searchResultState = useStateManager<boolean>(false);
@@ -76,8 +79,7 @@ export default function Home() {
             className="border-2 p-2"
             onClick={() => {
               setQuery(document.getElementsByName("searchQuery")[0].id);
-              searchResultState.set(true);
-              previewState.set(false);
+              pageState.set(PAGE_STATES.Search);
             }}
           >
             Search
@@ -96,7 +98,17 @@ export default function Home() {
 
         <main className="relative overflow-hidden">
           <AnimatePresence mode="wait">
-            {previewState.get ? (
+            {pageState.get === PAGE_STATES.Main && (
+              <Main songState={songState} />
+            )}
+            {pageState.get === PAGE_STATES.Search && (
+              <SearchResults
+                query={query}
+                songState={songState}
+                pageState={pageState}
+              />
+            )}
+            {pageState.get === PAGE_STATES.Preview && (
               <motion.div
                 key="previewWindow"
                 initial={{ y: "100%", opacity: 0 }}
@@ -110,14 +122,6 @@ export default function Home() {
                   audioPlayer={audioPlayer || null}
                 />
               </motion.div>
-            ) : searchResultState.get ? (
-              <SearchResults
-                query={query}
-                searchResultState={searchResultState}
-                songState={songState}
-              />
-            ) : (
-              <Main songState={songState} />
             )}
           </AnimatePresence>
         </main>
@@ -126,7 +130,7 @@ export default function Home() {
           <Player
             audioPlayer={audioPlayer || null}
             songState={songState}
-            previewState={previewState}
+            pageState={pageState}
           />
         </div>
       </div>

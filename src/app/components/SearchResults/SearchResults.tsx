@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 import { SongData } from "@/util/types/SongData";
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 
 import { StateManager } from "@/util/types/StateManager";
 import SearchItemSong, {
@@ -17,10 +17,11 @@ import { Channel } from "youtube-sr";
 import { ChannelMetadata } from "@/util/types/ChannelMetadata";
 import TopResult from "./SearchItem/TopResult";
 import Dropdown, { DropdownPos } from "../Util/Dropdown";
+import { PAGE_STATES } from "@/util/enums/pageState";
 
 interface SearchResultsProps {
   query: string;
-  searchResultState: StateManager<boolean>;
+  pageState: StateManager<PAGE_STATES>;
   songState: StateManager<SongData | null>;
 }
 
@@ -31,7 +32,7 @@ interface TopResult {
 
 export default function SearchResults({
   query,
-  searchResultState,
+  pageState,
   songState,
 }: SearchResultsProps) {
   const [topResult, setTopResult] = useState<TopResult | null>(null);
@@ -121,7 +122,7 @@ export default function SearchResults({
       <div>
         <button
           className="flex items-center justify-center rounded-full border-2 w-[3vw] h-[3vw] mx-[2vw] my-[2vh]"
-          onClick={() => searchResultState.set(false)}
+          onClick={() => pageState.set(PAGE_STATES.Main)}
         >
           <img className="h-[1.5vw] w-[1.5vw]" src="/icons/home.svg" />
         </button>
@@ -219,24 +220,36 @@ export default function SearchResults({
             onMouseOver={(e) => {
               playlistDropdownId.set(`playlistDropdown_${dropdownId.get}`);
               playlistDropdownPos.set({
-                x: e.clientX - 40,
-                y: e.clientY - 40,
+                x: `${(dropdownPos.get.x as number) + 100}px`,
+                y: `${(dropdownPos.get.y as number) + 100}px`,
               });
             }}
-            onMouseOut={(e) => playlistDropdownId.set(null)}
             className="flex items-center justify-center hover:cursor-pointer hover:bg-white/35 w-[10vw] h-[3vw] "
           >
             Add to playlist
           </div>
         </Dropdown>
+
         <Dropdown
+          onMouseOut={() => playlistDropdownId.set(null)}
+          onClick={() => playlistDropdownId.set(null)}
           className="rounded-[4px] overflow-hidden"
           id={playlistDropdownId.get || undefined}
           pos={playlistDropdownPos.get}
           dropdownStyle={{ background: dropdownMenuBg }}
           width={"10vw"}
           height={"9vw"}
-        ></Dropdown>
+        >
+          <span className="flex items-center justify-center hover:cursor-pointer hover:bg-white/35 w-[10vw] h-[3vw] ">
+            {"None found."}
+          </span>
+          <span className="flex items-center justify-center hover:cursor-pointer hover:bg-white/35 w-[10vw] h-[3vw] ">
+            {"None found."}
+          </span>
+          <span className="flex items-center justify-center hover:cursor-pointer hover:bg-white/35 w-[10vw] h-[3vw] ">
+            {"None found."}
+          </span>
+        </Dropdown>
 
         {/* {{playlists ? (
           <div className="my-[3vh]">

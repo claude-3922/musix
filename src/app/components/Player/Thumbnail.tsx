@@ -2,21 +2,20 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { SongData } from "@/util/types/SongData";
 import { StateManager } from "@/util/types/StateManager";
 import OverlayIcon from "../Util/OverlayIcon";
+import { PAGE_STATES } from "@/util/enums/pageState";
 
 interface ThumbnailProps {
   songData: SongData;
-  previewState: StateManager<boolean>;
+  pageState: StateManager<PAGE_STATES>;
 }
 
-export default function Thumbnail({ songData, previewState }: ThumbnailProps) {
+export default function Thumbnail({ songData, pageState }: ThumbnailProps) {
   const { vid } = songData;
-
-  const [thumbnailOverlay, setThumbnailOverlay] = useState(false);
 
   return (
     <div className="flex justify-start items-center">
@@ -28,7 +27,13 @@ export default function Thumbnail({ songData, previewState }: ThumbnailProps) {
           borderRadius: "4px",
           overflow: "hidden",
         }}
-        onClick={() => previewState.set(!previewState.get)}
+        onClick={() =>
+          pageState.set(
+            pageState.get === PAGE_STATES.Preview
+              ? PAGE_STATES.Main
+              : PAGE_STATES.Preview
+          )
+        }
       >
         <img
           src="/icons/arrow_up.svg"
@@ -36,7 +41,7 @@ export default function Thumbnail({ songData, previewState }: ThumbnailProps) {
             width: "2vw",
             height: "2vw",
             opacity: 0.8,
-            rotate: previewState.get ? "180deg" : "360deg",
+            rotate: pageState.get === PAGE_STATES.Preview ? "180deg" : "360deg",
           }}
         />
       </OverlayIcon>

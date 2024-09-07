@@ -10,14 +10,9 @@ import SeekBar from "../Util/SeekBar";
 interface ExtrasProps {
   data: SongData;
   audioPlayer: HTMLAudioElement;
-  previewState: StateManager<boolean>;
 }
 
-export default function Extras({
-  data,
-  audioPlayer,
-  previewState,
-}: ExtrasProps) {
+export default function Extras({ data, audioPlayer }: ExtrasProps) {
   const { playerInfo } = data;
   const [showLikeFill, setShowLikeFill] = useState(false);
   const [looped, setLooped] = useState(false);
