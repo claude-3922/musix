@@ -14,7 +14,7 @@ export default function History({ items }: HistoryProps) {
             if (i + 1 !== items.length) {
               return (
                 <p key={i}>
-                  {i + 1}. {item.vid.title}
+                  {i + 1}. {item.title}
                 </p>
               );
             }

@@ -19,7 +19,7 @@ export default function OverlayIcon({
   children,
   ...props
 }: OverlayIconProps) {
-  const [showOverlay, setShowOverlay] = useState(false);
+  const [hovering, setHovering] = useState(false);
 
   const cssWidth = typeof width === "string" ? width : `${width}px`;
   const cssHeight = typeof height === "string" ? height : `${height}px`;
@@ -27,14 +27,14 @@ export default function OverlayIcon({
   return (
     <span
       {...props}
-      onMouseOver={() => setShowOverlay(true)}
-      onMouseOut={() => setShowOverlay(false)}
+      onMouseOver={() => setHovering(true)}
+      onMouseOut={() => setHovering(false)}
       style={{
         ...iconStyle,
         position: "relative",
         width: cssWidth,
         height: cssHeight,
-        cursor: showOverlay ? "pointer" : "default",
+        cursor: hovering ? "pointer" : "default",
       }}
     >
       <img
@@ -47,9 +47,11 @@ export default function OverlayIcon({
           top: 0,
           width: cssWidth,
           height: cssHeight,
+          transform: hovering ? "scale(1.05)" : "scale(1)",
+          transition: "transform 0.125s linear",
         }}
       />
-      {showOverlay && (
+      {hovering && (
         <span
           style={{
             position: "absolute",

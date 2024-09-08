@@ -15,12 +15,10 @@ interface ThumbnailProps {
 }
 
 export default function Thumbnail({ songData, pageState }: ThumbnailProps) {
-  const { vid } = songData;
-
   return (
     <div className="flex justify-start items-center">
       <OverlayIcon
-        thumbnailURL={vid.thumbnail}
+        thumbnailURL={songData.thumbnail}
         width={"5vw"}
         height={"5vw"}
         iconStyle={{

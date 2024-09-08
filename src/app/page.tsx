@@ -57,7 +57,7 @@ export default function Home() {
         <audio
           id="audioPlayer"
           ref={(el) => setAudioPlayer(el)}
-          src={`/media?id=${songState.get.vid.id}&vid=0`}
+          src={`/media?id=${songState.get.id}&vid=0`}
           preload="auto"
         />
       ) : (

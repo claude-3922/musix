@@ -1,4 +1,5 @@
 import { ArtistMetadata } from "./ArtistData";
+import { SongData } from "./SongData";
 
 export interface PlaylistMetadata {
   name: string;
@@ -6,4 +7,8 @@ export interface PlaylistMetadata {
   owner: ArtistMetadata;
   thumbnail: string;
   moreThumbnails?: string[];
+}
+
+export interface PlaylistData extends PlaylistMetadata {
+  songs: SongData[];
 }

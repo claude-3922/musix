@@ -7,7 +7,7 @@ import indexedDB from "fake-indexeddb";
 import IDBKeyRange from "fake-indexeddb/lib/FDBKeyRange";
 
 interface NowPlayingRecord extends SongData {
-  id: number;
+  playingId: number;
 }
 
 class QueueDatabase extends Dexie {
@@ -44,7 +44,7 @@ class QueueDatabase extends Dexie {
       if (await this.getNowPlaying()) {
         await this.nowPlaying.update(1, song);
       } else {
-        await this.nowPlaying.add({ id: 1, ...song });
+        await this.nowPlaying.add({ playingId: 1, ...song });
       }
     } catch (error) {
       console.log("Error setting nowPlaying: ", error);

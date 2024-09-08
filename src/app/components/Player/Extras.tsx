@@ -13,7 +13,6 @@ interface ExtrasProps {
 }
 
 export default function Extras({ data, audioPlayer }: ExtrasProps) {
-  const { playerInfo } = data;
   const [showLikeFill, setShowLikeFill] = useState(false);
   const [looped, setLooped] = useState(false);
   const [muted, setMuted] = useState(false);
@@ -21,7 +20,7 @@ export default function Extras({ data, audioPlayer }: ExtrasProps) {
 
   const volumeSlider = useRef<HTMLInputElement | null>(null);
 
-  const lighterAccent = playerInfo.topColor;
+  const lighterAccent = "";
 
   audioPlayer.onvolumechange = () => {
     const isMuted = audioPlayer.volume === 0;

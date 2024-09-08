@@ -2,8 +2,8 @@ import { SongData } from "./types/SongData";
 
 export const sortSongDurations = (songs: SongData[]) => {
   return songs.sort((a, b) => {
-    const inRangeA = a.vid.duration >= 120 && a.vid.duration <= 360;
-    const inRangeB = b.vid.duration >= 120 && b.vid.duration <= 360;
+    const inRangeA = a.duration >= 120 && a.duration <= 360;
+    const inRangeB = b.duration >= 120 && b.duration <= 360;
 
     if (inRangeA && !inRangeB) {
       return -1;

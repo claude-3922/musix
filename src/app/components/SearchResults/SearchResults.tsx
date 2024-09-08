@@ -4,20 +4,19 @@ import { SongData } from "@/util/types/SongData";
 import React, { ReactNode, useEffect, useRef, useState } from "react";
 
 import { StateManager } from "@/util/types/StateManager";
-import SearchItemSong, {
-  playHandler,
-  queueAddHandler,
-} from "./SearchItem/SearchItemSong";
+
 import useStateManager from "@/app/hooks/StateManager";
 import { PlaylistMetadata } from "@/util/types/PlaylistData";
 import ExpandableList from "../Util/ExpandableList";
-import SearchItemPlaylist from "./SearchItem/SearchItemPlaylist";
+
 import { pSBC } from "@/util/pSBC";
 import { Channel } from "youtube-sr";
-import { ChannelMetadata } from "@/util/types/ChannelMetadata";
+
 import TopResult from "./SearchItem/TopResult";
 import Dropdown, { DropdownPos } from "../Util/Dropdown";
 import { PAGE_STATES } from "@/util/enums/pageState";
+import { ArtistData } from "@/util/types/ArtistData";
+import { AlbumData } from "@/util/types/AlbumData";
 
 interface SearchResultsProps {
   query: string;
@@ -26,8 +25,8 @@ interface SearchResultsProps {
 }
 
 interface TopResult {
-  type: "video" | "playlist" | "channel";
-  data: SongData | PlaylistMetadata | ChannelMetadata;
+  type: "SONG" | "ARTIST" | "ALBUM" | "VIDEO" | "PLAYLIST";
+  data: SongData | ArtistData | AlbumData | PlaylistMetadata;
 }
 
 export default function SearchResults({
@@ -37,7 +36,10 @@ export default function SearchResults({
 }: SearchResultsProps) {
   const [topResult, setTopResult] = useState<TopResult | null>(null);
   const [songs, setSongs] = useState<SongData[] | null>(null);
+  const [artists, setArtists] = useState<ArtistData[] | null>(null);
+  const [albums, setAlbums] = useState<AlbumData[] | null>(null);
   const [playlists, setPlaylists] = useState<PlaylistMetadata[] | null>(null);
+  const [videos, setVideos] = useState<SongData[] | null>(null);
 
   const dropdownId = useStateManager<string | null>(null);
   const dropdownPos = useStateManager<DropdownPos>({ x: 0, y: 0 });
@@ -65,24 +67,55 @@ export default function SearchResults({
         method: "POST",
         body: JSON.stringify({
           query: query,
-          count: 10,
         }),
       });
       if (songRes.status === 200) {
-        const data = await songRes.json();
-        setSongs(data.data as SongData[]);
+        const data: SongData[] = await songRes.json();
+        setSongs(data as SongData[]);
+      }
+
+      const artistRes = await fetch(`/search/artists`, {
+        method: "POST",
+        body: JSON.stringify({
+          query: query,
+        }),
+      });
+      if (artistRes.status === 200) {
+        const data: ArtistData[] = await artistRes.json();
+        setArtists(data as ArtistData[]);
+      }
+
+      const albumRes = await fetch(`/search/albums`, {
+        method: "POST",
+        body: JSON.stringify({
+          query: query,
+        }),
+      });
+      if (albumRes.status === 200) {
+        const data: AlbumData[] = await albumRes.json();
+        setAlbums(data as AlbumData[]);
       }
 
       const playlistRes = await fetch(`/search/playlists`, {
         method: "POST",
         body: JSON.stringify({
           query: query,
-          count: 6,
         }),
       });
       if (playlistRes.status === 200) {
         const data = await playlistRes.json();
-        setPlaylists(data.data as PlaylistMetadata[]);
+        setPlaylists(data as PlaylistMetadata[]);
+      }
+
+      const videoRes = await fetch(`/search/videos`, {
+        method: "POST",
+        body: JSON.stringify({
+          query: query,
+        }),
+      });
+      if (videoRes.status === 200) {
+        const data: SongData[] = await videoRes.json();
+        setSongs(data as SongData[]);
       }
     }
     init();
@@ -143,7 +176,7 @@ export default function SearchResults({
           </div>
         )}
 
-        {songs ? (
+        {/* {songs ? (
           <div className="my-[1vh]">
             <h1 className="mx-[2vw] text-2xl mb-[1vh]">SONGS</h1>
             <ExpandableList
@@ -185,9 +218,9 @@ export default function SearchResults({
               />
             ))}
           </div>
-        )}
+        )} */}
 
-        <Dropdown
+        {/* {<Dropdown
           className="rounded-[4px] overflow-hidden"
           id={dropdownId.get || undefined}
           pos={dropdownPos.get}
@@ -249,7 +282,7 @@ export default function SearchResults({
           <span className="flex items-center justify-center hover:cursor-pointer hover:bg-white/35 w-[10vw] h-[3vw] ">
             {"None found."}
           </span>
-        </Dropdown>
+        </Dropdown>} */}
 
         {/* {{playlists ? (
           <div className="my-[3vh]">

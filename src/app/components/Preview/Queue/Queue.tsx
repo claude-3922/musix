@@ -16,7 +16,7 @@ export default function Queue({ items }: QueueProps) {
     setTotalDuration(
       formatSongDuration(
         items
-          .map((v) => Number(v.vid.duration) || 0)
+          .map((v) => Number(v.duration) || 0)
           .reduce((sum, a) => (sum += a), 0)
       )
     );
@@ -29,7 +29,7 @@ export default function Queue({ items }: QueueProps) {
         <div>
           {items.map((item, i) => (
             <p key={i}>
-              {i + 1}. {item.vid.title}
+              {i + 1}. {item.title}
             </p>
           ))}
         </div>

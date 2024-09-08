@@ -28,8 +28,6 @@ export default function Controls({
   playerTime,
   playerPaused,
 }: ControlsProps) {
-  const { vid, playerInfo } = data;
-
   const previousHandler = async () => {
     const historyArray = await queueDB.history.toArray();
     const nowPlaying = historyArray[historyArray.length - 1];
@@ -41,7 +39,7 @@ export default function Controls({
 
     await queueDB.queue.add(nowPlaying);
 
-    await queueDB.history.where("vid.id").equals(nowPlaying.vid.id).delete();
+    await queueDB.history.where("vid.id").equals(nowPlaying.id).delete();
 
     songState.set(prevSong);
   };
@@ -56,10 +54,10 @@ export default function Controls({
 
     songState.set(songToPlay);
 
-    await queueDB.queue.where("vid.id").equals(songToPlay.vid.id).delete();
+    await queueDB.queue.where("vid.id").equals(songToPlay.id).delete();
   };
 
-  const lighterAccent = playerInfo.topColor;
+  const lighterAccent = "";
 
   return (
     <>
@@ -108,13 +106,13 @@ export default function Controls({
             }}
             height="0.25vw"
             width="30vw"
-            progressPercentage={(playerTime.get / vid.duration) * 100}
+            progressPercentage={(playerTime.get / data.duration) * 100}
             thumbRadius_pixels={16}
             thumbStyles={{
               backgroundColor: `${pSBC(0.5, lighterAccent, "#2D312C")}`,
             }}
             onSeek={(newPercentage) => {
-              const newTime = (newPercentage * vid.duration) / 100;
+              const newTime = (newPercentage * data.duration) / 100;
               audioPlayer.currentTime = newTime;
               let videoPlayer = document.getElementById(
                 "videoPlayer"
@@ -135,11 +133,11 @@ export default function Controls({
             onMouseDragEnd={(_, thumb) => {
               thumb.style.outline = `none`;
             }}
-            songDuration={vid.duration}
+            songDuration={data.duration}
           />
 
           <span className="flex text-sm w-[5vw] overflow-hidden justify-center">
-            {formatSongDuration(vid.duration)}
+            {formatSongDuration(data.duration)}
           </span>
         </span>
       </span>

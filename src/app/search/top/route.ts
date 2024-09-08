@@ -45,7 +45,9 @@ export async function POST(req: NextRequest) {
   }
 
   const topResult =
-    res.find((r) => r.name.toLowerCase() === query.toLowerCase()) || res[0];
+    res.find((r) => r.type === "SONG") ||
+    res.find((r) => r.name.toLowerCase() === query.toLowerCase()) ||
+    res[0];
 
   switch (topResult.type) {
     case "SONG":

@@ -54,24 +54,6 @@ export function Player({ audioPlayer, songState, pageState }: PlayerProps) {
   useEffect(() => {
     if (!data || !audioPlayer) return;
 
-    const completeColors = async (
-      incompleteData: SongData,
-      videoId: string
-    ): Promise<SongData> => {
-      let data = { ...incompleteData };
-      if (!data.playerInfo.accentColors || !data.playerInfo.topColor) {
-        try {
-          const res = await fetch(`/data/colors?id=${data.vid.id || videoId}`);
-          const colors = await res.json();
-          data.playerInfo.accentColors = colors.accentColors;
-          data.playerInfo.topColor = colors.topColor;
-        } catch (error) {
-          console.error("Error fetching colors:", error);
-        }
-      }
-      return data;
-    };
-
     const loadStartHandler = () => {
       setAudioLoading(true);
     };
@@ -84,9 +66,6 @@ export function Player({ audioPlayer, songState, pageState }: PlayerProps) {
       setAudioLoading(false);
 
       audioPlayer.play();
-      //previewStateRef.current.set(true);
-      audioPlayer.preservesPitch = false;
-      audioPlayer.playbackRate = 0.8;
     };
 
     const songEndedHandler = async () => {
@@ -100,16 +79,15 @@ export function Player({ audioPlayer, songState, pageState }: PlayerProps) {
 
       songState.set(songToPlay);
 
-      await queueDB.queue.where("vid.id").equals(songToPlay.vid.id).delete();
+      await queueDB.queue.where("vid.id").equals(songToPlay.id).delete();
     };
 
     const initPlayer = async (
       data: SongData,
       audioPlayer: HTMLAudioElement
     ) => {
-      const fullData = await completeColors(data, data.vid.id);
-      setSongData(fullData);
-      queueDB.setNowPlaying(fullData);
+      setSongData(data);
+      queueDB.setNowPlaying(data);
 
       audioPlayer.load();
       audioPlayer.volume = Number(
@@ -148,8 +126,6 @@ export function Player({ audioPlayer, songState, pageState }: PlayerProps) {
     return <PlayerLoading />;
   }
 
-  const { vid, owner, playerInfo } = songData;
-
   audioPlayer.addEventListener("timeupdate", timeUpdateHandler);
   audioPlayer.addEventListener("pause", pauseHandler);
   audioPlayer.addEventListener("play", playHandler);
@@ -168,16 +144,13 @@ export function Player({ audioPlayer, songState, pageState }: PlayerProps) {
       }}
     >
       <div className="flex justify-start items-center w-[30vw]">
-        <Thumbnail
-          songData={{ vid, owner, playerInfo }}
-          pageState={pageState}
-        />
-        <Title data={{ vid, owner, playerInfo }} />
+        <Thumbnail songData={songData} pageState={pageState} />
+        <Title data={songData} />
       </div>
 
       <div className="flex flex-col justify-center w-[40vw] h-[6.07vw] items-center">
         <Controls
-          data={{ vid, owner, playerInfo }}
+          data={songData}
           songState={songState}
           audioPlayer={audioPlayer}
           playerTime={playerTime}
@@ -186,7 +159,7 @@ export function Player({ audioPlayer, songState, pageState }: PlayerProps) {
         />
       </div>
 
-      <Extras data={{ vid, owner, playerInfo }} audioPlayer={audioPlayer} />
+      <Extras data={songData} audioPlayer={audioPlayer} />
     </div>
   );
 }

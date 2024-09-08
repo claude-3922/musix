@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
   const ytmusic = new YTMusic();
   const yt = await ytmusic.initialize();
   if (!yt) return console.log("NO YT");
-  const res = await yt.getArtist(query);
+  const res = await yt.getPlaylistVideos(query);
   console.log(res);
   return NextResponse.json(res);
 }

@@ -34,8 +34,6 @@ export default function Preview({
 
   if (!audioPlayer || !songData) return null;
 
-  const { vid, playerInfo } = songData;
-
   const tabs = [
     {
       id: 1,
@@ -50,12 +48,7 @@ export default function Preview({
     },
     {
       id: 2,
-      component: (
-        <Lyrics
-          title={`${songData.owner.title} - ${vid.title}`}
-          accent={pSBC(0.5, playerInfo.topColor, "#000000") || "black"}
-        />
-      ),
+      component: <></>,
     },
     { id: 3, component: <Queue items={queue || []} /> },
     { id: 4, component: <History items={history || []} /> },
