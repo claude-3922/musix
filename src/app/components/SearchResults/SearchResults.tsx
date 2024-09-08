@@ -12,11 +12,16 @@ import ExpandableList from "../Util/ExpandableList";
 import { pSBC } from "@/util/pSBC";
 import { Channel } from "youtube-sr";
 
-import TopResult from "./SearchItem/TopResult";
+import TopResult from "./Item/TopResult";
 import Dropdown, { DropdownPos } from "../Util/Dropdown";
 import { PAGE_STATES } from "@/util/enums/pageState";
 import { ArtistData } from "@/util/types/ArtistData";
 import { AlbumData } from "@/util/types/AlbumData";
+import { COLORS } from "@/util/enums/colors";
+import { useLiveQuery } from "dexie-react-hooks";
+import { queueDB } from "@/db/queueDB";
+import { loadingSpinner } from "../Player/Controls";
+import Song from "./Item/Song";
 
 interface SearchResultsProps {
   query: string;
@@ -48,8 +53,12 @@ export default function SearchResults({
   const playlistDropdownPos = useStateManager<DropdownPos>({ x: 0, y: 0 });
 
   useEffect(() => {
+    setTopResult(null);
     setSongs(null);
+    setArtists(null);
+    setAlbums(null);
     setPlaylists(null);
+    setVideos(null);
 
     async function init() {
       const topRes = await fetch(`/search/top`, {
@@ -74,66 +83,52 @@ export default function SearchResults({
         setSongs(data as SongData[]);
       }
 
-      const artistRes = await fetch(`/search/artists`, {
-        method: "POST",
-        body: JSON.stringify({
-          query: query,
-        }),
-      });
-      if (artistRes.status === 200) {
-        const data: ArtistData[] = await artistRes.json();
-        setArtists(data as ArtistData[]);
-      }
+      // const artistRes = await fetch(`/search/artists`, {
+      //   method: "POST",
+      //   body: JSON.stringify({
+      //     query: query,
+      //   }),
+      // });
+      // if (artistRes.status === 200) {
+      //   const data: ArtistData[] = await artistRes.json();
+      //   setArtists(data as ArtistData[]);
+      // }
 
-      const albumRes = await fetch(`/search/albums`, {
-        method: "POST",
-        body: JSON.stringify({
-          query: query,
-        }),
-      });
-      if (albumRes.status === 200) {
-        const data: AlbumData[] = await albumRes.json();
-        setAlbums(data as AlbumData[]);
-      }
+      // const albumRes = await fetch(`/search/albums`, {
+      //   method: "POST",
+      //   body: JSON.stringify({
+      //     query: query,
+      //   }),
+      // });
+      // if (albumRes.status === 200) {
+      //   const data: AlbumData[] = await albumRes.json();
+      //   setAlbums(data as AlbumData[]);
+      // }
 
-      const playlistRes = await fetch(`/search/playlists`, {
-        method: "POST",
-        body: JSON.stringify({
-          query: query,
-        }),
-      });
-      if (playlistRes.status === 200) {
-        const data = await playlistRes.json();
-        setPlaylists(data as PlaylistMetadata[]);
-      }
+      // const playlistRes = await fetch(`/search/playlists`, {
+      //   method: "POST",
+      //   body: JSON.stringify({
+      //     query: query,
+      //   }),
+      // });
+      // if (playlistRes.status === 200) {
+      //   const data = await playlistRes.json();
+      //   setPlaylists(data as PlaylistMetadata[]);
+      // }
 
-      const videoRes = await fetch(`/search/videos`, {
-        method: "POST",
-        body: JSON.stringify({
-          query: query,
-        }),
-      });
-      if (videoRes.status === 200) {
-        const data: SongData[] = await videoRes.json();
-        setSongs(data as SongData[]);
-      }
+      // const videoRes = await fetch(`/search/videos`, {
+      //   method: "POST",
+      //   body: JSON.stringify({
+      //     query: query,
+      //   }),
+      // });
+      // if (videoRes.status === 200) {
+      //   const data: SongData[] = await videoRes.json();
+      //   setSongs(data as SongData[]);
+      // }
     }
     init();
   }, [query]);
-
-  const darkerAccent = pSBC(0.03, "#000000");
-  const darkerDarkerAccent = pSBC(0.02, "#000000");
-  const darkestDarkerAccent = pSBC(0.01, "#000000");
-
-  const dropdownMenuBg = `linear-gradient(to top, ${pSBC(
-    0.98,
-    "#ffffff",
-    "#000000"
-  )}, ${pSBC(0.96, "#ffffff", "#000000")}, ${pSBC(
-    0.98,
-    "#ffffff",
-    "#000000"
-  )})`;
 
   return (
     <div
@@ -144,12 +139,7 @@ export default function SearchResults({
         }
       }}
       style={{
-        background: `linear-gradient(135deg, 
-        ${darkestDarkerAccent} 0%, 
-        ${darkerDarkerAccent} 30%, 
-        ${darkerAccent} 50%, 
-        ${darkerDarkerAccent} 70%, 
-        ${darkestDarkerAccent} 100%)`,
+        backgroundColor: COLORS.BG,
       }}
     >
       <div>
@@ -170,55 +160,53 @@ export default function SearchResults({
             />
           </div>
         ) : (
-          <div className="my-[1vh]">
-            <h1 className="mx-[2vw] text-2xl mb-[1vh]">-</h1>
-            <div className="animate-pulse rounded-[4px] w-[80vw] h-[12vh] mb-[1vh] mx-[1vw] bg-white/10" />
+          <div className="relative my-[3vh] flex items-center justify-center">
+            <div className="relative animate-pulse rounded-[4px] h-[20vh] w-[80vw] bg-white/10 mx-[1vw]"></div>
+            <span className="absolute z-[1]">
+              {loadingSpinner("5vw", "5vw")}
+            </span>
           </div>
         )}
 
-        {/* {songs ? (
-          <div className="my-[1vh]">
-            <h1 className="mx-[2vw] text-2xl mb-[1vh]">SONGS</h1>
-            <ExpandableList
-              beforeCount={3}
-              beforeHeight={`${3 * 13}vh`}
-              afterCount={songs.length - (topResult?.type === "video" ? 1 : 0)}
-              afterHeight={`${
-                (songs.length - (topResult?.type === "video" ? 1 : 0)) * 13
-              }vh`}
-              customExpandButtonProps={{
-                className:
-                  "text-sm w-[6vw] hover:bg-white/20 py-[0.5vh] border-2 rounded-full mx-[2vw]",
-              }}
-            >
-              {songs
-                .filter((v) =>
-                  topResult?.type === "video"
-                    ? v.vid.id !== (topResult.data as SongData).vid.id
-                    : true
-                )
-                .map((r, i) => (
-                  <SearchItemSong
-                    key={i}
-                    data={r}
-                    songState={songState}
-                    dropdownId={dropdownId}
-                    dropdownPos={dropdownPos}
-                  />
-                ))}
-            </ExpandableList>
-          </div>
+        {songs ? (
+          <ExpandableList
+            beforeCount={3}
+            beforeHeight={`${3 * 13}vh`}
+            afterCount={songs.length - (topResult?.type === "SONG" ? 1 : 0)}
+            afterHeight={`${
+              (songs.length - (topResult?.type === "SONG" ? 1 : 0)) * 13
+            }vh`}
+            customExpandButtonProps={{
+              className:
+                "text-sm w-[6vw] bg-white/10 hover:ring-2 ring-accentColor/50 py-[0.5vh] rounded-full mx-[1.5vw] my-[1vh]",
+            }}
+          >
+            {songs
+              .filter((v) =>
+                topResult?.type === "SONG"
+                  ? v.id !== (topResult.data as SongData).id
+                  : true
+              )
+              .map((r, i) => (
+                <Song
+                  key={i}
+                  data={r}
+                  songState={songState}
+                  dropdownId={dropdownId}
+                  dropdownPos={dropdownPos}
+                />
+              ))}
+          </ExpandableList>
         ) : (
-          <div className="my-[1vh]">
-            <h1 className="mx-[2vw] text-2xl mb-[1vh]">-</h1>
+          <div>
             {Array.from({ length: 3 }, (_, i) => (
               <div
                 key={i}
-                className="animate-pulse rounded-[4px] w-[80vw] h-[12vh] mb-[1vh] mx-[1vw] bg-white/10"
+                className="animate-pulse rounded-[4px] w-[80vw] h-[12vh] my-[1vh] mx-[1vw] bg-white/10"
               />
             ))}
           </div>
-        )} */}
+        )}
 
         {/* {<Dropdown
           className="rounded-[4px] overflow-hidden"

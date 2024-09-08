@@ -5,13 +5,16 @@ import { pSBC } from "@/util/pSBC";
 import { PlaylistMetadata } from "@/util/types/PlaylistData";
 import { SongData } from "@/util/types/SongData";
 import { StateManager } from "@/util/types/StateManager";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Dropdown, { DropdownPos, toggleDropdown } from "../../Util/Dropdown";
 import OverlayIcon from "../../Util/OverlayIcon";
 import { AlbumData } from "@/util/types/AlbumData";
 import { ArtistData } from "@/util/types/ArtistData";
-import { enqueue, play } from "@/app/player/manager";
+import { enqueue, play } from "@/player/manager";
 import { loadingSpinner } from "../../Player/Controls";
+import { COLORS } from "@/util/enums/colors";
+import { useLiveQuery } from "dexie-react-hooks";
+import { queueDB } from "@/db/queueDB";
 
 interface TopResultProps {
   type: "SONG" | "ARTIST" | "ALBUM" | "VIDEO" | "PLAYLIST";
@@ -31,8 +34,28 @@ export default function TopResult({
   dropdownPos,
 }: TopResultProps) {
   const [addedToQueue, setAddedToQueue] = useState(false);
+  const [isNp, setIsNp] = useState(false);
 
   const [waiting, setWaiting] = useState(false);
+
+  useEffect(() => {
+    async function init() {
+      if (songState.get && songState.get.id === data.id) {
+        setIsNp(true);
+      } else {
+        setIsNp(false);
+      }
+    }
+    init();
+  }, [songState]);
+
+  useLiveQuery(async () => {
+    const queueArray = await queueDB.queue.toArray();
+
+    if (queueArray.find((s) => s.id === data.id)) {
+      setAddedToQueue(true);
+    }
+  });
 
   let currentItemId: string | null = null;
 
@@ -96,7 +119,7 @@ export default function TopResult({
 
   return (
     <div
-      className="flex items-center rounded-[4px] h-[20vh] w-[80vw] bg-white/10 mx-[1vw] "
+      className="flex items-center rounded-[4px] h-[20vh] w-[80vw] bg-white/10 mx-[1vw]"
       onContextMenu={(e) => {
         dropdownPos.set({
           x: e.clientX - 20,
@@ -114,7 +137,10 @@ export default function TopResult({
           overflow: "hidden",
           margin: "0vw 1vw",
         }}
-        onClick={async () => await handlePlay()}
+        onClick={async () => {
+          if (isNp) return;
+          await handlePlay();
+        }}
       >
         {waiting ? (
           loadingSpinner("4vw", "4vw")
@@ -153,19 +179,30 @@ export default function TopResult({
         <span className="flex justify-center items-center gap-8">
           <span className="flex justify-center items-center gap-2">
             <button
-              className="rounded-full border-2 px-[1vw] py-[0.5vh] hover:bg-white/20"
-              onClick={async () => await handlePlay()}
+              className="rounded-full px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50"
+              onClick={async () => {
+                if (isNp) return;
+                await handlePlay();
+              }}
               disabled={waiting}
+              style={{
+                opacity: waiting || isNp ? 0.5 : 1,
+                backgroundColor: COLORS.ACCENT,
+              }}
             >
-              Play
+              {isNp ? "Already playing" : "Play"}
             </button>
             <button
-              className="rounded-full border-2 px-[1vw] py-[0.5vh] hover:bg-white/20"
+              className="rounded-full px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50"
               onClick={async () => {
                 await handleEnqueue();
                 setAddedToQueue(true);
               }}
               disabled={addedToQueue || waiting}
+              style={{
+                opacity: waiting || addedToQueue ? 0.5 : 1,
+                backgroundColor: COLORS.ACCENT,
+              }}
             >
               {addedToQueue ? "Added to queue" : "Add to queue"}
             </button>

@@ -6,6 +6,7 @@ import { SongData } from "@/util/types/SongData";
 import { pSBC } from "@/util/pSBC";
 import { StateManager } from "@/util/types/StateManager";
 import SeekBar from "../Util/SeekBar";
+import { COLORS } from "@/util/enums/colors";
 
 interface ExtrasProps {
   data: SongData;
@@ -48,17 +49,17 @@ export default function Extras({ data, audioPlayer }: ExtrasProps) {
             height="0.25vw"
             containerStyles={{
               borderRadius: "10vw",
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
+              backgroundColor: COLORS.BG,
             }}
             progressStyles={{
-              backgroundColor:
-                `${pSBC(0.5, lighterAccent, "#000000")}` || "white",
+              backgroundColor: COLORS.ACCENT,
               borderRadius: "10vw",
             }}
             progressPercentage={audioPlayer.volume * 100}
             thumbRadius_pixels={16}
             thumbStyles={{
-              backgroundColor: `${pSBC(0.5, lighterAccent, "#000000")}`,
+              backgroundColor: COLORS.ACCENT,
+              transition: "opacity 0.125s linear, transform 0.125s linear",
             }}
             onSeek={(newPercentage) => {
               const newVolume = newPercentage / 100;
@@ -66,15 +67,10 @@ export default function Extras({ data, audioPlayer }: ExtrasProps) {
                 audioPlayer.volume = newVolume;
             }}
             onMouseDragStart={(_, thumb) => {
-              thumb.style.outline = `2px solid ${pSBC(
-                0.5,
-                lighterAccent,
-                "#2D312C"
-              )}`;
-              thumb.style.outlineOffset = `2px`;
+              thumb.style.transform = "scale(1.3)";
             }}
             onMouseDragEnd={(_, thumb) => {
-              thumb.style.outline = `none`;
+              thumb.style.transform = "scale(1)";
             }}
           />
         )}
@@ -98,7 +94,7 @@ export default function Extras({ data, audioPlayer }: ExtrasProps) {
         className="mr-[1.5vw] hover:scale-110"
         onClick={() => setShowLikeFill((p) => !p)}
       >
-        {showLikeFill ? heartFill(lighterAccent || "gray") : heartNoFill}
+        {showLikeFill ? heartFill(COLORS.ACCENT) : heartNoFill}
       </button>
       <button
         className="mr-[1.5vw] hover:scale-110"
@@ -112,7 +108,7 @@ export default function Extras({ data, audioPlayer }: ExtrasProps) {
             xmlns="http://www.w3.org/2000/svg"
             width="22"
             height="22"
-            fill={`${pSBC(0.5, lighterAccent, "#000000")}`}
+            fill={COLORS.ACCENT}
             className="bi bi-repeat"
             viewBox="0 0 16 16"
           >
@@ -153,7 +149,7 @@ export const heartFill = (fillColor: string) => (
     xmlns="http://www.w3.org/2000/svg"
     width="18"
     height="18"
-    fill={`${pSBC(0.5, fillColor, "#000000")}`}
+    fill={`${fillColor}`}
     className="bi bi-heart-fill"
     viewBox="0 0 16 16"
   >

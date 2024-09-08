@@ -10,6 +10,7 @@ import { pSBC } from "@/util/pSBC";
 import { StateManager } from "@/util/types/StateManager";
 import { queueDB } from "@/db/queueDB";
 import SeekBar from "../Util/SeekBar";
+import { COLORS } from "@/util/enums/colors";
 
 interface ControlsProps {
   data: SongData;
@@ -57,8 +58,6 @@ export default function Controls({
     await queueDB.queue.where("vid.id").equals(songToPlay.id).delete();
   };
 
-  const lighterAccent = "";
-
   return (
     <>
       <span className="flex flex-row justify-between items-center">
@@ -96,12 +95,11 @@ export default function Controls({
 
           <SeekBar
             containerStyles={{
-              backgroundColor: `rgba(255, 255, 255, 0.1)`,
+              backgroundColor: COLORS.BG,
               borderRadius: "10vw",
             }}
             progressStyles={{
-              backgroundColor:
-                `${pSBC(0.5, lighterAccent, "#000000")}` || "white",
+              backgroundColor: COLORS.ACCENT,
               borderRadius: "10vw",
             }}
             height="0.25vw"
@@ -109,7 +107,8 @@ export default function Controls({
             progressPercentage={(playerTime.get / data.duration) * 100}
             thumbRadius_pixels={16}
             thumbStyles={{
-              backgroundColor: `${pSBC(0.5, lighterAccent, "#2D312C")}`,
+              backgroundColor: COLORS.ACCENT,
+              transition: "opacity 0.125s linear, transform 0.125s linear",
             }}
             onSeek={(newPercentage) => {
               const newTime = (newPercentage * data.duration) / 100;
@@ -123,15 +122,10 @@ export default function Controls({
               }
             }}
             onMouseDragStart={(_, thumb) => {
-              thumb.style.outline = `2px solid ${pSBC(
-                0.5,
-                lighterAccent,
-                "#2D312C"
-              )}`;
-              thumb.style.outlineOffset = `2px`;
+              thumb.style.transform = "scale(1.3)";
             }}
             onMouseDragEnd={(_, thumb) => {
-              thumb.style.outline = `none`;
+              thumb.style.transform = "scale(1)";
             }}
             songDuration={data.duration}
           />

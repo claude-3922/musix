@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Rubik } from "next/font/google";
 import "./globals.css";
+import { COLORS } from "@/util/enums/colors";
 
 const font = Rubik({
   weight: "400",
@@ -19,7 +20,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${font.className} bg-black/90 text-white`}>
+      <body
+        className={`${font.className} text-white`}
+        style={{ background: COLORS.BG }}
+      >
         {children}
       </body>
     </html>

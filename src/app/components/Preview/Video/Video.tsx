@@ -47,7 +47,7 @@ export default function Video({
         id="videoPlayer"
         ref={(r) => videoPlayer.set(r)}
         className="absolute z-[1] w-[60vw] h-[36vw] left-[0%] top-[0%] rounded-[4px] object-contain"
-        src={enabled ? `/media?id=${songData.id}&vid=1` : ""}
+        src={`/media?id=${songData.id}&vid=1`}
         poster={songData.thumbnail}
         onTimeUpdate={timeUpdateHandler}
         onClick={clickHandler}

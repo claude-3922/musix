@@ -17,6 +17,7 @@ import { queueDB } from "@/db/queueDB";
 import useStateManager from "@/app/hooks/StateManager";
 import PlayerEmpty from "./PlayerEmpty";
 import { PAGE_STATES } from "@/util/enums/pageState";
+import { COLORS } from "@/util/enums/colors";
 
 interface PlayerProps {
   audioPlayer: HTMLAudioElement | null;
@@ -134,13 +135,7 @@ export function Player({ audioPlayer, songState, pageState }: PlayerProps) {
     <div
       className={`no-select text-white flex flex-row items-center justify-between w-[100vw] h-[6.07vw] px-[1vw]`}
       style={{
-        background: `linear-gradient(90deg, ${pSBC(0.01, "#000000")} 0%, ${pSBC(
-          0.02,
-          "#000000"
-        )} 25%, ${pSBC(0.03, "#000000")} 50%, ${pSBC(
-          0.02,
-          "#000000"
-        )} 75%, ${pSBC(0.01, "#000000")} 100%)`,
+        backgroundColor: `${pSBC(0.4, COLORS.BG, "#000000")}`,
       }}
     >
       <div className="flex justify-start items-center w-[30vw]">
