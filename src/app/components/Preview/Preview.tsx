@@ -12,6 +12,7 @@ import History from "./Queue/History";
 import useStateManager from "@/app/hooks/StateManager";
 import Video from "./Video/Video";
 import { COLORS } from "@/util/enums/colors";
+import OverlayIcon from "../Util/OverlayIcon";
 
 interface PreviewProps {
   vidEnabled: boolean;
@@ -24,81 +25,54 @@ export default function Preview({
   songData,
   audioPlayer,
 }: PreviewProps) {
-  const [activeTab, setActiveTab] = useState(1);
-  const [previousTab, setPreviousTab] = useState(activeTab);
   const videoPlayerState = useStateManager<HTMLVideoElement | null>(null);
-
-  useEffect(() => setPreviousTab(activeTab), [activeTab]);
 
   const queue = useLiveQuery(() => queueDB.queue.toArray());
   const history = useLiveQuery(() => queueDB.history.toArray());
 
   if (!audioPlayer || !songData) return null;
 
-  const tabs = [
-    {
-      id: 1,
-      component: (
-        <Video
-          songData={songData}
-          enabled={vidEnabled}
-          audioPlayer={audioPlayer}
-          videoPlayer={videoPlayerState}
-        />
-      ),
-    },
-    {
-      id: 2,
-      component: <></>,
-    },
-    { id: 3, component: <Queue items={queue || []} /> },
-    { id: 4, component: <History items={history || []} /> },
-  ];
+  const clickHandler = () => {
+    audioPlayer.paused ? audioPlayer.play() : audioPlayer.pause();
+  };
+
+  const timeUpdateHandler = () => {
+    if (!videoPlayerState.get) return;
+    syncVideoToAudio(audioPlayer, videoPlayerState.get);
+  };
 
   return (
     <div
-      className="scrollbar-hide flex flex-col items-center justify-center w-[100vw] h-[83.25vh] overflow-y-hidden"
+      className="scrollbar-hide flex items-center justify-center w-[100vw] h-[83.25vh] overflow-y-hidden"
       style={{
         backgroundColor: COLORS.BG,
       }}
     >
-      <div className="flex items-center justify-center">
-        {tabs.map(({ id }) => (
-          <button
-            key={id}
-            onClick={() => setActiveTab(id)}
-            className={`my-[2vh] mx-[0.5vw] ${id === 1 ? "p-[0.5vw]" : ""}`}
-            style={{
-              borderBottom: activeTab === id ? "solid 2px white" : "none",
-            }}
-          >
-            {id === 1 ? (
-              <img className="w-[2vw] h-[2vw]" src="icons/playFill.svg" />
-            ) : (
-              `TAB ${id}`
-            )}
-          </button>
-        ))}
+      <div className="flex justify-center items-center w-[90vw] h-[40vw] rounded-l">
+        <video
+          ref={(r) => videoPlayerState.set(r)}
+          id="videoPlayer"
+          src={`/media?id=${songData.id}&vid=1`}
+          onTimeUpdate={timeUpdateHandler}
+          onClick={clickHandler}
+          autoPlay
+          className="h-[93.3%] w-[63.3%] object-cover rounded-l-3xl mx-[1vw]"
+        ></video>
+        <span className="flex flex-col justify-evenly items-center h-[93.3%] w-full bg-white/10 rounded-r-3xl">
+          <span className="flex gap-4 justify-center items-center">
+            <button>LYRICS</button>
+            <button>QUEUE</button>
+            <button>HISTORY</button>
+          </span>
+        </span>
       </div>
-      <AnimatePresence mode="wait">
-        {tabs.map(
-          ({ id, component }) =>
-            activeTab === id && (
-              <motion.div
-                key={id}
-                initial={{
-                  x: activeTab > previousTab ? 300 : -300,
-                  opacity: 0,
-                }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: activeTab > previousTab ? -300 : 300, opacity: 0 }}
-                transition={{ duration: 0.125 }}
-              >
-                {component}
-              </motion.div>
-            )
-        )}
-      </AnimatePresence>
     </div>
   );
 }
+
+const syncVideoToAudio = (audio: HTMLAudioElement, video: HTMLVideoElement) => {
+  if (Math.abs(audio.currentTime - video.currentTime) >= 0.25) {
+    video.currentTime = audio.currentTime;
+    console.log("Video time changed");
+  }
+};

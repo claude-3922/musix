@@ -11,6 +11,7 @@ import { StateManager } from "@/util/types/StateManager";
 import { queueDB } from "@/db/queueDB";
 import SeekBar from "../Util/SeekBar";
 import { COLORS } from "@/util/enums/colors";
+import { enqueue, play } from "@/player/manager";
 
 interface ControlsProps {
   data: SongData;
@@ -31,29 +32,38 @@ export default function Controls({
 }: ControlsProps) {
   const previousHandler = async () => {
     const historyArray = await queueDB.history.toArray();
-    const nowPlaying = historyArray[historyArray.length - 1];
-    const prevSong = historyArray[historyArray.length - 2];
+    const nowPlaying = await queueDB.getNowPlaying();
+    const prevSong = historyArray[historyArray.length - 1];
 
-    if (!prevSong) {
+    if (!prevSong || historyArray.length === 0) {
       return (audioPlayer.currentTime = 0);
     }
 
-    await queueDB.queue.add(nowPlaying);
+    if (nowPlaying) {
+      const enqueued = await enqueue(nowPlaying);
+      if (!enqueued) {
+        console.log("Failed to enqueue song");
+      }
+    }
 
-    await queueDB.history.where("vid.id").equals(nowPlaying.id).delete();
+    const played = await play(songState, prevSong, false);
+    if (!played) {
+      console.log("Failed to play song");
+    }
 
-    songState.set(prevSong);
+    await queueDB.history.where("vid.id").equals(prevSong.id).delete();
   };
 
   const nextHandler = async () => {
-    const songToPlay = (await queueDB.queue.toArray())[0] || null;
+    const queue = await queueDB.queue.toArray();
+    if (queue.length === 0) return;
+    const songToPlay = queue[0];
 
-    if (!songToPlay) {
-      return songState.set(songToPlay);
+    if (!songToPlay) return;
+    const played = await play(songState, songToPlay);
+    if (!played) {
+      console.log("Failed to play song");
     }
-    await queueDB.history.add(songToPlay);
-
-    songState.set(songToPlay);
 
     await queueDB.queue.where("vid.id").equals(songToPlay.id).delete();
   };

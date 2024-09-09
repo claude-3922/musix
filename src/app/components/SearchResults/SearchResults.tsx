@@ -22,6 +22,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { queueDB } from "@/db/queueDB";
 import { loadingSpinner } from "../Player/Controls";
 import Song from "./Item/Song";
+import { enqueue, play } from "@/player/manager";
 
 interface SearchResultsProps {
   query: string;
@@ -169,34 +170,36 @@ export default function SearchResults({
         )}
 
         {songs ? (
-          <ExpandableList
-            beforeCount={3}
-            beforeHeight={`${3 * 13}vh`}
-            afterCount={songs.length - (topResult?.type === "SONG" ? 1 : 0)}
-            afterHeight={`${
-              (songs.length - (topResult?.type === "SONG" ? 1 : 0)) * 13
-            }vh`}
-            customExpandButtonProps={{
-              className:
-                "text-sm w-[6vw] bg-white/10 hover:ring-2 ring-accentColor/50 py-[0.5vh] rounded-full mx-[1.5vw] my-[1vh]",
-            }}
-          >
-            {songs
-              .filter((v) =>
-                topResult?.type === "SONG"
-                  ? v.id !== (topResult.data as SongData).id
-                  : true
-              )
-              .map((r, i) => (
-                <Song
-                  key={i}
-                  data={r}
-                  songState={songState}
-                  dropdownId={dropdownId}
-                  dropdownPos={dropdownPos}
-                />
-              ))}
-          </ExpandableList>
+          <div className="my-[3vh]">
+            <ExpandableList
+              beforeCount={3}
+              beforeHeight={`${3 * 13}vh`}
+              afterCount={songs.length - (topResult?.type === "SONG" ? 1 : 0)}
+              afterHeight={`${
+                (songs.length - (topResult?.type === "SONG" ? 1 : 0)) * 13
+              }vh`}
+              customExpandButtonProps={{
+                className:
+                  "text-sm w-[6vw] bg-white/10 hover:ring-2 ring-accentColor/50 py-[0.5vh] rounded-full mx-[1.5vw] my-[1vh]",
+              }}
+            >
+              {songs
+                .filter((v) =>
+                  topResult?.type === "SONG"
+                    ? v.id !== (topResult.data as SongData).id
+                    : true
+                )
+                .map((r, i) => (
+                  <Song
+                    key={i}
+                    data={r}
+                    songState={songState}
+                    dropdownId={dropdownId}
+                    dropdownPos={dropdownPos}
+                  />
+                ))}
+            </ExpandableList>
+          </div>
         ) : (
           <div>
             {Array.from({ length: 3 }, (_, i) => (
@@ -208,32 +211,30 @@ export default function SearchResults({
           </div>
         )}
 
-        {/* {<Dropdown
+        <Dropdown
           className="rounded-[4px] overflow-hidden"
           id={dropdownId.get || undefined}
           pos={dropdownPos.get}
-          dropdownStyle={{ background: dropdownMenuBg }}
+          dropdownStyle={{ background: `${pSBC(0.4, COLORS.BG, "#000000")}` }}
           width={"10vw"}
           height={"9vw"}
         >
           <span
             onClick={async () => {
-              await playHandler(
+              await play(
                 songState,
-                songs?.find((v) => v.vid.id === dropdownId.get) as any
+                songs?.find((s) => s.id === dropdownId.get)!
               );
             }}
-            className="flex items-center justify-center hover:cursor-pointer hover:bg-white/35 w-[10vw] h-[3vw] "
+            className="flex items-center justify-evenly hover:cursor-pointer hover:bg-white/10 w-[10vw] h-[3vw] "
           >
             Play
           </span>
           <span
             onClick={async () => {
-              await queueAddHandler(
-                songs?.find((v) => v.vid.id === dropdownId.get) as any
-              );
+              await enqueue(songs?.find((s) => s.id === dropdownId.get)!);
             }}
-            className="flex items-center justify-center hover:cursor-pointer hover:bg-white/35 w-[10vw] h-[3vw] "
+            className="flex items-center justify-evenly hover:cursor-pointer hover:bg-white/10 w-[10vw] h-[3vw] "
           >
             Add to queue
           </span>
@@ -245,32 +246,11 @@ export default function SearchResults({
                 y: `${(dropdownPos.get.y as number) + 100}px`,
               });
             }}
-            className="flex items-center justify-center hover:cursor-pointer hover:bg-white/35 w-[10vw] h-[3vw] "
+            className="flex items-center justify-evenly hover:cursor-pointer hover:bg-white/10 w-[10vw] h-[3vw] "
           >
             Add to playlist
           </div>
         </Dropdown>
-
-        <Dropdown
-          onMouseOut={() => playlistDropdownId.set(null)}
-          onClick={() => playlistDropdownId.set(null)}
-          className="rounded-[4px] overflow-hidden"
-          id={playlistDropdownId.get || undefined}
-          pos={playlistDropdownPos.get}
-          dropdownStyle={{ background: dropdownMenuBg }}
-          width={"10vw"}
-          height={"9vw"}
-        >
-          <span className="flex items-center justify-center hover:cursor-pointer hover:bg-white/35 w-[10vw] h-[3vw] ">
-            {"None found."}
-          </span>
-          <span className="flex items-center justify-center hover:cursor-pointer hover:bg-white/35 w-[10vw] h-[3vw] ">
-            {"None found."}
-          </span>
-          <span className="flex items-center justify-center hover:cursor-pointer hover:bg-white/35 w-[10vw] h-[3vw] ">
-            {"None found."}
-          </span>
-        </Dropdown>} */}
 
         {/* {{playlists ? (
           <div className="my-[3vh]">

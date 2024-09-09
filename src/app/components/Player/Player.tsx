@@ -18,6 +18,7 @@ import useStateManager from "@/app/hooks/StateManager";
 import PlayerEmpty from "./PlayerEmpty";
 import { PAGE_STATES } from "@/util/enums/pageState";
 import { COLORS } from "@/util/enums/colors";
+import { play } from "@/player/manager";
 
 interface PlayerProps {
   audioPlayer: HTMLAudioElement | null;
@@ -72,13 +73,15 @@ export function Player({ audioPlayer, songState, pageState }: PlayerProps) {
     const songEndedHandler = async () => {
       if (audioPlayer.loop) return;
 
-      const queue = queueDB.queue.toCollection();
-      const songToPlay = await queue.first();
+      const queue = await queueDB.queue.toArray();
+      if (queue.length === 0) return;
+      const songToPlay = queue[0];
 
       if (!songToPlay) return;
-      await queueDB.history.add(songToPlay);
-
-      songState.set(songToPlay);
+      const played = await play(songState, songToPlay);
+      if (!played) {
+        console.log("Failed to play song");
+      }
 
       await queueDB.queue.where("vid.id").equals(songToPlay.id).delete();
     };
@@ -108,6 +111,7 @@ export function Player({ audioPlayer, songState, pageState }: PlayerProps) {
       audioPlayer.removeEventListener("canplay", playReadyHandler);
       audioPlayer.removeEventListener("ended", songEndedHandler);
       audioPlayer.removeEventListener("waiting", waitingHandler);
+      setSongData(null);
     };
   }, [audioPlayer, data, songState]);
 

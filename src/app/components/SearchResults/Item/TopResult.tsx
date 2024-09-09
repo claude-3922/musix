@@ -47,7 +47,7 @@ export default function TopResult({
       }
     }
     init();
-  }, [songState]);
+  }, [data.id, songState]);
 
   useLiveQuery(async () => {
     const queueArray = await queueDB.queue.toArray();
@@ -119,7 +119,7 @@ export default function TopResult({
 
   return (
     <div
-      className="flex items-center rounded-[4px] h-[20vh] w-[80vw] bg-white/10 mx-[1vw]"
+      className="flex justify-start items-center rounded-[4px] h-[18vh] w-[80vw] bg-white/10 mx-[1vw]"
       onContextMenu={(e) => {
         dropdownPos.set({
           x: e.clientX - 20,
@@ -130,8 +130,8 @@ export default function TopResult({
     >
       <OverlayIcon
         thumbnailURL={data.thumbnail}
-        width={"10vw"}
-        height={"10vw"}
+        width={"8vw"}
+        height={"8vw"}
         iconStyle={{
           borderRadius: "4px",
           overflow: "hidden",
@@ -143,93 +143,90 @@ export default function TopResult({
         }}
       >
         {waiting ? (
-          loadingSpinner("4vw", "4vw")
+          loadingSpinner("3.5vw", "3.5vw")
         ) : (
           <img
             src="/icons/playFill.svg"
-            style={{ width: "4vw", height: "4vw", opacity: 0.8 }}
+            style={{ width: "3.5vw", height: "3.5vw", opacity: 0.8 }}
           />
         )}
       </OverlayIcon>
 
-      <span className="flex flex-col gap-4 items-start justify-center">
+      <span className="grow ">
+        <span className="text-sm text-nowrap opacity-50">
+          <h1>{`${type} • ${
+            (type === "SONG" || type === "VIDEO") &&
+            formatSongDuration((data as SongData).duration)
+          }`}</h1>
+        </span>
         <span>
-          <span className="text-sm w-[60ch] overflow-hidden whitespace-nowrap opacity-50">
-            <h1>{`${type} • ${
-              type !== "ARTIST" &&
-              type !== "PLAYLIST" &&
-              (type === "SONG" || type === "VIDEO"
-                ? formatSongDuration((data as SongData).duration)
-                : (data as AlbumData).year)
-            }`}</h1>
-          </span>
-          <h1 className="text-lg w-[60ch] overflow-hidden whitespace-nowrap">
+          <h1 className="text-lg">
             {type === "SONG" || type === "VIDEO"
               ? (data as SongData).title
               : (data as AlbumData | ArtistData | PlaylistMetadata).name}
           </h1>
-          <h1 className="text-base w-[60ch] overflow-hidden whitespace-nowrap">
-            {type !== "ARTIST" &&
-              (type === "SONG" || type === "VIDEO" || type === "ALBUM"
-                ? (data as SongData | AlbumData).artist.name
-                : (data as PlaylistMetadata).owner.name)}
+          <h1 className="">
+            {type === "SONG" || type === "VIDEO" || type === "ALBUM"
+              ? (data as SongData | AlbumData).artist.name
+              : type === "PLAYLIST" && (data as PlaylistMetadata).owner.name}
           </h1>
         </span>
+      </span>
 
-        <span className="flex justify-center items-center gap-8">
-          <span className="flex justify-center items-center gap-2">
-            <button
-              className="rounded-full px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50"
-              onClick={async () => {
-                if (isNp) return;
-                await handlePlay();
-              }}
-              disabled={waiting}
-              style={{
-                opacity: waiting || isNp ? 0.5 : 1,
-                backgroundColor: COLORS.ACCENT,
-              }}
-            >
-              {isNp ? "Already playing" : "Play"}
-            </button>
-            <button
-              className="rounded-full px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50"
-              onClick={async () => {
-                await handleEnqueue();
-                setAddedToQueue(true);
-              }}
-              disabled={addedToQueue || waiting}
-              style={{
-                opacity: waiting || addedToQueue ? 0.5 : 1,
-                backgroundColor: COLORS.ACCENT,
-              }}
-            >
-              {addedToQueue ? "Added to queue" : "Add to queue"}
-            </button>
-            <span
-              //type="button"
-              className="flex items-center justify-center relative rounded-full hover:cursor-pointer"
-              onClick={(e) => {
-                dropdownPos.set({
-                  x: e.clientX - 20,
-                  y: e.clientY - 20,
-                });
-                toggleDropdown(currentItemId as any, dropdownId);
-              }}
-            >
-              <img
-                className="w-[1.5vw] h-[1.5vw] hover:scale-110"
-                src="/icons/dots_vertical.svg"
-              ></img>
-            </span>
-          </span>
+      <span className="flex justify-end items-center gap-2 w-[38.5ch] mr-[1vw]">
+        <button
+          className="rounded-full px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50"
+          onClick={async () => {
+            if (isNp) return;
+            await handlePlay();
+          }}
+          disabled={waiting}
+          style={{
+            opacity: waiting || isNp ? 0.5 : 1,
+            backgroundColor: COLORS.ACCENT,
+          }}
+        >
+          {isNp ? "Already playing" : "Play"}
+        </button>
+        <button
+          className="rounded-full px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50"
+          onClick={async () => {
+            await handleEnqueue();
+            setAddedToQueue(true);
+          }}
+          disabled={addedToQueue || waiting}
+          style={{
+            opacity: waiting || addedToQueue ? 0.5 : 1,
+            backgroundColor: COLORS.ACCENT,
+          }}
+        >
+          {addedToQueue ? "Added to queue" : "Add to queue"}
+        </button>
+        <span
+          //type="button"
+          className="flex items-center justify-center relative rounded-full hover:cursor-pointer"
+          onClick={(e) => {
+            dropdownPos.set({
+              x: e.clientX - 20,
+              y: e.clientY - 20,
+            });
+            toggleDropdown(currentItemId as any, dropdownId);
+          }}
+        >
+          <img
+            className="w-[1.5vw] h-[1.5vw] hover:scale-110"
+            src="/icons/dots_vertical.svg"
+          ></img>
         </span>
       </span>
     </div>
   );
 }
 
-const fetchSongs = async (type: string, id: string): Promise<SongData[]> => {
+const fetchSongs = async (
+  type: "ALBUM" | "PLAYLIST",
+  id: string
+): Promise<SongData[]> => {
   const endpoint =
     type === "ALBUM" ? `/data/album?id=${id}` : `/data/playlist/items?id=${id}`;
   const res = await fetch(endpoint);

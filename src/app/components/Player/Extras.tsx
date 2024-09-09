@@ -21,8 +21,6 @@ export default function Extras({ data, audioPlayer }: ExtrasProps) {
 
   const volumeSlider = useRef<HTMLInputElement | null>(null);
 
-  const lighterAccent = "";
-
   audioPlayer.onvolumechange = () => {
     const isMuted = audioPlayer.volume === 0;
     setMuted(isMuted);

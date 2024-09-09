@@ -11,13 +11,11 @@ export default function History({ items }: HistoryProps) {
       {items.length > 1 ? (
         <div>
           {items.map((item, i) => {
-            if (i + 1 !== items.length) {
-              return (
-                <p key={i}>
-                  {i + 1}. {item.title}
-                </p>
-              );
-            }
+            return (
+              <p key={i}>
+                {i + 1}. {item.title}
+              </p>
+            );
           })}
         </div>
       ) : (

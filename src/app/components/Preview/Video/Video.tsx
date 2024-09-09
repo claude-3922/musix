@@ -42,29 +42,19 @@ export default function Video({
   });
 
   return (
-    <div className="relative w-[60vw] h-[36vw] rounded-[4px]">
+    <div className="flex justify-center items-center relative w-[60vw] h-[36vw] rounded-[4px] bg-black">
       <video
         id="videoPlayer"
         ref={(r) => videoPlayer.set(r)}
-        className="absolute z-[1] w-[60vw] h-[36vw] left-[0%] top-[0%] rounded-[4px] object-contain"
+        className="absolute z-[1] h-[36vw] left-[20%] top-[0%] rounded-[4px] object-cover"
         src={`/media?id=${songData.id}&vid=1`}
-        poster={songData.thumbnail}
         onTimeUpdate={timeUpdateHandler}
         onClick={clickHandler}
         onLoadStart={loadingHandler}
         onWaiting={loadingHandler}
         onCanPlay={playHandler}
-        autoPlay={!audioPlayer.paused}
+        autoPlay
       />
-
-      {loading && enabled && (
-        <div
-          className="flex items-center justify-center absolute z-[2] left-[0%] top-[0%] bg-black/50"
-          style={videoPlayer.get ? videoContainerStyles(videoPlayer.get) : {}}
-        >
-          {loadingSpinner("5vw", "5vw")}
-        </div>
-      )}
     </div>
   );
 }

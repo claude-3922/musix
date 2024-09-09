@@ -49,6 +49,7 @@ export async function POST(req: NextRequest) {
   }
 
   const topResult = res[0];
+  console.log(res[0]);
 
   return NextResponse.json(
     {

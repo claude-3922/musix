@@ -93,15 +93,31 @@ export default function Song({
         )}
       </OverlayIcon>
 
-      <span className="flex flex-col gap-2 items-start justify-center">
-        <span>
-          <h1>{data.title}</h1>
-          <h1 className="text-sm">{data.artist.name}</h1>
-        </span>
-
+      <span className="flex flex-col items-start justify-center w-[65ch]">
+        <h1>{data.title}</h1>
+        <h1 className="text-sm">{data.artist.name}</h1>
+      </span>
+      <span className="flex items-center justify-end w-[37ch] gap-4 mr-[1vw]">
         <h1 className="text-sm opacity-50">
           {formatSongDuration(data.duration)}
         </h1>
+
+        <span
+          //type="button"
+          className="flex items-center justify-center relative rounded-full hover:cursor-pointer"
+          onClick={(e) => {
+            dropdownPos.set({
+              x: e.clientX - 20,
+              y: e.clientY - 20,
+            });
+            toggleDropdown(currentItemId as any, dropdownId);
+          }}
+        >
+          <img
+            className="w-[1.5vw] h-[1.5vw] hover:scale-110"
+            src="/icons/dots_vertical.svg"
+          ></img>
+        </span>
       </span>
     </div>
   );
