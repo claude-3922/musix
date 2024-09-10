@@ -122,6 +122,7 @@ export default function Home() {
                   songData={songState.get}
                   vidEnabled={vid}
                   audioPlayer={audioPlayer || null}
+                  songState={songState}
                 />
               </motion.div>
             )}
