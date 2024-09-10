@@ -1,41 +1,43 @@
+import { LyricsData } from "@/util/types/LyricsData";
 import { NextRequest, NextResponse } from "next/server";
-import { Client } from "genius-lyrics";
 
-const GeniusClient = new Client();
+export async function GET(req: NextRequest) {
+  const name = req.nextUrl.searchParams.get("name");
+  const artist = req.nextUrl.searchParams.get("artist");
+  const album = req.nextUrl.searchParams.get("album");
+  const duration = req.nextUrl.searchParams.get("duration");
 
-export async function POST(req: NextRequest) {
-  let title = null;
-
-  try {
-    const body = await req.json();
-    title = body.title;
-  } catch (error) {
-    console.log(" INFO /data/lyrics 'Invalid request body'");
-    console.log(error);
+  if (!name || !artist || !album || !duration) {
     return NextResponse.json(
-      { message: "Invalid request body" },
-      { status: 403 }
+      { message: "Missing params (song, artist, album, duration)" },
+      { status: 400 }
     );
   }
 
-  if (!title) {
-    console.log(" INFO /data/lyrics 'No song title given'");
+  const res = await fetch(
+    `https://lrclib.net/api/get?artist_name=${artist}&album_name=${album}&track_name=${name}&duration=${duration}`
+  );
+  if (res.status !== 200) {
     return NextResponse.json(
-      { message: "No song title given" },
-      { status: 403 }
+      { message: "Failed to fetch lyrics" },
+      { status: 500 }
     );
   }
 
-  const search = await GeniusClient.songs.search(title);
-  if (search.length === 0) {
-    return NextResponse.json(
-      { message: `No search result for title ${title} was found` },
-      { status: 404 }
-    );
-  }
+  const data = await res.json();
 
-  const bestResult = search[0];
-  const lyrics = await bestResult.lyrics();
-
-  return NextResponse.json({ lyrics: lyrics }, { status: 200 });
+  return NextResponse.json(
+    {
+      trackName: name,
+      albumName: album,
+      artistName: artist,
+      duration: parseInt(duration),
+      lyrics: {
+        isSynced: data.syncedLyrics.length > 0,
+        plainLyrics: data.plainLyrics,
+        syncedLyrics: data.syncedLyrics,
+      },
+    } as LyricsData,
+    { status: 200 }
+  );
 }

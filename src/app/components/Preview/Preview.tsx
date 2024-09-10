@@ -3,12 +3,11 @@
 import { pSBC } from "@/util/pSBC";
 import { SongData } from "@/util/types/SongData";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useEffect, useRef, useState } from "react";
-import Lyrics from "./Lyrics/Lyrics";
+import React, { use, useEffect, useMemo, useRef, useState } from "react";
+
 import { useLiveQuery } from "dexie-react-hooks";
 import { queueDB } from "@/db/queueDB";
-import Queue from "./Queue/Queue";
-import History from "./Queue/History";
+
 import useStateManager from "@/app/hooks/StateManager";
 
 import { COLORS } from "@/util/enums/colors";
@@ -16,6 +15,7 @@ import OverlayIcon from "../Util/OverlayIcon";
 import { PREVIEW_TAB_STATES } from "@/util/enums/previewTabState";
 import Suggestions from "./Suggestions";
 import { StateManager } from "@/util/types/StateManager";
+import Lyrics from "./Lyrics";
 
 interface PreviewProps {
   vidEnabled: boolean;
@@ -102,6 +102,15 @@ export default function Preview({
               <Suggestions
                 currentSongId={songData?.id || null}
                 songState={songState}
+                suggestionsState={suggestionsState}
+              />
+            )}
+            {previewPageState.get === PREVIEW_TAB_STATES.Lyrics && (
+              <Lyrics
+                trackName={songData.title}
+                albumName={songData.album?.name || ""}
+                artistName={songData.artist.name}
+                duration={songData.duration}
               />
             )}
           </span>

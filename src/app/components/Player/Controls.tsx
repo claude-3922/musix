@@ -140,7 +140,10 @@ export default function Controls({
             songDuration={data.duration}
           />
 
-          <span className="flex text-sm w-[5vw] overflow-hidden justify-center">
+          <span
+            id="audioTime"
+            className="flex text-sm w-[5vw] overflow-hidden justify-center"
+          >
             {formatSongDuration(data.duration)}
           </span>
         </span>

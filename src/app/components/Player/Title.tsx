@@ -20,7 +20,11 @@ export default function Title({ data }: TitleProps) {
         </a>
       </span>
       <span className="flex whitespace-nowrap overflow-hidden justify-start w-[24vw] mx-[1vw]">
-        <a href={""} className="hover:underline" target="_blank">
+        <a
+          href={`https://www.youtube.com/channel/${data.artist.id}`}
+          className="hover:underline"
+          target="_blank"
+        >
           {data.artist.name.length > 30 ? (
             <h1 className="animateTitle flex justify-start text-sm">
               {data.artist.name}
