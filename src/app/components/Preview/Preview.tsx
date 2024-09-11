@@ -73,10 +73,10 @@ export default function Preview({
           onTimeUpdate={timeUpdateHandler}
           onClick={clickHandler}
           autoPlay
-          className="h-[93.3%] w-[50%] object-cover rounded-l-3xl"
+          className="h-[100%] w-[50%] object-cover rounded-l"
         ></video>
         <span
-          className="flex flex-col justify-evenly items-center h-[93.3%] w-full rounded-r-3xl transition-[width_0.125s_ease-in-out]"
+          className="flex flex-col justify-evenly items-center h-[100%] w-full rounded-r transition-[width_0.125s_ease-in-out]"
           style={{
             backgroundColor: `${pSBC(0.4, COLORS.BG, "#000000")}`,
           }}
@@ -97,12 +97,11 @@ export default function Preview({
               </button>
             ))}
           </span>
-          <span className=" h-[85%] w-[95%] rounded-br-3xl overflow-y-scroll scrollbar-hide">
+          <span className="h-[85%] w-[95%] rounded-br overflow-y-scroll overflow-x-hidden">
             {previewPageState.get === PREVIEW_TAB_STATES.Suggestions && (
               <Suggestions
                 currentSongId={songData?.id || null}
                 songState={songState}
-                suggestionsState={suggestionsState}
               />
             )}
             {previewPageState.get === PREVIEW_TAB_STATES.Lyrics && (
@@ -111,6 +110,7 @@ export default function Preview({
                 albumName={songData.album?.name || ""}
                 artistName={songData.artist.name}
                 duration={songData.duration}
+                audioPlayer={audioPlayer}
               />
             )}
           </span>

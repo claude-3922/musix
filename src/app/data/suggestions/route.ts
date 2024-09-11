@@ -38,6 +38,7 @@ export async function GET(req: NextRequest) {
       .contents[0].as(YTNodes.MusicCarouselShelf)
       .contents.map((item) => item.as(YTNodes.MusicResponsiveListItem))
       .map(async (item, i) => {
+        if (i > 9) return;
         return {
           id: item.id!,
           url: `https://www.youtube.com/watch?v=${item.id!}`,
@@ -66,7 +67,7 @@ export async function GET(req: NextRequest) {
       })
   );
 
-  return NextResponse.json(suggestions, {
+  return NextResponse.json(suggestions.filter(Boolean), {
     status: 200,
   });
 }

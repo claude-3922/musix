@@ -1,7 +1,14 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 import { SongData } from "@/util/types/SongData";
-import React, { ReactNode, useEffect, useRef, useState } from "react";
+import React, {
+  MouseEvent,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { StateManager } from "@/util/types/StateManager";
 
@@ -52,6 +59,8 @@ export default function SearchResults({
 
   const playlistDropdownId = useStateManager<string | null>(null);
   const playlistDropdownPos = useStateManager<DropdownPos>({ x: 0, y: 0 });
+
+  const songItemsContainer = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setTopResult(null);
@@ -131,9 +140,17 @@ export default function SearchResults({
     init();
   }, [query]);
 
+  const songCategoryItems = songs
+    ? songs.filter((v) =>
+        topResult?.type === "SONG"
+          ? v.id !== (topResult.data as SongData).id
+          : true
+      )
+    : null;
+
   return (
     <div
-      className="flex items-start justify-center w-[100vw] h-[83.25vh] overflow-y-scroll bg-custom_black/10"
+      className="flex items-start justify-center w-[100vw] h-[83.25vh] overflow-y-scroll overflow-x-hidden"
       onClick={(e) => {
         if (dropdownId.get) {
           dropdownId.set(null);
@@ -143,81 +160,88 @@ export default function SearchResults({
         backgroundColor: COLORS.BG,
       }}
     >
-      <div>
-        <button
-          className="flex items-center justify-center rounded-full border-2 w-[3vw] h-[3vw] mx-[2vw] my-[2vh]"
-          onClick={() => pageState.set(PAGE_STATES.Main)}
-        >
-          <img className="h-[1.5vw] w-[1.5vw]" src="/icons/home.svg" />
-        </button>
+      <div className="w-[80%] h-full">
         {topResult ? (
-          <div className="my-[3vh]">
-            <TopResult
-              type={topResult.type}
-              data={topResult.data}
-              songState={songState}
-              dropdownId={dropdownId}
-              dropdownPos={dropdownPos}
-            />
-          </div>
+          <TopResult
+            type={topResult.type}
+            data={topResult.data}
+            songState={songState}
+            dropdownId={dropdownId}
+            dropdownPos={dropdownPos}
+          />
         ) : (
-          <div className="relative my-[3vh] flex items-center justify-center">
-            <div className="relative animate-pulse rounded-[4px] h-[20vh] w-[80vw] bg-white/10 mx-[1vw]"></div>
+          <div className="relative flex items-center justify-center w-full h-[20%]">
+            <div className="relative animate-pulse rounded-[4px] w-full h-full bg-white/10"></div>
             <span className="absolute z-[1]">
               {loadingSpinner("5vw", "5vw")}
             </span>
           </div>
         )}
 
-        {songs ? (
-          <div className="my-[3vh]">
-            <ExpandableList
-              beforeCount={3}
-              beforeHeight={`${3 * 13}vh`}
-              afterCount={songs.length - (topResult?.type === "SONG" ? 1 : 0)}
-              afterHeight={`${
-                (songs.length - (topResult?.type === "SONG" ? 1 : 0)) * 13
-              }vh`}
-              customExpandButtonProps={{
-                className:
-                  "text-sm w-[6vw] bg-white/10 hover:ring-2 ring-accentColor/50 py-[0.5vh] rounded-full mx-[1.5vw] my-[1vh]",
-              }}
-            >
-              {songs
-                .filter((v) =>
-                  topResult?.type === "SONG"
-                    ? v.id !== (topResult.data as SongData).id
-                    : true
-                )
-                .map((r, i) => (
-                  <Song
-                    key={i}
-                    data={r}
-                    songState={songState}
-                    dropdownId={dropdownId}
-                    dropdownPos={dropdownPos}
-                  />
-                ))}
-            </ExpandableList>
-          </div>
-        ) : (
-          <div>
-            {Array.from({ length: 3 }, (_, i) => (
-              <div
-                key={i}
-                className="animate-pulse rounded-[4px] w-[80vw] h-[12vh] my-[1vh] mx-[1vw] bg-white/10"
-              />
-            ))}
-          </div>
-        )}
+        <div
+          id="songItemsContainer"
+          ref={songItemsContainer}
+          className="w-full h-[54.25%] mt-[1%] overflow-hidden"
+        >
+          {songCategoryItems ? (
+            <div className="flex flex-col items-center gap-1 justify-start w-full h-[83.25vh]">
+              {songCategoryItems.map((r, i) => (
+                <Song
+                  key={i}
+                  data={r}
+                  songState={songState}
+                  dropdownId={dropdownId}
+                  dropdownPos={dropdownPos}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-1 justify-start w-full h-[83.25vh]">
+              {Array.from({ length: 10 }, (_, i) => (
+                <div
+                  key={i}
+                  className="animate-pulse rounded-[4px] w-full min-h-[13%] bg-white/10"
+                />
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="flex items-center gap-4 justify-end w-full h-[10%]">
+          <button
+            className="border-2 disabled:opacity-50 h-[32px] w-[32px] rounded-full rotate-[270deg] hover:scale-110 hover:bg-white/5"
+            onClick={() => {
+              const container = songItemsContainer.current;
+              if (!container) return;
+              container.scrollBy({
+                top: -container.clientHeight,
+                behavior: "smooth",
+              });
+            }}
+          >
+            <img className="w-full h-full" src="/icons/chevron_0deg.svg" />
+          </button>
+          <button
+            className="relative border-2 disabled:opacity-50 h-[32px] w-[32px] rounded-full rotate-[90deg] hover:scale-110 hover:bg-white/5"
+            onClick={() => {
+              const container = songItemsContainer.current;
+              if (!container) return;
+              container.scrollBy({
+                top: container.clientHeight,
+                behavior: "smooth",
+              });
+            }}
+          >
+            <img className="w-full h-full" src="/icons/chevron_0deg.svg" />
+          </button>
+        </div>
 
         <Dropdown
           className="rounded-[4px] overflow-hidden"
           id={dropdownId.get || undefined}
           pos={dropdownPos.get}
           dropdownStyle={{ background: `${pSBC(0.4, COLORS.BG, "#000000")}` }}
-          width={"10vw"}
-          height={"9vw"}
+          width={"10%"}
+          height={"20%"}
         >
           <span
             onClick={async () => {
@@ -226,7 +250,7 @@ export default function SearchResults({
                 songs?.find((s) => s.id === dropdownId.get)!
               );
             }}
-            className="flex items-center justify-evenly hover:cursor-pointer hover:bg-white/10 w-[10vw] h-[3vw] "
+            className="flex items-center justify-evenly hover:cursor-pointer hover:bg-white/10 w-full h-[33.3%] overflow-hidden whitespace-nowrap text-ellipsis"
           >
             Play
           </span>
@@ -234,19 +258,13 @@ export default function SearchResults({
             onClick={async () => {
               await enqueue(songs?.find((s) => s.id === dropdownId.get)!);
             }}
-            className="flex items-center justify-evenly hover:cursor-pointer hover:bg-white/10 w-[10vw] h-[3vw] "
+            className="flex items-center justify-evenly hover:cursor-pointer hover:bg-white/10 w-full h-[33.3%] overflow-hidden whitespace-nowrap text-ellipsis"
           >
             Add to queue
           </span>
           <div
-            onMouseOver={(e) => {
-              playlistDropdownId.set(`playlistDropdown_${dropdownId.get}`);
-              playlistDropdownPos.set({
-                x: `${(dropdownPos.get.x as number) + 100}px`,
-                y: `${(dropdownPos.get.y as number) + 100}px`,
-              });
-            }}
-            className="flex items-center justify-evenly hover:cursor-pointer hover:bg-white/10 w-[10vw] h-[3vw] "
+            onMouseOver={function (this: any, e) {}}
+            className="flex items-center justify-evenly hover:cursor-pointer hover:bg-white/10 w-full h-[33.3%] overflow-hidden whitespace-nowrap text-ellipsis"
           >
             Add to playlist
           </div>

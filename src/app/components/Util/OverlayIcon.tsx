@@ -9,6 +9,8 @@ interface OverlayIconProps extends HTMLAttributes<HTMLSpanElement> {
   height: number | string;
 
   iconStyle: React.CSSProperties;
+
+  optionalYoutubeId?: string;
 }
 
 export default function OverlayIcon({
@@ -17,6 +19,7 @@ export default function OverlayIcon({
   height,
   iconStyle,
   children,
+  optionalYoutubeId,
   ...props
 }: OverlayIconProps) {
   const [hovering, setHovering] = useState(false);
@@ -45,8 +48,8 @@ export default function OverlayIcon({
           zIndex: 0,
           left: 0,
           top: 0,
-          width: cssWidth,
-          height: cssHeight,
+          width: "100%",
+          height: "100%",
           transform: hovering ? "scale(1.05)" : "scale(1)",
           transition: "transform 0.125s linear",
         }}
@@ -58,8 +61,8 @@ export default function OverlayIcon({
             zIndex: 1,
             left: 0,
             top: 0,
-            width: cssWidth,
-            height: cssHeight,
+            width: "100%",
+            height: "100%",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",

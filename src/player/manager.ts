@@ -41,3 +41,11 @@ export const enqueue = async (data: SongData) => {
     return false;
   }
 };
+
+export const dequeue = async (data: SongData) => {
+  const queueArray = await queueDB.queue.toArray();
+  if (queueArray.find((song) => song.id === data.id)) {
+    await queueDB.queue.where("vid.id").equals(data.id).delete();
+  }
+  return true;
+};

@@ -9,6 +9,8 @@ interface LyricsProps {
   albumName: string;
   artistName: string;
   duration: number;
+
+  audioPlayer: HTMLAudioElement | null;
 }
 
 export default function Lyrics({
@@ -16,8 +18,10 @@ export default function Lyrics({
   albumName,
   artistName,
   duration,
+  audioPlayer,
 }: LyricsProps) {
   const [lyricsData, setLyricsData] = useState<LyricsData | null>(null);
+  const [audioTime, setAudioTime] = useState<number>(0);
 
   useEffect(() => {
     async function init() {
@@ -31,7 +35,17 @@ export default function Lyrics({
     }
 
     init();
-  }, [albumName, artistName, duration, trackName]);
+    if (!audioPlayer) return;
+
+    const timeUpdateHandler = () => {
+      setAudioTime(audioPlayer.currentTime);
+    };
+    audioPlayer.addEventListener("timeupdate", timeUpdateHandler);
+
+    return () => {
+      audioPlayer.removeEventListener("timeupdate", timeUpdateHandler);
+    };
+  }, [albumName, artistName, audioPlayer, duration, trackName]);
 
   if (!lyricsData) return <div>No lyrics found.</div>;
 

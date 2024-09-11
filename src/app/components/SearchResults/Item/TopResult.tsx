@@ -10,7 +10,7 @@ import Dropdown, { DropdownPos, toggleDropdown } from "../../Util/Dropdown";
 import OverlayIcon from "../../Util/OverlayIcon";
 import { AlbumData } from "@/util/types/AlbumData";
 import { ArtistData } from "@/util/types/ArtistData";
-import { enqueue, play } from "@/player/manager";
+import { dequeue, enqueue, play } from "@/player/manager";
 import { loadingSpinner } from "../../Player/Controls";
 import { COLORS } from "@/util/enums/colors";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -117,9 +117,27 @@ export default function TopResult({
     setWaiting(false);
   };
 
+  const handleDequeue = async () => {
+    if (type === "ARTIST") return;
+    setWaiting(true);
+
+    if (type === "SONG" || type === "VIDEO") {
+      await dequeue(data as SongData);
+      setWaiting(false);
+      return;
+    }
+
+    const songs = await fetchSongs(type, data.id);
+    for (const song of songs) {
+      await dequeue(song);
+    }
+
+    setWaiting(false);
+  };
+
   return (
     <div
-      className="flex justify-start items-center rounded-[4px] h-[18vh] w-[80vw] bg-white/10 mx-[1vw]"
+      className="flex justify-start items-center rounded-[4px] h-[20%] w-full bg-white/10"
       onContextMenu={(e) => {
         dropdownPos.set({
           x: e.clientX - 20,
@@ -129,13 +147,14 @@ export default function TopResult({
       }}
     >
       <OverlayIcon
+        optionalYoutubeId={data.id}
         thumbnailURL={data.thumbnail}
         width={"8vw"}
         height={"8vw"}
         iconStyle={{
           borderRadius: "4px",
           overflow: "hidden",
-          margin: "0vw 1vw",
+          margin: "1vw",
         }}
         onClick={async () => {
           if (isNp) return;
@@ -143,29 +162,29 @@ export default function TopResult({
         }}
       >
         {waiting ? (
-          loadingSpinner("3.5vw", "3.5vw")
+          loadingSpinner("50%", "50%")
         ) : (
           <img
             src="/icons/playFill.svg"
-            style={{ width: "3.5vw", height: "3.5vw", opacity: 0.8 }}
+            style={{ width: "50%", height: "50%", opacity: 0.8 }}
           />
         )}
       </OverlayIcon>
 
-      <span className="grow ">
-        <span className="text-sm text-nowrap opacity-50">
+      <span className="grow max-w-[60%]">
+        <span className="text-sm whitespace-nowrap text-ellipsis opacity-50 w-full">
           <h1>{`${type} • ${
             (type === "SONG" || type === "VIDEO") &&
             formatSongDuration((data as SongData).duration)
           }`}</h1>
         </span>
         <span>
-          <h1 className="text-lg">
+          <h1 className="text-lg whitespace-nowrap text-ellipsis w-full">
             {type === "SONG" || type === "VIDEO"
               ? (data as SongData).title
               : (data as AlbumData | ArtistData | PlaylistMetadata).name}
           </h1>
-          <h1 className="">
+          <h1 className="text-base whitespace-nowrap text-ellipsis w-full">
             {type === "SONG" || type === "VIDEO" || type === "ALBUM"
               ? (data as SongData | AlbumData).artist.name
               : type === "PLAYLIST" && (data as PlaylistMetadata).owner.name}
@@ -173,14 +192,14 @@ export default function TopResult({
         </span>
       </span>
 
-      <span className="flex justify-end items-center gap-2 w-[38.5ch] mr-[1vw]">
+      <span className="flex justify-end items-center gap-2 min-w-[30%] max-w-[50%] h-full">
         <button
-          className="rounded-full px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50"
+          className="sm:text-base text-sm rounded-full px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50 disabled:ring-0 whitespace-nowrap text-ellipsis overflow-hidden"
           onClick={async () => {
             if (isNp) return;
             await handlePlay();
           }}
-          disabled={waiting}
+          disabled={waiting || isNp}
           style={{
             opacity: waiting || isNp ? 0.5 : 1,
             backgroundColor: COLORS.ACCENT,
@@ -189,22 +208,27 @@ export default function TopResult({
           {isNp ? "Already playing" : "Play"}
         </button>
         <button
-          className="rounded-full px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50"
+          className="text-base rounded-full px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50 disabled:ring-0 whitespace-nowrap text-ellipsis overflow-hidden"
           onClick={async () => {
-            await handleEnqueue();
-            setAddedToQueue(true);
+            if (addedToQueue) {
+              await handleDequeue();
+              setAddedToQueue(false);
+            } else {
+              await handleEnqueue();
+              setAddedToQueue(true);
+            }
           }}
-          disabled={addedToQueue || waiting}
+          disabled={waiting}
           style={{
-            opacity: waiting || addedToQueue ? 0.5 : 1,
+            opacity: waiting ? 0.5 : 1,
             backgroundColor: COLORS.ACCENT,
           }}
         >
-          {addedToQueue ? "Added to queue" : "Add to queue"}
+          {addedToQueue ? "Remove from queue" : "Add to queue"}
         </button>
         <span
           //type="button"
-          className="flex items-center justify-center relative rounded-full hover:cursor-pointer"
+          className="w-[10%] h-[20%] flex items-center justify-center relative rounded-full hover:cursor-pointer"
           onClick={(e) => {
             dropdownPos.set({
               x: e.clientX - 20,
@@ -214,7 +238,7 @@ export default function TopResult({
           }}
         >
           <img
-            className="w-[1.5vw] h-[1.5vw] hover:scale-110"
+            className="w-full h-full hover:scale-110"
             src="/icons/dots_vertical.svg"
           ></img>
         </span>

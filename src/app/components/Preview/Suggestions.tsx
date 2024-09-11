@@ -10,32 +10,32 @@ import ExpandableList from "../Util/ExpandableList";
 interface SuggestionsProps {
   currentSongId: string | null;
   songState: StateManager<SongData | null>;
-  suggestionsState: StateManager<SongData[] | null>;
 }
 
 export default function Suggestions({
   currentSongId,
   songState,
-  suggestionsState,
 }: SuggestionsProps) {
   const [loading, setLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState<SongData[] | null>(null);
 
   useEffect(() => {
-    if (suggestionsState.get || !currentSongId) return;
+    if (!currentSongId) return;
 
     setLoading(true);
 
     async function init() {
+      setSuggestions(null);
       const res = await fetch(`/data/suggestions?id=${currentSongId}`);
       if (res.status === 200) {
         const data: SongData[] = await res.json();
-        suggestionsState.set(data);
+        setSuggestions(data);
         setLoading(false);
       }
     }
 
     init();
-  }, [currentSongId, suggestionsState]);
+  }, [currentSongId]);
 
   if (!currentSongId) {
     return <>Nothing currently playing</>;
@@ -44,9 +44,9 @@ export default function Suggestions({
   if (loading) return <>Loading...</>;
 
   return (
-    <div className="">
-      {suggestionsState.get
-        ? suggestionsState.get.map((s, i) => {
+    <div>
+      {suggestions
+        ? suggestions.map((s, i) => {
             return (
               <div
                 key={i}

@@ -63,7 +63,7 @@ export default function Song({
 
   return (
     <div
-      className="flex items-center rounded-[4px] h-[12vh] w-[80vw] bg-white/10 mx-[1vw] my-[1vh]"
+      className="flex items-center justify-start rounded-[4px] h-[13%] sm:w-full w-full bg-white/10"
       onContextMenu={(e) => {
         dropdownPos.set({
           x: e.clientX - 20,
@@ -73,38 +73,39 @@ export default function Song({
       }}
     >
       <OverlayIcon
+        optionalYoutubeId={data.id}
         thumbnailURL={data.thumbnail}
         width={"5vw"}
         height={"5vw"}
         iconStyle={{
           borderRadius: "4px",
           overflow: "hidden",
-          margin: "0vw 1vw",
+          margin: "1vw",
         }}
         onClick={async () => await handlePlay()}
       >
         {waiting ? (
-          loadingSpinner("2.5vw", "2.5vw")
+          loadingSpinner("50%", "50%")
         ) : (
           <img
             src="/icons/playFill.svg"
-            style={{ width: "2.5vw", height: "2.5vw", opacity: 0.8 }}
+            style={{ width: "50%", height: "50%", opacity: 0.8 }}
           />
         )}
       </OverlayIcon>
 
-      <span className="flex flex-col items-start justify-center w-[65ch]">
+      <span className="flex flex-col items-start justify-center grow whitespace-nowrap text-ellipsis max-w-[70%] overflow-hidden">
         <h1>{data.title}</h1>
         <h1 className="text-sm">{data.artist.name}</h1>
       </span>
-      <span className="flex items-center justify-end w-[37ch] gap-4 mr-[1vw]">
+      <span className="flex items-center justify-end gap-2 min-w-[30%] max-w-[50%] h-full">
         <h1 className="text-sm opacity-50">
           {formatSongDuration(data.duration)}
         </h1>
 
         <span
           //type="button"
-          className="flex items-center justify-center relative rounded-full hover:cursor-pointer"
+          className="flex items-center justify-center relative rounded-full hover:cursor-pointer w-[10%] h-[20%]"
           onClick={(e) => {
             dropdownPos.set({
               x: e.clientX - 20,
@@ -114,7 +115,7 @@ export default function Song({
           }}
         >
           <img
-            className="w-[1.5vw] h-[1.5vw] hover:scale-110"
+            className="w-full h-full hover:scale-110"
             src="/icons/dots_vertical.svg"
           ></img>
         </span>
