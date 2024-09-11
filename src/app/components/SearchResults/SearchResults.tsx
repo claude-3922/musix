@@ -61,6 +61,7 @@ export default function SearchResults({
   const playlistDropdownPos = useStateManager<DropdownPos>({ x: 0, y: 0 });
 
   const songItemsContainer = useRef<HTMLDivElement | null>(null);
+  const videoItemsContainer = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setTopResult(null);
@@ -126,16 +127,16 @@ export default function SearchResults({
       //   setPlaylists(data as PlaylistMetadata[]);
       // }
 
-      // const videoRes = await fetch(`/search/videos`, {
-      //   method: "POST",
-      //   body: JSON.stringify({
-      //     query: query,
-      //   }),
-      // });
-      // if (videoRes.status === 200) {
-      //   const data: SongData[] = await videoRes.json();
-      //   setSongs(data as SongData[]);
-      // }
+      const videoRes = await fetch(`/search/videos`, {
+        method: "POST",
+        body: JSON.stringify({
+          query: query,
+        }),
+      });
+      if (videoRes.status === 200) {
+        const data: SongData[] = await videoRes.json();
+        setVideos(data as SongData[]);
+      }
     }
     init();
   }, [query]);
@@ -145,6 +146,17 @@ export default function SearchResults({
         topResult?.type === "SONG"
           ? v.id !== (topResult.data as SongData).id
           : true
+      )
+    : null;
+
+  const videoCategoryItems = videos
+    ? videos.filter(
+        (v) =>
+          (topResult?.type === "VIDEO"
+            ? v.id !== (topResult.data as SongData).id
+            : true) &&
+          v.duration !== 0 &&
+          v.title
       )
     : null;
 
@@ -161,6 +173,11 @@ export default function SearchResults({
       }}
     >
       <div className="w-[80%] h-full">
+        <div className="w-full h-[7.5%] mt-[3%]">
+          <span className="w-full h-full flex items-center justify-start text-2xl font-bold tracking-wide">
+            Top Result
+          </span>
+        </div>
         {topResult ? (
           <TopResult
             type={topResult.type}
@@ -178,10 +195,44 @@ export default function SearchResults({
           </div>
         )}
 
+        <div className="flex items-center gap-2 justify-between w-full h-[7.5%] mt-[3%]">
+          <span className="flex items-center justify-start w-full h-full text-2xl font-bold tracking-wide">
+            Songs
+          </span>
+          <span className="flex items-center gap-2 justify-end w-full h-full">
+            <button
+              className="border-2 opacity-50 h-[32px] w-[32px] rounded-full rotate-[270deg] hover:scale-110 hover:bg-white/5 hover:opacity-100"
+              onClick={() => {
+                const container = songItemsContainer.current;
+                if (!container) return;
+                container.scrollBy({
+                  top: -container.clientHeight,
+                  behavior: "smooth",
+                });
+              }}
+            >
+              <img className="w-full h-full" src="/icons/chevron_0deg.svg" />
+            </button>
+            <button
+              className=" border-2 opacity-50 h-[32px] w-[32px] rounded-full rotate-[90deg] hover:scale-110 hover:bg-white/5 hover:opacity-100"
+              onClick={() => {
+                const container = songItemsContainer.current;
+                if (!container) return;
+                container.scrollBy({
+                  top: container.clientHeight,
+                  behavior: "smooth",
+                });
+              }}
+            >
+              <img className="w-full h-full" src="/icons/chevron_0deg.svg" />
+            </button>
+          </span>
+        </div>
+
         <div
           id="songItemsContainer"
           ref={songItemsContainer}
-          className="w-full h-[54.25%] mt-[1%] overflow-hidden"
+          className="w-full h-[54.25%] overflow-hidden"
         >
           {songCategoryItems ? (
             <div className="flex flex-col items-center gap-1 justify-start w-full h-[83.25vh]">
@@ -206,33 +257,68 @@ export default function SearchResults({
             </div>
           )}
         </div>
-        <div className="flex items-center gap-4 justify-end w-full h-[10%]">
-          <button
-            className="border-2 disabled:opacity-50 h-[32px] w-[32px] rounded-full rotate-[270deg] hover:scale-110 hover:bg-white/5"
-            onClick={() => {
-              const container = songItemsContainer.current;
-              if (!container) return;
-              container.scrollBy({
-                top: -container.clientHeight,
-                behavior: "smooth",
-              });
-            }}
-          >
-            <img className="w-full h-full" src="/icons/chevron_0deg.svg" />
-          </button>
-          <button
-            className="relative border-2 disabled:opacity-50 h-[32px] w-[32px] rounded-full rotate-[90deg] hover:scale-110 hover:bg-white/5"
-            onClick={() => {
-              const container = songItemsContainer.current;
-              if (!container) return;
-              container.scrollBy({
-                top: container.clientHeight,
-                behavior: "smooth",
-              });
-            }}
-          >
-            <img className="w-full h-full" src="/icons/chevron_0deg.svg" />
-          </button>
+
+        <div className="flex items-center gap-2 justify-between w-full h-[7.5%] mt-[3%]">
+          <span className="flex items-center justify-start w-full h-full text-2xl font-bold tracking-wide">
+            Videos
+          </span>
+          <span className="flex items-center gap-2 justify-end w-full h-full">
+            <button
+              className="border-2 opacity-50 h-[32px] w-[32px] rounded-full rotate-[270deg] hover:scale-110 hover:bg-white/5 hover:opacity-100"
+              onClick={() => {
+                const container = videoItemsContainer.current;
+                if (!container) return;
+                container.scrollBy({
+                  top: -container.clientHeight,
+                  behavior: "smooth",
+                });
+              }}
+            >
+              <img className="w-full h-full" src="/icons/chevron_0deg.svg" />
+            </button>
+            <button
+              className=" border-2 opacity-50 h-[32px] w-[32px] rounded-full rotate-[90deg] hover:scale-110 hover:bg-white/5 hover:opacity-100"
+              onClick={() => {
+                const container = videoItemsContainer.current;
+                if (!container) return;
+                container.scrollBy({
+                  top: container.clientHeight,
+                  behavior: "smooth",
+                });
+              }}
+            >
+              <img className="w-full h-full" src="/icons/chevron_0deg.svg" />
+            </button>
+          </span>
+        </div>
+
+        <div
+          id="videoItemsContainer"
+          ref={videoItemsContainer}
+          className="w-full h-[54.25%] overflow-hidden"
+        >
+          {videoCategoryItems ? (
+            <div className="flex flex-col items-center gap-1 justify-start w-full h-[83.25vh]">
+              {videoCategoryItems.map((r, i) => (
+                <Song
+                  key={i}
+                  data={r}
+                  songState={songState}
+                  dropdownId={dropdownId}
+                  dropdownPos={dropdownPos}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-1 justify-start w-full h-[83.25vh]">
+              {Array.from({ length: 10 }, (_, i) => (
+                <div
+                  key={i}
+                  className="animate-pulse rounded-[4px] w-full min-h-[13%] bg-white/10"
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         <Dropdown
@@ -269,42 +355,6 @@ export default function SearchResults({
             Add to playlist
           </div>
         </Dropdown>
-
-        {/* {{playlists ? (
-          <div className="my-[3vh]">
-            <h1 className="mx-[2vw] text-2xl mb-[1vh]">PLAYLISTS</h1>
-            <ExpandableList
-              beforeCount={2}
-              beforeHeight={`${2 * 13}vh`}
-              afterCount={playlists.length}
-              afterHeight={`${playlists.length * 13}vh`}
-              customExpandButtonProps={{
-                className:
-                  "text-sm w-[6vw] hover:bg-white/20 py-[0.5vh] border-2 rounded-full mx-[2vw]",
-              }}
-              className="overflow-y-scroll"
-            >
-              {playlists.map((r, i) => (
-                <SearchItemPlaylist
-                  key={i}
-                  data={r}
-                  songState={songState}
-                  dropdownItemId={dropdownItemId}
-                />
-              ))}
-            </ExpandableList>
-          </div>
-        ) : (
-          <div className="my-[1vh]">
-            <h1 className="mx-[2vw] text-2xl mb-[1vh]">-</h1>
-            {Array.from({ length: 2 }, (_, i) => (
-              <div
-                key={i}
-                className="animate-pulse rounded-[4px] w-[80vw] h-[12vh] mb-[1vh] mx-[1vw] bg-white/10"
-              />
-            ))}
-          </div>
-        )}} */}
       </div>
     </div>
   );

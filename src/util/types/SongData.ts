@@ -10,4 +10,5 @@ export interface SongData {
   artist: ArtistMetadata;
   album?: AlbumMetadata;
   moreThumbnails?: string[];
+  explicit?: boolean;
 }

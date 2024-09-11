@@ -63,7 +63,7 @@ export default function Song({
 
   return (
     <div
-      className="flex items-center justify-start rounded-[4px] h-[13%] sm:w-full w-full bg-white/10"
+      className="flex items-center justify-start h-[13%] rounded w-full bg-white/[5%]"
       onContextMenu={(e) => {
         dropdownPos.set({
           x: e.clientX - 20,
@@ -105,7 +105,7 @@ export default function Song({
 
         <span
           //type="button"
-          className="flex items-center justify-center relative rounded-full hover:cursor-pointer w-[10%] h-[20%]"
+          className="flex items-center justify-center relative rounded-full hover:cursor-pointer w-[12%] h-[26%]"
           onClick={(e) => {
             dropdownPos.set({
               x: e.clientX - 20,

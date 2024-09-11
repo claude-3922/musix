@@ -76,11 +76,22 @@ export default function Suggestions({
                 </OverlayIcon>
 
                 <span className="flex flex-col items-start justify-center grow max-w-[60%]">
-                  <p>{s.title}</p>
+                  <span className="flex items-center justify-start w-full whitespace-nowrap text-ellipsis">
+                    {s.title}
+                    {s.explicit && (
+                      <button
+                        disabled
+                        className="text-[8px] rounded-full w-[12%] h-[5%] border-[1px] ml-[2%] "
+                      >
+                        EXPLICIT
+                      </button>
+                    )}
+                  </span>
                   <p className="text-sm w-[100%] overflow-hidden whitespace-nowrap text-ellipsis">
                     {s.artist.name}
                   </p>
                 </span>
+
                 <span className="flex gap-2 items-center justify-center w-[20%]">
                   <p className="text-sm opacity-50">
                     {formatSongDuration(s.duration)}

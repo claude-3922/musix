@@ -38,16 +38,14 @@ export async function GET(req: NextRequest) {
       .contents[0].as(YTNodes.MusicCarouselShelf)
       .contents.map((item) => item.as(YTNodes.MusicResponsiveListItem))
       .map(async (item, i) => {
-        if (i > 9) return;
+        if (i > 9 || !item.id) return;
+        let thisSong = await yt.music.getInfo(item.id!);
         return {
           id: item.id!,
           url: `https://www.youtube.com/watch?v=${item.id!}`,
           title: item.flex_columns[0].title.text?.toString() || "Unknown",
           thumbnail: item.thumbnails[0].url,
-          duration:
-            item.duration?.seconds ||
-            (await ytMusic.getSong(item.id!)).duration ||
-            0,
+          duration: item.duration?.seconds || thisSong.basic_info.duration || 0,
           artist: {
             name: item.flex_columns[1].title.text?.toString() || "Unknown",
             id:
@@ -63,11 +61,12 @@ export async function GET(req: NextRequest) {
           moreThumbnails: item.thumbnails
             .sort((a, b) => b.width - a.width)
             .map((t) => t.url),
+          explicit: !thisSong.basic_info.is_family_safe || false,
         };
       })
   );
 
-  return NextResponse.json(suggestions.filter(Boolean), {
+  return NextResponse.json(suggestions.filter(Boolean) as SongData[], {
     status: 200,
   });
 }

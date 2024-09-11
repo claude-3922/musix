@@ -76,9 +76,9 @@ export default function Preview({
           className="h-[100%] w-[50%] object-cover rounded-l"
         ></video>
         <span
-          className="flex flex-col justify-evenly items-center h-[100%] w-full rounded-r transition-[width_0.125s_ease-in-out]"
+          className="flex flex-col justify-between items-center h-[100%] w-full rounded-r transition-[width_0.125s_ease-in-out]"
           style={{
-            backgroundColor: `${pSBC(0.4, COLORS.BG, "#000000")}`,
+            backgroundColor: `${COLORS.BG}`,
           }}
         >
           <span className="flex gap-4 justify-center items-center">
@@ -86,18 +86,19 @@ export default function Preview({
               <button
                 key={label}
                 onClick={() => previewPageState.set(state)}
-                className="text-base rounded-full px-[0.75vw] py-[0.33vw] hover:ring hover:ring-accentColor/50"
+                className="text-base rounded-full px-[0.75vw] py-[0.33vw] hover:ring hover:ring-accentColor/50 disabled:ring-0"
                 style={{
                   backgroundColor:
                     previewPageState.get === state ? COLORS.ACCENT : "",
                   transition: "all 0.125s ease-in-out",
                 }}
+                disabled={previewPageState.get === state}
               >
                 {label}
               </button>
             ))}
           </span>
-          <span className="h-[85%] w-[95%] rounded-br overflow-y-scroll overflow-x-hidden">
+          <span className="h-[90%] w-[95%] rounded-br overflow-y-scroll overflow-x-hidden">
             {previewPageState.get === PREVIEW_TAB_STATES.Suggestions && (
               <Suggestions
                 currentSongId={songData?.id || null}

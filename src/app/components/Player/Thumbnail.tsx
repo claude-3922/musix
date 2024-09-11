@@ -34,12 +34,12 @@ export default function Thumbnail({ songData, pageState }: ThumbnailProps) {
         }
       >
         <img
-          src="/icons/arrow_up.svg"
+          src="/icons/chevron_0deg.svg"
           style={{
             width: "2vw",
             height: "2vw",
             opacity: 0.8,
-            rotate: pageState.get === PAGE_STATES.Preview ? "180deg" : "360deg",
+            rotate: pageState.get === PAGE_STATES.Preview ? "90deg" : "270deg",
           }}
         />
       </OverlayIcon>

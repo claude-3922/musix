@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Rubik } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import { COLORS } from "@/util/enums/colors";
 
-const font = Rubik({
+const font = Poppins({
   weight: "400",
   subsets: ["latin"],
 });

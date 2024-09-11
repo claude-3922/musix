@@ -2,6 +2,7 @@ import { AlbumData } from "@/util/types/AlbumData";
 import { PlaylistData } from "@/util/types/PlaylistData";
 import { SongData } from "@/util/types/SongData";
 import { NextRequest, NextResponse } from "next/server";
+import Innertube, { YTNodes } from "youtubei.js";
 import YTMusic from "ytmusic-api";
 
 export async function GET(req: NextRequest) {

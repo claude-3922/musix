@@ -137,7 +137,7 @@ export default function TopResult({
 
   return (
     <div
-      className="flex justify-start items-center rounded-[4px] h-[20%] w-full bg-white/10"
+      className="flex justify-start items-center rounded-[4px] h-[20%] w-full bg-white/[5%]"
       onContextMenu={(e) => {
         dropdownPos.set({
           x: e.clientX - 20,
@@ -192,9 +192,9 @@ export default function TopResult({
         </span>
       </span>
 
-      <span className="flex justify-end items-center gap-2 min-w-[30%] max-w-[50%] h-full">
+      <span className="flex justify-end items-center gap-2 min-w-[35%] max-w-[50%] h-full">
         <button
-          className="sm:text-base text-sm rounded-full px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50 disabled:ring-0 whitespace-nowrap text-ellipsis overflow-hidden"
+          className="text-base rounded-full px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50 disabled:ring-0 whitespace-nowrap text-ellipsis overflow-hidden"
           onClick={async () => {
             if (isNp) return;
             await handlePlay();
@@ -238,7 +238,7 @@ export default function TopResult({
           }}
         >
           <img
-            className="w-full h-full hover:scale-110"
+            className="w-[90%] h-[90%] hover:scale-110"
             src="/icons/dots_vertical.svg"
           ></img>
         </span>
