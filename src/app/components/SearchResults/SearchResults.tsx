@@ -24,12 +24,13 @@ import { PAGE_STATES } from "@/util/enums/pageState";
 import { ArtistData } from "@/util/types/ArtistData";
 import { AlbumData } from "@/util/types/AlbumData";
 import { COLORS } from "@/util/enums/colors";
+import { Music, Star } from "../Icons/Icons";
 import { useLiveQuery } from "dexie-react-hooks";
 import { queueDB } from "@/db/queueDB";
 
 import Song from "./Item/Song";
 import { enqueue, play } from "@/player/manager";
-import { Chevron_0Deg, Error, LoadingSpinner } from "../Icons/Icons";
+import { Chevron_0Deg, Error, LoadingSpinner, Video } from "../Icons/Icons";
 
 interface SearchResultsProps {
   query: string;
@@ -173,7 +174,8 @@ export default function SearchResults({
     >
       <div className="w-[80%] h-full">
         <div className="w-full h-[7.5%] mt-[3%]">
-          <span className="w-full h-full flex items-center justify-start text-2xl font-bold tracking-wide ">
+          <span className="flex items-center justify-start w-full h-full text-xl font-bold tracking-wide opacity-80 gap-2">
+            <Star opacity={0.8} size={"24px"} />
             Top Result
           </span>
         </div>
@@ -187,15 +189,16 @@ export default function SearchResults({
           />
         ) : (
           <div className="relative flex items-center justify-center w-full h-[20%]">
-            <div className="relative animate-pulse rounded-[4px] w-full h-full bg-white/10"></div>
+            <div className="relative animate-pulse w-full h-full bg-white/[5%]"></div>
             <span className="absolute z-[1]">
-              <LoadingSpinner size={"5vw"} fill={"#e8eaed"} opacity={0.8} />
+              <LoadingSpinner size={"3vw"} fill={"#e8eaed"} opacity={0.8} />
             </span>
           </div>
         )}
 
         <div className="flex items-center gap-2 justify-between w-full h-[7.5%] mt-[3%]">
-          <span className="flex items-center justify-start w-full h-full text-2xl font-bold tracking-wide">
+          <span className="flex items-center justify-start w-full h-full text-xl font-bold tracking-wide opacity-80 gap-2">
+            <Music opacity={0.8} size={"24px"} />
             Songs
           </span>
           <span className="flex items-center gap-2 justify-end w-full h-full">
@@ -246,19 +249,13 @@ export default function SearchResults({
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-start w-full h-[83.25vh]">
-              {Array.from({ length: 10 }, (_, i) => (
-                <div
-                  key={i}
-                  className="animate-pulse rounded-[4px] w-full min-h-[13%] bg-white/10"
-                />
-              ))}
-            </div>
+            <div className="animate-pulse bg-white/[5%] w-full h-full"></div>
           )}
         </div>
 
         <div className="flex items-center gap-2 justify-between w-full h-[7.5%] mt-[3%]">
-          <span className="flex items-center justify-start w-full h-full text-2xl font-bold tracking-wide">
+          <span className="flex items-center justify-start w-full h-full text-xl font-bold tracking-wide opacity-80 gap-2">
+            <Video opacity={0.8} size={"24px"} />
             Videos
           </span>
           <span className="flex items-center gap-2 justify-end w-full h-full">
@@ -309,14 +306,7 @@ export default function SearchResults({
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center gap-1 justify-start w-full h-[83.25vh]">
-              {Array.from({ length: 10 }, (_, i) => (
-                <div
-                  key={i}
-                  className="animate-pulse rounded-[4px] w-full min-h-[13%] bg-white/10"
-                />
-              ))}
-            </div>
+            <div className="animate-pulse bg-white/[5%] w-full h-full"></div>
           )}
         </div>
 

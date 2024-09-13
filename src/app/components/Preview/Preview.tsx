@@ -16,6 +16,7 @@ import { PREVIEW_TAB_STATES } from "@/util/enums/previewTabState";
 import Suggestions from "./Suggestions";
 import { StateManager } from "@/util/types/StateManager";
 import Lyrics from "./Lyrics";
+import NowPlaying from "./NowPlaying";
 
 interface PreviewProps {
   songData: SongData | null;
@@ -56,7 +57,7 @@ export default function Preview({
   ];
 
   return (
-    <div className="flex justify-center items-center w-[90%] h-[90%] scrollbar-hide">
+    <div className="flex justify-center items-center gap-2 w-[90%] h-[90%] scrollbar-hide overflow-x-hidden">
       <video
         ref={(r) => videoPlayerState.set(r)}
         id="videoPlayer"
@@ -68,8 +69,8 @@ export default function Preview({
         className="h-full w-[45%] object-cover"
       ></video>
 
-      <div className="flex flex-col justify-between items-center h-full w-full border-y-1 border-r-1 gap-4">
-        <span className="flex gap-4 justify-center items-center w-full">
+      <div className="flex flex-col justify-between items-center h-full w-full border-y-1 border-r-1 gap-4 grow">
+        <span className="flex gap-4 justify-center items-center w-full py-1">
           {buttons.map(({ label, state }) => (
             <button
               key={label}
@@ -87,6 +88,9 @@ export default function Preview({
           ))}
         </span>
         <span className="h-full w-full overflow-y-scroll overflow-x-hidden">
+          {previewPageState.get === PREVIEW_TAB_STATES.NowPlaying && (
+            <NowPlaying data={songData} />
+          )}
           {previewPageState.get === PREVIEW_TAB_STATES.Suggestions && (
             <Suggestions
               currentSongId={songData?.id || null}

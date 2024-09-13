@@ -17,6 +17,7 @@ import { queueDB } from "@/db/queueDB";
 import {
   LoadingSpinner,
   MoreVertical,
+  PauseSymbol,
   PlaySymbol,
   QueueAdd,
   QueueRemove,
@@ -207,7 +208,17 @@ export default function TopResult({
             backgroundColor: COLORS.ACCENT,
           }}
         >
-          {isNp ? "Already playing" : "Play"}
+          {isNp ? (
+            <span className="flex items-center justify-center gap-2">
+              <PauseSymbol size={"24px"} fill={"#e8eaed"} opacity={1} />
+              <p>Playing</p>
+            </span>
+          ) : (
+            <span className="flex items-center justify-center gap-2">
+              <PlaySymbol size={"24px"} fill={"#e8eaed"} opacity={1} />
+              <p>Play</p>
+            </span>
+          )}
         </button>
         <button
           className="text-base rounded-full px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50 disabled:ring-0 whitespace-nowrap text-ellipsis overflow-hidden"

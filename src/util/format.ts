@@ -4,7 +4,8 @@ export function formatSongDuration(seconds: number) {
   const secs = Math.floor(seconds % 60);
 
   const formattedHrs = hrs > 0 ? `${hrs}:` : "";
-  const formattedMins = mins > 0 ? `${mins}:` : "00:";
+  const formattedMins =
+    mins > 0 ? (mins > 10 ? `${mins}:` : `0${mins}:`) : "00:";
   const formattedSecs = secs > 0 ? `${secs >= 10 ? secs : "0" + secs}` : "00";
 
   return `${formattedHrs}${formattedMins}${formattedSecs}`.trim();

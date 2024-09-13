@@ -205,7 +205,7 @@ export function Player({ audioPlayer, songState, showPreview }: PlayerProps) {
       </div>
 
       <div
-        className="flex items-center justify-end w-[30%] h-full gap-2"
+        className="flex items-center justify-end w-[30%] h-full gap-1"
         onMouseOver={() => setShowVolumeBar(true)}
         onMouseOut={() => setShowVolumeBar(false)}
       >

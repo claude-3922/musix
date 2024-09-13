@@ -38,7 +38,7 @@ export default function NavBar({
       >
         <Home size={"30px"} opacity={0.8} />
       </button>
-      <span className="relative h-[80%] w-[20%] mx-4">
+      <span className="relative h-[70%] w-[20%] mx-4">
         <input
           ref={searchBar}
           data-query=""
@@ -63,6 +63,7 @@ export default function NavBar({
           onClick={() => {
             queryState.set(searchBar.current?.dataset.query || "");
             pageState.set(PAGE_STATES.Search);
+            if (showPreview.get) showPreview.set(false);
           }}
         >
           <Search opacity={0.8} size={"24px"} />

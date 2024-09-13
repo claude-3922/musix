@@ -42,7 +42,7 @@ export default function OverlayIcon({
       }}
     >
       <Image
-        loading="lazy"
+        loading="eager"
         alt="Thumbnail"
         width={120}
         height={120}

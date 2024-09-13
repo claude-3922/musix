@@ -90,9 +90,9 @@ export default function Extras({
         }}
       >
         {muted ? (
-          <VolumeMute size={"110%"} fill={"#e8eaed"} />
+          <VolumeMute size={"90%"} fill={"#e8eaed"} />
         ) : (
-          <VolumeFull size={"110%"} fill={"#e8eaed"} />
+          <VolumeFull size={"90%"} fill={"#e8eaed"} />
         )}
       </button>
 
@@ -101,9 +101,9 @@ export default function Extras({
         onClick={() => setShowLikeFill((p) => !p)}
       >
         {showLikeFill ? (
-          <HeartFill size={"100%"} fill={COLORS.ACCENT} />
+          <HeartFill size={"80%"} fill={COLORS.ACCENT} />
         ) : (
-          <HeartEmpty size={"100%"} fill={"#e8eaed"} />
+          <HeartEmpty size={"80%"} fill={"#e8eaed"} />
         )}
       </button>
       <button
@@ -114,9 +114,9 @@ export default function Extras({
         }}
       >
         {looped ? (
-          <LoopAll size={"100%"} fill={COLORS.ACCENT} />
+          <LoopAll size={"80%"} fill={COLORS.ACCENT} />
         ) : (
-          <LoopOff size={"100%"} fill={"#e8eaed"} />
+          <LoopOff size={"80%"} fill={"#e8eaed"} />
         )}
       </button>
     </>
