@@ -16,11 +16,11 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { queueDB } from "@/db/queueDB";
 import {
   LoadingSpinner,
+  Minus,
   MoreVertical,
   PauseSymbol,
   PlaySymbol,
-  QueueAdd,
-  QueueRemove,
+  Plus,
 } from "../../Icons/Icons";
 
 interface TopResultProps {
@@ -239,12 +239,12 @@ export default function TopResult({
         >
           {addedToQueue ? (
             <span className="flex items-center justify-center gap-2">
-              <QueueRemove size={"24px"} fill={"#e8eaed"} opacity={1} />
+              <Minus size={"24px"} fill={"#e8eaed"} opacity={1} />
               <p>Remove from queue</p>
             </span>
           ) : (
             <span className="flex items-center justify-center gap-2">
-              <QueueAdd size={"24px"} fill={"#e8eaed"} opacity={1} />
+              <Plus size={"24px"} fill={"#e8eaed"} opacity={1} />
               <p>Add to queue</p>
             </span>
           )}

@@ -34,6 +34,10 @@ export default function Preview({
     PREVIEW_TAB_STATES.NowPlaying
   );
 
+  useEffect(() => {
+    if (!audioPlayer) return;
+  }, [audioPlayer]);
+
   // const queue = useLiveQuery(() => queueDB.queue.toArray());
   // const history = useLiveQuery(() => queueDB.history.toArray());
 
@@ -66,11 +70,11 @@ export default function Preview({
         onTimeUpdate={timeUpdateHandler}
         onClick={clickHandler}
         autoPlay
-        className="h-full w-[45%] object-cover"
+        className="h-full w-[45%] object-cover rounded-l-lg"
       ></video>
 
-      <div className="flex flex-col justify-between items-center h-full w-full border-y-1 border-r-1 gap-4 grow">
-        <span className="flex gap-4 justify-center items-center w-full py-1">
+      <div className="flex flex-col justify-center items-center h-full w-full border-y-1 border-r-1 gap-2 grow bg-white/[5%] rounded-r-lg">
+        <span className="flex gap-4 justify-center items-center w-full pt-2">
           {buttons.map(({ label, state }) => (
             <button
               key={label}
@@ -87,7 +91,7 @@ export default function Preview({
             </button>
           ))}
         </span>
-        <span className="h-full w-full overflow-y-scroll overflow-x-hidden">
+        <span className="h-full w-full overflow-y-hidden overflow-x-hidden rounded-br-lg">
           {previewPageState.get === PREVIEW_TAB_STATES.NowPlaying && (
             <NowPlaying data={songData} />
           )}

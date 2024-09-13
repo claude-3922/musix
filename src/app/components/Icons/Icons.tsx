@@ -262,50 +262,6 @@ export function VolumeMute({
   );
 }
 
-export function QueueAdd({
-  size = "24px",
-  fill = "white",
-  opacity = 1,
-}: IconProps) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      height={size}
-      viewBox="0 -960 960 960"
-      width={size}
-      fill={fill}
-      opacity={opacity}
-    >
-      <path d="M520-400h80v-120h120v-80H600v-120h-80v120H400v80h120v120ZM240-240v-640h640v640H240Zm80-80h480v-480H320v480ZM80-80v-640h80v560h560v80H80Zm240-720v480-480Z" />
-    </svg>
-  );
-}
-
-export function QueueRemove({
-  size = "24px",
-  fill = "white",
-  opacity = 1,
-}: IconProps) {
-  return (
-    <svg
-      id="Layer_1"
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 20 20"
-      width={size}
-      height={size}
-      fill={fill}
-      opacity={opacity}
-    >
-      <defs>
-        <style>{`.cls-1 { fill: ${fill}; }`}</style>
-      </defs>
-      <polygon className="cls-1" points="2 4 0 4 0 20 16 20 16 18 2 18 2 4" />
-      <path className="cls-1" d="M4,0v16h16V0H4ZM18,14H6V2h12v12Z" />
-      <path className="cls-1" d="M6,7h8v2H6V7Z" /> {/* Proper minus sign */}
-    </svg>
-  );
-}
-
 export function Arrow_180Deg({
   size = "24px",
   fill = "white",
@@ -515,7 +471,7 @@ export function Music({
   );
 }
 
-export function Star({
+export function StarFill({
   size = "24px",
   fill = "white",
   opacity = 1,
@@ -529,7 +485,45 @@ export function Star({
       fill={fill}
       opacity={opacity}
     >
-      <path d="m354-287 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-120l65-281L80-590l288-25 112-265 112 265 288 25-218 189 65 281-247-149-247 149Zm247-350Z" />
+      <path d="m233-120 93-304L80-600h304l96-320 96 320h304L634-424l93 304-247-188-247 188Z" />
+    </svg>
+  );
+}
+
+export function Plus({
+  size = "24px",
+  fill = "white",
+  opacity = 1,
+}: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height={size}
+      viewBox="0 -960 960 960"
+      width={size}
+      fill={fill}
+      opacity={opacity}
+    >
+      <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
+    </svg>
+  );
+}
+
+export function Minus({
+  size = "24px",
+  fill = "white",
+  opacity = 1,
+}: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height={size}
+      viewBox="0 -960 960 960"
+      width={size}
+      fill={fill}
+      opacity={opacity}
+    >
+      <path d="M200-440v-80h560v80H200Z" />
     </svg>
   );
 }

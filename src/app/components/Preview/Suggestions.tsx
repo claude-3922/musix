@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import OverlayIcon from "../Util/OverlayIcon";
 import { formatSongDuration } from "@/util/format";
 import { play } from "@/player/manager";
-import { PlaySymbol } from "../Icons/Icons";
+import { Chevron_0Deg, PlaySymbol } from "../Icons/Icons";
 
 interface SuggestionsProps {
   currentSongId: string | null;
@@ -38,63 +38,51 @@ export default function Suggestions({
   }, [currentSongId]);
 
   if (!currentSongId) {
-    return <>Nothing currently playing</>;
+    return (
+      <div className="w-full h-full flex items-center justify-center text-3xl opacity-40 tracking-wide">
+        Player not found.
+      </div>
+    );
   }
 
-  if (loading) return <>Loading...</>;
+  if (loading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center text-3xl opacity-40 tracking-wide">
+        Loading....
+      </div>
+    );
+  }
+
+  if (!suggestions) {
+    return (
+      <div className="w-full h-full flex items-center justify-center text-3xl opacity-40 tracking-wide">
+        No suggestions found.
+      </div>
+    );
+  }
 
   return (
-    <>
-      {suggestions
-        ? suggestions.map((s, i) => {
-            return (
-              <span
-                key={i}
-                className="flex items-center justify-start bg-white/[5%] mb-[0.5%]"
-              >
-                <span className="flex items-center justify-center w-[5%]">
-                  {i + 1}
-                </span>
-
-                <OverlayIcon
-                  thumbnailURL={s.thumbnail}
-                  width="5vw"
-                  height="5vw"
-                  iconStyle={{
-                    overflow: "hidden",
-                    margin: "0.5vw 0.5vw",
-                  }}
-                  onClick={async () => await play(songState, s)}
-                >
-                  <PlaySymbol size={"50%"} fill={"#e8eaed"} opacity={0.8} />
-                </OverlayIcon>
-
-                <span className="flex flex-col items-start justify-center grow max-w-[60%]">
-                  <span className="flex items-center justify-start w-full whitespace-nowrap text-ellipsis">
-                    {s.title}
-                    {s.explicit && (
-                      <button
-                        disabled
-                        className="text-[8px] rounded-full w-[12%] h-[5%] border-[1px] ml-[2%] "
-                      >
-                        EXPLICIT
-                      </button>
-                    )}
-                  </span>
-                  <p className="text-sm w-[100%] overflow-hidden whitespace-nowrap text-ellipsis">
-                    {s.artist.name}
-                  </p>
-                </span>
-
-                <span className="flex gap-2 items-center justify-center w-[20%]">
-                  <p className="text-sm opacity-50">
-                    {formatSongDuration(s.duration)}
-                  </p>
-                </span>
-              </span>
-            );
-          })
-        : "No suggestions found."}
-    </>
+    <div className="w-full h-full flex flex-col items-center justify-start overflow-x-hidden bg-white/10">
+      <div className="flex flex-col items-center justify-end w-full h-[75%] bg-black/10">
+        <span className="text-xl h-[14%] w-full flex items-center justify-between">
+          Suggestions
+          <span className="w-full h-full flex items-center justify-end gap-4">
+            <button className="h-full w-[6%] rotate-180 opacity-60 hover:scale-110 hover:opacity-100">
+              <Chevron_0Deg size={"100%"} fill={"#e8eaed"} opacity={0.8} />
+            </button>
+            <button className="h-full w-[6%] opacity-60 hover:scale-110 hover:opacity-100">
+              <Chevron_0Deg size={"100%"} fill={"#e8eaed"} opacity={0.8} />
+            </button>
+          </span>
+        </span>
+        <div
+          style={{
+            background:
+              "linear-gradient(to right, transparent 0%, rgba(0, 0,0, 0.3) 100%)",
+          }}
+          className="w-full h-[86%] flex flex-col items-center justify-start"
+        ></div>
+      </div>
+    </div>
   );
 }
