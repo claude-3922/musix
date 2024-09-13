@@ -6,26 +6,35 @@ import { Arrow_180Deg, Home, Search } from "../Icons/Icons";
 interface NavBarProps {
   pageState: StateManager<PAGE_STATES>;
   queryState: StateManager<string>;
+  showPreview: StateManager<boolean>;
 }
 
-export default function NavBar({ pageState, queryState }: NavBarProps) {
+export default function NavBar({
+  pageState,
+  queryState,
+  showPreview,
+}: NavBarProps) {
   const searchBar = useRef<HTMLInputElement | null>(null);
 
   return (
     <>
       <button
         className="w-[3.5%] h-[80%] rounded-full flex items-center justify-center opacity-60 hover:opacity-100"
-        onClick={() =>
+        onClick={() => {
+          if (showPreview.get) return showPreview.set(false);
           pageState.set(
             pageState.get - 1 <= 0 ? PAGE_STATES.Main : pageState.get - 1
-          )
-        }
+          );
+        }}
       >
         <Arrow_180Deg size={"30px"} opacity={0.8} />
       </button>
       <button
         className="w-[3.5%] h-[80%] rounded-full flex items-center justify-center opacity-60 hover:opacity-100"
-        onClick={() => pageState.set(PAGE_STATES.Main)}
+        onClick={() => {
+          if (showPreview.get) showPreview.set(false);
+          pageState.set(PAGE_STATES.Main);
+        }}
       >
         <Home size={"30px"} opacity={0.8} />
       </button>

@@ -71,7 +71,11 @@ export default function Home() {
         }}
         className="flex flex-row items-center justify-center gap-2 min-h-[8%] max-h-[8%] w-full"
       >
-        <NavBar pageState={pageState} queryState={queryState} />
+        <NavBar
+          pageState={pageState}
+          queryState={queryState}
+          showPreview={showPreview}
+        />
       </nav>
 
       <main
@@ -87,7 +91,7 @@ export default function Home() {
             ))}
           {showPreview.get && (
             <motion.div
-              className="w-full h-full flex items-center justify-center"
+              className="w-full h-full flex items-center justify-center scrollbar-hide overflow-y-hidden"
               key="preview"
               initial={{ y: "100%", opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}

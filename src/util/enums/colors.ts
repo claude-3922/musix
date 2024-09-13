@@ -1,4 +1,4 @@
 export enum COLORS {
-  BG = "#313131",
-  ACCENT = "#A91D3A",
+  BG = "#222831",
+  ACCENT = "#00ADB5",
 }

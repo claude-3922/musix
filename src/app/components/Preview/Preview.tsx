@@ -30,7 +30,7 @@ export default function Preview({
 }: PreviewProps) {
   const videoPlayerState = useStateManager<HTMLVideoElement | null>(null);
   const previewPageState = useStateManager<PREVIEW_TAB_STATES>(
-    PREVIEW_TAB_STATES.Suggestions
+    PREVIEW_TAB_STATES.NowPlaying
   );
 
   // const queue = useLiveQuery(() => queueDB.queue.toArray());
@@ -48,6 +48,7 @@ export default function Preview({
   };
 
   const buttons = [
+    { label: "Now Playing", state: PREVIEW_TAB_STATES.NowPlaying },
     { label: "Suggestions", state: PREVIEW_TAB_STATES.Suggestions },
     { label: "Lyrics", state: PREVIEW_TAB_STATES.Lyrics },
     { label: "Queue", state: PREVIEW_TAB_STATES.Queue },
@@ -73,7 +74,7 @@ export default function Preview({
             <button
               key={label}
               onClick={() => previewPageState.set(state)}
-              className="text-base rounded px-[0.75vw] py-[0.33vw] hover:ring hover:ring-accentColor/50 disabled:ring-0"
+              className="text-base rounded-full px-[0.75vw] py-[0.33vw] hover:ring hover:ring-accentColor/50 disabled:ring-0"
               style={{
                 backgroundColor:
                   previewPageState.get === state ? COLORS.ACCENT : "",

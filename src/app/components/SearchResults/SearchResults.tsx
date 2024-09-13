@@ -14,7 +14,6 @@ import { StateManager } from "@/util/types/StateManager";
 
 import useStateManager from "@/app/hooks/StateManager";
 import { PlaylistMetadata } from "@/util/types/PlaylistData";
-import ExpandableList from "../Util/ExpandableList";
 
 import { pSBC } from "@/util/pSBC";
 import { Channel } from "youtube-sr";
@@ -30,7 +29,7 @@ import { queueDB } from "@/db/queueDB";
 
 import Song from "./Item/Song";
 import { enqueue, play } from "@/player/manager";
-import { Error, LoadingSpinner } from "../Icons/Icons";
+import { Chevron_0Deg, Error, LoadingSpinner } from "../Icons/Icons";
 
 interface SearchResultsProps {
   query: string;
@@ -211,7 +210,7 @@ export default function SearchResults({
                 });
               }}
             >
-              <img className="w-full h-full" src="/icons/chevron_0deg.svg" />
+              <Chevron_0Deg size={"100%"} opacity={0.8} />
             </button>
             <button
               className="  opacity-50 h-[32px] w-[32px] rounded rotate-[90deg] hover:scale-110 hover:opacity-100"
@@ -224,7 +223,7 @@ export default function SearchResults({
                 });
               }}
             >
-              <img className="w-full h-full" src="/icons/chevron_0deg.svg" />
+              <Chevron_0Deg size={"100%"} opacity={0.8} />
             </button>
           </span>
         </div>
@@ -274,7 +273,7 @@ export default function SearchResults({
                 });
               }}
             >
-              <img className="w-full h-full" src="/icons/chevron_0deg.svg" />
+              <Chevron_0Deg size={"100%"} opacity={0.8} />
             </button>
             <button
               className="opacity-50 h-[32px] w-[32px] rounded rotate-[90deg] hover:scale-110 hover:opacity-100"
@@ -287,7 +286,7 @@ export default function SearchResults({
                 });
               }}
             >
-              <img className="w-full h-full" src="/icons/chevron_0deg.svg" />
+              <Chevron_0Deg size={"100%"} opacity={0.8} />
             </button>
           </span>
         </div>

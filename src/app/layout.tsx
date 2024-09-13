@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${font.className} text-white h-[100vh] w-[100vw]`}
+        className={`${font.className} text-fontColor h-[100vh] w-[100vw]`}
         style={{ background: COLORS.BG }}
       >
         {children}

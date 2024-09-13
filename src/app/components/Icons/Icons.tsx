@@ -400,3 +400,22 @@ export function MoreVertical({
     </svg>
   );
 }
+
+export function Chevron_0Deg({
+  size = "24px",
+  fill = "white",
+  opacity = 1,
+}: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height={size}
+      viewBox="0 -960 960 960"
+      width={size}
+      fill={fill}
+      opacity={opacity}
+    >
+      <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
+    </svg>
+  );
+}

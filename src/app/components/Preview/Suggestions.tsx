@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import OverlayIcon from "../Util/OverlayIcon";
 import { formatSongDuration } from "@/util/format";
 import { play } from "@/player/manager";
-import ExpandableList from "../Util/ExpandableList";
+import { PlaySymbol } from "../Icons/Icons";
 
 interface SuggestionsProps {
   currentSongId: string | null;
@@ -66,12 +66,7 @@ export default function Suggestions({
                   }}
                   onClick={async () => await play(songState, s)}
                 >
-                  <img
-                    src="/icons/playFill.svg"
-                    alt="Play"
-                    width={"50%"}
-                    height={"50%"}
-                  />
+                  <PlaySymbol size={"50%"} fill={"#e8eaed"} opacity={0.8} />
                 </OverlayIcon>
 
                 <span className="flex flex-col items-start justify-center grow max-w-[60%]">

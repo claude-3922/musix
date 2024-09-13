@@ -5,7 +5,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Controls from "./Controls";
 import Extras from "./Extras";
-import PlayerLoading from "./PlayerLoading";
+
 import { pSBC } from "@/util/pSBC";
 
 import { SongData } from "@/util/types/SongData";
@@ -14,11 +14,12 @@ import { StateManager } from "@/util/types/StateManager";
 import { queueDB } from "@/db/queueDB";
 
 import useStateManager from "@/app/hooks/StateManager";
-import PlayerEmpty from "./PlayerEmpty";
+
 import { PAGE_STATES } from "@/util/enums/pageState";
 import { COLORS } from "@/util/enums/colors";
 import { play } from "@/player/manager";
 import OverlayIcon from "../Util/OverlayIcon";
+import { Chevron_0Deg } from "../Icons/Icons";
 
 interface PlayerProps {
   audioPlayer: HTMLAudioElement | null;
@@ -129,7 +130,7 @@ export function Player({ audioPlayer, songState, showPreview }: PlayerProps) {
   if (!audioPlayer) {
     return (
       <div
-        className={`no-select text-white flex flex-row items-center justify-center w-full h-full`}
+        className={`no-select flex flex-row items-center justify-center w-full h-full`}
         style={{
           backgroundColor: `${pSBC(0.4, COLORS.BG, "#000000")}`,
         }}
@@ -147,7 +148,7 @@ export function Player({ audioPlayer, songState, showPreview }: PlayerProps) {
 
   return (
     <div
-      className={`no-select text-white flex flex-row items-center justify-evenly w-full h-full px-[1%]`}
+      className={`no-select flex flex-row items-center justify-evenly w-full h-full px-[1%]`}
       style={{
         backgroundColor: `${pSBC(0.4, COLORS.BG, "#000000")}`,
       }}
@@ -162,15 +163,12 @@ export function Player({ audioPlayer, songState, showPreview }: PlayerProps) {
           }}
           onClick={() => showPreview.set(!showPreview.get)}
         >
-          <img
-            src="/icons/chevron_0deg.svg"
-            style={{
-              width: "50%",
-              height: "50%",
-              opacity: 0.8,
-              rotate: showPreview.get ? "90deg" : "270deg",
-            }}
-          />
+          <span
+            className="w-[50%] h-[50%] opacity-100"
+            style={{ rotate: showPreview.get ? "90deg" : "270deg" }}
+          >
+            <Chevron_0Deg size={"100%"} opacity={0.8} />
+          </span>
         </OverlayIcon>
 
         <div className="flex flex-col items-start justify-center w-[45%] h-full overflow-x-hidden">
