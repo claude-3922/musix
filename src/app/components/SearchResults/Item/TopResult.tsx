@@ -16,6 +16,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { queueDB } from "@/db/queueDB";
 import {
   LoadingSpinner,
+  MoreVertical,
   PlaySymbol,
   QueueAdd,
   QueueRemove,
@@ -195,7 +196,7 @@ export default function TopResult({
 
       <span className="flex justify-end items-center gap-2 min-w-[35%] max-w-[50%] h-full">
         <button
-          className="text-base rounded px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50 disabled:ring-0 whitespace-nowrap text-ellipsis overflow-hidden"
+          className="text-base rounded-full px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50 disabled:ring-0 whitespace-nowrap text-ellipsis overflow-hidden"
           onClick={async () => {
             if (isNp) return;
             await handlePlay();
@@ -209,7 +210,7 @@ export default function TopResult({
           {isNp ? "Already playing" : "Play"}
         </button>
         <button
-          className="text-base rounded px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50 disabled:ring-0 whitespace-nowrap text-ellipsis overflow-hidden"
+          className="text-base rounded-full px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50 disabled:ring-0 whitespace-nowrap text-ellipsis overflow-hidden"
           onClick={async () => {
             if (addedToQueue) {
               await handleDequeue();
@@ -239,7 +240,7 @@ export default function TopResult({
         </button>
         <span
           //type="button"
-          className="w-[10%] h-[20%] flex items-center justify-center relative hover:cursor-pointer"
+          className="w-[10%] h-[20%] flex items-center justify-center relative hover:cursor-pointer hover:scale-110"
           onClick={(e) => {
             dropdownPos.set({
               x: e.clientX - 20,
@@ -247,11 +248,11 @@ export default function TopResult({
             });
             toggleDropdown(currentItemId as any, dropdownId);
           }}
+          style={{
+            opacity: dropdownId.get === currentItemId ? 1 : 0.6,
+          }}
         >
-          <img
-            className="w-[90%] h-[90%] hover:scale-110"
-            src="/icons/dots_vertical.svg"
-          ></img>
+          <MoreVertical size={"90%"} opacity={0.8} />
         </span>
       </span>
     </div>

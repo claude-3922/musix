@@ -15,7 +15,12 @@ import { enqueue, play } from "@/player/manager";
 import { COLORS } from "@/util/enums/colors";
 import { useLiveQuery } from "dexie-react-hooks";
 import { queueDB } from "@/db/queueDB";
-import { LoadingSpinner, PlayButton, PlaySymbol } from "../../Icons/Icons";
+import {
+  LoadingSpinner,
+  MoreVertical,
+  PlayButton,
+  PlaySymbol,
+} from "../../Icons/Icons";
 
 interface SongProps {
   data: SongData;
@@ -102,7 +107,7 @@ export default function Song({
 
         <span
           //type="button"
-          className="flex items-center justify-center relative hover:cursor-pointer w-[12%] h-[26%]"
+          className="flex items-center justify-center relative hover:cursor-pointer w-[12%] h-[26%] hover:scale-110"
           onClick={(e) => {
             dropdownPos.set({
               x: e.clientX - 20,
@@ -110,11 +115,11 @@ export default function Song({
             });
             toggleDropdown(currentItemId as any, dropdownId);
           }}
+          style={{
+            opacity: dropdownId.get === currentItemId ? 1 : 0.6,
+          }}
         >
-          <img
-            className="w-full h-full hover:scale-110"
-            src="/icons/dots_vertical.svg"
-          ></img>
+          <MoreVertical size={"100%"} opacity={0.8} />
         </span>
       </span>
     </div>

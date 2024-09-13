@@ -201,7 +201,7 @@ export default function SearchResults({
           </span>
           <span className="flex items-center gap-2 justify-end w-full h-full">
             <button
-              className=" opacity-50 h-[32px] w-[32px] rounded rotate-[270deg] hover:scale-110 hover:bg-white/5 hover:opacity-100"
+              className=" opacity-50 h-[32px] w-[32px] rounded rotate-[270deg] hover:scale-110 hover:opacity-100"
               onClick={() => {
                 const container = songItemsContainer.current;
                 if (!container) return;
@@ -214,7 +214,7 @@ export default function SearchResults({
               <img className="w-full h-full" src="/icons/chevron_0deg.svg" />
             </button>
             <button
-              className="  opacity-50 h-[32px] w-[32px] rounded rotate-[90deg] hover:scale-110 hover:bg-white/5 hover:opacity-100"
+              className="  opacity-50 h-[32px] w-[32px] rounded rotate-[90deg] hover:scale-110 hover:opacity-100"
               onClick={() => {
                 const container = songItemsContainer.current;
                 if (!container) return;
@@ -232,10 +232,10 @@ export default function SearchResults({
         <div
           id="songItemsContainer"
           ref={songItemsContainer}
-          className="w-full h-[66.5%] overflow-hidden"
+          className="w-full h-[55%] overflow-hidden"
         >
           {songCategoryItems ? (
-            <div className="flex flex-col items-center gap-1 justify-start w-full h-full">
+            <div className="flex flex-col items-center gap-0 justify-start w-full h-full">
               {songCategoryItems.map((r, i) => (
                 <Song
                   key={i}
@@ -247,7 +247,7 @@ export default function SearchResults({
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center gap-1 justify-start w-full h-[83.25vh]">
+            <div className="flex flex-col items-center justify-start w-full h-[83.25vh]">
               {Array.from({ length: 10 }, (_, i) => (
                 <div
                   key={i}
@@ -264,7 +264,7 @@ export default function SearchResults({
           </span>
           <span className="flex items-center gap-2 justify-end w-full h-full">
             <button
-              className=" opacity-50 h-[32px] w-[32px] rounded rotate-[270deg] hover:scale-110 hover:bg-white/5 hover:opacity-100"
+              className=" opacity-50 h-[32px] w-[32px] rounded rotate-[270deg] hover:scale-110 hover:opacity-100"
               onClick={() => {
                 const container = videoItemsContainer.current;
                 if (!container) return;
@@ -277,7 +277,7 @@ export default function SearchResults({
               <img className="w-full h-full" src="/icons/chevron_0deg.svg" />
             </button>
             <button
-              className="  opacity-50 h-[32px] w-[32px] rounded rotate-[90deg] hover:scale-110 hover:bg-white/5 hover:opacity-100"
+              className="opacity-50 h-[32px] w-[32px] rounded rotate-[90deg] hover:scale-110 hover:opacity-100"
               onClick={() => {
                 const container = videoItemsContainer.current;
                 if (!container) return;
@@ -295,10 +295,10 @@ export default function SearchResults({
         <div
           id="videoItemsContainer"
           ref={videoItemsContainer}
-          className="w-full h-[66.5%] overflow-hidden"
+          className="w-full h-[55%] overflow-hidden"
         >
           {videoCategoryItems ? (
-            <div className="flex flex-col items-center gap-1 justify-start w-full h-full">
+            <div className="flex flex-col items-center justify-start w-full h-full">
               {videoCategoryItems.map((r, i) => (
                 <Song
                   key={i}
