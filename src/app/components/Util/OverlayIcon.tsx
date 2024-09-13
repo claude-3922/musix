@@ -41,6 +41,7 @@ export default function OverlayIcon({
       }}
     >
       <img
+        alt="Thumbnail"
         src={thumbnailURL}
         style={{
           objectFit: "cover",

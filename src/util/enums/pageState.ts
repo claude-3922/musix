@@ -1,5 +1,5 @@
 export enum PAGE_STATES {
-  Main,
-  Preview,
-  Search,
+  Main = 1,
+  Search = 2,
+  Info = 3,
 }

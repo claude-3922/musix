@@ -13,17 +13,14 @@ import useStateManager from "./hooks/StateManager";
 import { AnimatePresence, motion } from "framer-motion";
 import { PAGE_STATES } from "@/util/enums/pageState";
 import { COLORS } from "@/util/enums/colors";
+import { pSBC } from "@/util/pSBC";
+import NavBar from "./components/Navigation/NavBar";
 
 export default function Home() {
-  const [query, setQuery] = useState<string>("");
-  const [vid, setVid] = useState<boolean>(false);
-
   const songState = useStateManager<SongData | null>(null);
-
   const pageState = useStateManager<PAGE_STATES>(PAGE_STATES.Main);
-
-  const previewState = useStateManager<boolean>(false);
-  const searchResultState = useStateManager<boolean>(false);
+  const showPreview = useStateManager<boolean>(false);
+  const queryState = useStateManager<string>("");
 
   const [audioPlayer, setAudioPlayer] = useState<HTMLAudioElement | null>(null);
 
@@ -54,70 +51,44 @@ export default function Home() {
 
   return (
     <div
-      className="flex flex-col items-center justify-center w-full h-full"
+      className="flex flex-col items-center justify-center w-full h-full overflow-hidden"
       onContextMenu={(e) => e.preventDefault()}
     >
       {songState.get ? (
         <audio
           id="audioPlayer"
           ref={(el) => setAudioPlayer(el)}
-          src={`/media?id=${songState.get.id}&vid=0`}
+          src={`api/media?id=${songState.get.id}&vid=0`}
           preload="auto"
         />
       ) : (
         <></>
       )}
 
-      <nav className="flex flex-row items-center justify-center h-[6%]">
-        <input
-          id=""
-          name="searchQuery"
-          onChange={(e) => {
-            e.target.id = e.target.value;
-          }}
-          className="border-2 p-2 bg-white/10"
-          type="text"
-          placeholder="search a song"
-        />
-        <button
-          type="submit"
-          className="border-2 p-2"
-          onClick={() => {
-            setQuery(document.getElementsByName("searchQuery")[0].id);
-            pageState.set(PAGE_STATES.Search);
-          }}
-        >
-          Search
-        </button>
-        <label>
-          Vid?
-          <input
-            type="checkbox"
-            name="vidEnabled"
-            onChange={(e) => {
-              setVid(e.target.checked);
-            }}
-          />
-        </label>
+      <nav
+        style={{
+          backgroundColor: `${pSBC(0.4, COLORS.BG, "#000000")}`,
+        }}
+        className="flex flex-row items-center justify-center gap-2 min-h-[8%] max-h-[8%] w-full"
+      >
+        <NavBar pageState={pageState} queryState={queryState} />
       </nav>
 
       <main
-        className="relative overflow-y-scroll w-full grow min-h-[80%] max-h-[90%]"
+        className="relative overflow-y-scroll w-full grow"
         style={{ backgroundColor: `${COLORS.BG}` }}
       >
         <AnimatePresence mode="wait">
-          {pageState.get === PAGE_STATES.Main && <Main songState={songState} />}
-          {pageState.get === PAGE_STATES.Search && (
-            <SearchResults
-              query={query}
-              songState={songState}
-              pageState={pageState}
-            />
-          )}
-          {pageState.get === PAGE_STATES.Preview && (
+          {(pageState.get === PAGE_STATES.Main && !showPreview.get && (
+            <Main songState={songState} />
+          )) ||
+            (pageState.get === PAGE_STATES.Search && !showPreview.get && (
+              <SearchResults query={queryState.get} songState={songState} />
+            ))}
+          {showPreview.get && (
             <motion.div
               className="w-full h-full flex items-center justify-center"
-              key="previewWindow"
+              key="preview"
               initial={{ y: "100%", opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: "100%", opacity: 0 }}
@@ -125,7 +96,6 @@ export default function Home() {
             >
               <Preview
                 songData={songState.get}
-                vidEnabled={vid}
                 audioPlayer={audioPlayer || null}
                 songState={songState}
               />
@@ -134,11 +104,11 @@ export default function Home() {
         </AnimatePresence>
       </main>
 
-      <div className=" h-[11%] w-full">
+      <div className="min-h-[11%] max-h-[11%] w-full">
         <Player
           audioPlayer={audioPlayer || null}
           songState={songState}
-          pageState={pageState}
+          showPreview={showPreview}
         />
       </div>
     </div>

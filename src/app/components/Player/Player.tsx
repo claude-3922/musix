@@ -23,10 +23,10 @@ import OverlayIcon from "../Util/OverlayIcon";
 interface PlayerProps {
   audioPlayer: HTMLAudioElement | null;
   songState: StateManager<SongData | null>;
-  pageState: StateManager<PAGE_STATES>;
+  showPreview: StateManager<boolean>;
 }
 
-export function Player({ audioPlayer, songState, pageState }: PlayerProps) {
+export function Player({ audioPlayer, songState, showPreview }: PlayerProps) {
   const data = songState.get;
 
   const [songData, setSongData] = useState<SongData | null>(null);
@@ -127,9 +127,18 @@ export function Player({ audioPlayer, songState, pageState }: PlayerProps) {
   }, [playerPaused.get]);
 
   if (!audioPlayer) {
-    return <PlayerEmpty />;
+    return (
+      <div
+        className={`no-select text-white flex flex-row items-center justify-center w-full h-full`}
+        style={{
+          backgroundColor: `${pSBC(0.4, COLORS.BG, "#000000")}`,
+        }}
+      >
+        <span className="text-2xl opacity-60">Nothing playing</span>
+      </div>
+    );
   } else if (!songData) {
-    return <PlayerLoading />;
+    return null;
   }
 
   audioPlayer.addEventListener("timeupdate", timeUpdateHandler);
@@ -151,13 +160,7 @@ export function Player({ audioPlayer, songState, pageState }: PlayerProps) {
           iconStyle={{
             overflow: "hidden",
           }}
-          onClick={() =>
-            pageState.set(
-              pageState.get === PAGE_STATES.Preview
-                ? PAGE_STATES.Main
-                : PAGE_STATES.Preview
-            )
-          }
+          onClick={() => showPreview.set(!showPreview.get)}
         >
           <img
             src="/icons/chevron_0deg.svg"
@@ -165,8 +168,7 @@ export function Player({ audioPlayer, songState, pageState }: PlayerProps) {
               width: "50%",
               height: "50%",
               opacity: 0.8,
-              rotate:
-                pageState.get === PAGE_STATES.Preview ? "90deg" : "270deg",
+              rotate: showPreview.get ? "90deg" : "270deg",
             }}
           />
         </OverlayIcon>

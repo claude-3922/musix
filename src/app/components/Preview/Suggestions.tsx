@@ -26,7 +26,7 @@ export default function Suggestions({
 
     async function init() {
       setSuggestions(null);
-      const res = await fetch(`/data/suggestions?id=${currentSongId}`);
+      const res = await fetch(`api/data/suggestions?id=${currentSongId}`);
       if (res.status === 200) {
         const data: SongData[] = await res.json();
         setSuggestions(data);

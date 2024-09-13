@@ -64,7 +64,7 @@ export default function Song({
 
   return (
     <div
-      className="flex items-center justify-start h-[14%] w-full bg-white/[5%]"
+      className="flex items-center justify-start h-[25%] w-full bg-white/[5%]"
       onContextMenu={(e) => {
         dropdownPos.set({
           x: e.clientX - 20,

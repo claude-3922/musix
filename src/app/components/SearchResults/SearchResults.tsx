@@ -30,11 +30,10 @@ import { queueDB } from "@/db/queueDB";
 
 import Song from "./Item/Song";
 import { enqueue, play } from "@/player/manager";
-import { LoadingSpinner } from "../Icons/Icons";
+import { Error, LoadingSpinner } from "../Icons/Icons";
 
 interface SearchResultsProps {
   query: string;
-  pageState: StateManager<PAGE_STATES>;
   songState: StateManager<SongData | null>;
 }
 
@@ -45,7 +44,6 @@ interface TopResult {
 
 export default function SearchResults({
   query,
-  pageState,
   songState,
 }: SearchResultsProps) {
   const [topResult, setTopResult] = useState<TopResult | null>(null);
@@ -73,19 +71,19 @@ export default function SearchResults({
     setVideos(null);
 
     async function init() {
-      const topRes = await fetch(`/search/top?q=${query}`);
+      const topRes = await fetch(`api/search/top?q=${query}`);
       if (topRes.status === 200) {
         const data: TopResult = await topRes.json();
         setTopResult(data);
       }
 
-      const songRes = await fetch(`/search/songs?q=${query}`);
+      const songRes = await fetch(`api/search/songs?q=${query}`);
       if (songRes.status === 200) {
         const data: SongData[] = await songRes.json();
         setSongs(data as SongData[]);
       }
 
-      // const artistRes = await fetch(`/search/artists`, {
+      // const artistRes = await fetch(`api/search/artists`, {
       //   method: "POST",
       //   body: JSON.stringify({
       //     query: query,
@@ -96,7 +94,7 @@ export default function SearchResults({
       //   setArtists(data as ArtistData[]);
       // }
 
-      // const albumRes = await fetch(`/search/albums`, {
+      // const albumRes = await fetch(`api/search/albums`, {
       //   method: "POST",
       //   body: JSON.stringify({
       //     query: query,
@@ -107,7 +105,7 @@ export default function SearchResults({
       //   setAlbums(data as AlbumData[]);
       // }
 
-      // const playlistRes = await fetch(`/search/playlists`, {
+      // const playlistRes = await fetch(`api/search/playlists`, {
       //   method: "POST",
       //   body: JSON.stringify({
       //     query: query,
@@ -118,7 +116,7 @@ export default function SearchResults({
       //   setPlaylists(data as PlaylistMetadata[]);
       // }
 
-      const videoRes = await fetch(`/search/videos?q=${query}`);
+      const videoRes = await fetch(`api/search/videos?q=${query}`);
       if (videoRes.status === 200) {
         const data: SongData[] = await videoRes.json();
         setVideos(data as SongData[]);
@@ -126,6 +124,22 @@ export default function SearchResults({
     }
     init();
   }, [query]);
+
+  if (!query) {
+    return (
+      <div
+        className="flex flex-col gap-2 items-center justify-center w-full h-full overflow-y-scroll overflow-x-hidden"
+        style={{
+          backgroundColor: COLORS.BG,
+        }}
+      >
+        <span className="flex items-center justify-center gap-2 text-3xl tracking-wide font-bold opacity-60">
+          <Error size={"36px"} /> No query
+        </span>
+        <span className="opacity-60 text-lg">Type something maybe?</span>
+      </div>
+    );
+  }
 
   const songCategoryItems = songs
     ? songs.filter((v) =>
@@ -160,7 +174,7 @@ export default function SearchResults({
     >
       <div className="w-[80%] h-full">
         <div className="w-full h-[7.5%] mt-[3%]">
-          <span className="w-full h-full flex items-center justify-start text-2xl font-bold tracking-wide">
+          <span className="w-full h-full flex items-center justify-start text-2xl font-bold tracking-wide ">
             Top Result
           </span>
         </div>
@@ -218,10 +232,10 @@ export default function SearchResults({
         <div
           id="songItemsContainer"
           ref={songItemsContainer}
-          className="w-full h-[58.2%] overflow-hidden"
+          className="w-full h-[66.5%] overflow-hidden"
         >
           {songCategoryItems ? (
-            <div className="flex flex-col items-center gap-1 justify-start w-full h-[83.25vh]">
+            <div className="flex flex-col items-center gap-1 justify-start w-full h-full">
               {songCategoryItems.map((r, i) => (
                 <Song
                   key={i}
@@ -281,10 +295,10 @@ export default function SearchResults({
         <div
           id="videoItemsContainer"
           ref={videoItemsContainer}
-          className="w-full h-[58.2%] overflow-hidden"
+          className="w-full h-[66.5%] overflow-hidden"
         >
           {videoCategoryItems ? (
-            <div className="flex flex-col items-center gap-1 justify-start w-full h-[83.25vh]">
+            <div className="flex flex-col items-center gap-1 justify-start w-full h-full">
               {videoCategoryItems.map((r, i) => (
                 <Song
                   key={i}

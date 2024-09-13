@@ -18,14 +18,12 @@ import { StateManager } from "@/util/types/StateManager";
 import Lyrics from "./Lyrics";
 
 interface PreviewProps {
-  vidEnabled: boolean;
   songData: SongData | null;
   audioPlayer: HTMLAudioElement | null;
   songState: StateManager<SongData | null>;
 }
 
 export default function Preview({
-  vidEnabled,
   songData,
   audioPlayer,
   songState,
@@ -34,7 +32,6 @@ export default function Preview({
   const previewPageState = useStateManager<PREVIEW_TAB_STATES>(
     PREVIEW_TAB_STATES.Suggestions
   );
-  const suggestionsState = useStateManager<SongData[] | null>(null);
 
   // const queue = useLiveQuery(() => queueDB.queue.toArray());
   // const history = useLiveQuery(() => queueDB.history.toArray());
@@ -63,7 +60,7 @@ export default function Preview({
         ref={(r) => videoPlayerState.set(r)}
         id="videoPlayer"
         poster={songData.thumbnail}
-        src={`/media?id=${songData.id}&vid=1`}
+        src={`api/media?id=${songData.id}&vid=1`}
         onTimeUpdate={timeUpdateHandler}
         onClick={clickHandler}
         autoPlay

@@ -26,7 +26,7 @@ export default function Lyrics({
   useEffect(() => {
     async function init() {
       const res = await fetch(
-        `/data/lyrics?name=${trackName}&artist=${artistName}&album=${albumName}&duration=${duration}`
+        `api/data/lyrics?name=${trackName}&artist=${artistName}&album=${albumName}&duration=${duration}`
       );
       if (res.status !== 200) return;
       const data: LyricsData = await res.json();
