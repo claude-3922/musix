@@ -11,10 +11,11 @@ import OverlayIcon from "../../Util/OverlayIcon";
 import { AlbumData } from "@/util/types/AlbumData";
 import { ArtistData } from "@/util/types/ArtistData";
 import { enqueue, play } from "@/player/manager";
-import { loadingSpinner } from "../../Player/Controls";
+
 import { COLORS } from "@/util/enums/colors";
 import { useLiveQuery } from "dexie-react-hooks";
 import { queueDB } from "@/db/queueDB";
+import { LoadingSpinner, PlayButton, PlaySymbol } from "../../Icons/Icons";
 
 interface SongProps {
   data: SongData;
@@ -63,7 +64,7 @@ export default function Song({
 
   return (
     <div
-      className="flex items-center justify-start h-[13%] rounded w-full bg-white/[5%]"
+      className="flex items-center justify-start h-[14%] w-full bg-white/[5%]"
       onContextMenu={(e) => {
         dropdownPos.set({
           x: e.clientX - 20,
@@ -78,19 +79,15 @@ export default function Song({
         width={"5vw"}
         height={"5vw"}
         iconStyle={{
-          borderRadius: "4px",
           overflow: "hidden",
           margin: "1vw",
         }}
         onClick={async () => await handlePlay()}
       >
         {waiting ? (
-          loadingSpinner("50%", "50%")
+          <LoadingSpinner size={"50%"} fill={"#e8eaed"} opacity={0.8} />
         ) : (
-          <img
-            src="/icons/playFill.svg"
-            style={{ width: "50%", height: "50%", opacity: 0.8 }}
-          />
+          <PlaySymbol size={"50%"} fill={"#e8eaed"} opacity={0.8} />
         )}
       </OverlayIcon>
 
@@ -105,7 +102,7 @@ export default function Song({
 
         <span
           //type="button"
-          className="flex items-center justify-center relative rounded-full hover:cursor-pointer w-[12%] h-[26%]"
+          className="flex items-center justify-center relative hover:cursor-pointer w-[12%] h-[26%]"
           onClick={(e) => {
             dropdownPos.set({
               x: e.clientX - 20,

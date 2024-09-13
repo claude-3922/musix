@@ -10,20 +10,8 @@ import YTMusic from "ytmusic-api";
  * TODO: Add support for artists, albums, playlists when the YTMusic Library is fixed
  */
 
-export async function POST(req: NextRequest) {
-  let query: string | null = null;
-
-  try {
-    const body = await req.json();
-    query = body.query;
-  } catch (error) {
-    console.log(" INFO /search/top 'Invalid request body'");
-    console.log(error);
-    return NextResponse.json(
-      { message: "Invalid request body" },
-      { status: 403 }
-    );
-  }
+export async function GET(req: NextRequest) {
+  const query: string | null = req.nextUrl.searchParams.get("q");
 
   if (!query || query.trim().length === 0) {
     console.log(" INFO /search/top 'No query provided'");

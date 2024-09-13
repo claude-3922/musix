@@ -58,63 +58,52 @@ export default function Preview({
   ];
 
   return (
-    <div
-      className="scrollbar-hide flex items-center justify-center w-[100vw] h-[83.25vh] overflow-y-hidden"
-      style={{
-        backgroundColor: COLORS.BG,
-      }}
-    >
-      <div className="flex justify-center items-center w-[90vw] h-[40vw] rounded-l">
-        <video
-          ref={(r) => videoPlayerState.set(r)}
-          id="videoPlayer"
-          poster={songData.thumbnail}
-          src={`/media?id=${songData.id}&vid=1`}
-          onTimeUpdate={timeUpdateHandler}
-          onClick={clickHandler}
-          autoPlay
-          className="h-[100%] w-[50%] object-cover rounded-l"
-        ></video>
-        <span
-          className="flex flex-col justify-between items-center h-[100%] w-full rounded-r transition-[width_0.125s_ease-in-out]"
-          style={{
-            backgroundColor: `${COLORS.BG}`,
-          }}
-        >
-          <span className="flex gap-4 justify-center items-center">
-            {buttons.map(({ label, state }) => (
-              <button
-                key={label}
-                onClick={() => previewPageState.set(state)}
-                className="text-base rounded-full px-[0.75vw] py-[0.33vw] hover:ring hover:ring-accentColor/50 disabled:ring-0"
-                style={{
-                  backgroundColor:
-                    previewPageState.get === state ? COLORS.ACCENT : "",
-                  transition: "all 0.125s ease-in-out",
-                }}
-                disabled={previewPageState.get === state}
-              >
-                {label}
-              </button>
-            ))}
-          </span>
-          <span className="h-[90%] w-[95%] rounded-br overflow-y-scroll overflow-x-hidden">
-            {previewPageState.get === PREVIEW_TAB_STATES.Suggestions && (
-              <Suggestions
-                currentSongId={songData?.id || null}
-                songState={songState}
-              />
-            )}
-            {previewPageState.get === PREVIEW_TAB_STATES.Lyrics && (
-              <Lyrics
-                trackName={songData.title}
-                albumName={songData.album?.name || ""}
-                artistName={songData.artist.name}
-                duration={songData.duration}
-                audioPlayer={audioPlayer}
-              />
-            )}
-          </span>
+    <div className="flex justify-center items-center w-[90%] h-[90%] scrollbar-hide">
+      <video
+        ref={(r) => videoPlayerState.set(r)}
+        id="videoPlayer"
+        poster={songData.thumbnail}
+        src={`/media?id=${songData.id}&vid=1`}
+        onTimeUpdate={timeUpdateHandler}
+        onClick={clickHandler}
+        autoPlay
+        className="h-full w-[45%] object-cover"
+      ></video>
+
+      <div className="flex flex-col justify-between items-center h-full w-full border-y-1 border-r-1 gap-4">
+        <span className="flex gap-4 justify-center items-center w-full">
+          {buttons.map(({ label, state }) => (
+            <button
+              key={label}
+              onClick={() => previewPageState.set(state)}
+              className="text-base rounded px-[0.75vw] py-[0.33vw] hover:ring hover:ring-accentColor/50 disabled:ring-0"
+              style={{
+                backgroundColor:
+                  previewPageState.get === state ? COLORS.ACCENT : "",
+                transition: "background-color 0.125s ease-in-out",
+              }}
+              disabled={previewPageState.get === state}
+            >
+              {label}
+            </button>
+          ))}
+        </span>
+        <span className="h-full w-full overflow-y-scroll overflow-x-hidden">
+          {previewPageState.get === PREVIEW_TAB_STATES.Suggestions && (
+            <Suggestions
+              currentSongId={songData?.id || null}
+              songState={songState}
+            />
+          )}
+          {previewPageState.get === PREVIEW_TAB_STATES.Lyrics && (
+            <Lyrics
+              trackName={songData.title}
+              albumName={songData.album?.name || ""}
+              artistName={songData.artist.name}
+              duration={songData.duration}
+              audioPlayer={audioPlayer}
+            />
+          )}
         </span>
       </div>
     </div>

@@ -12,6 +12,7 @@ import { SongData } from "@/util/types/SongData";
 import useStateManager from "./hooks/StateManager";
 import { AnimatePresence, motion } from "framer-motion";
 import { PAGE_STATES } from "@/util/enums/pageState";
+import { COLORS } from "@/util/enums/colors";
 
 export default function Home() {
   const [query, setQuery] = useState<string>("");
@@ -52,7 +53,10 @@ export default function Home() {
   }, [audioPlayer]);
 
   return (
-    <div onContextMenu={(e) => e.preventDefault()}>
+    <div
+      className="flex flex-col items-center justify-center w-full h-full"
+      onContextMenu={(e) => e.preventDefault()}
+    >
       {songState.get ? (
         <audio
           id="audioPlayer"
@@ -64,78 +68,78 @@ export default function Home() {
         <></>
       )}
 
-      <div className="flex flex-col items-center justify-between">
-        <nav className="flex flex-row items-center justify-between">
+      <nav className="flex flex-row items-center justify-center h-[6%]">
+        <input
+          id=""
+          name="searchQuery"
+          onChange={(e) => {
+            e.target.id = e.target.value;
+          }}
+          className="border-2 p-2 bg-white/10"
+          type="text"
+          placeholder="search a song"
+        />
+        <button
+          type="submit"
+          className="border-2 p-2"
+          onClick={() => {
+            setQuery(document.getElementsByName("searchQuery")[0].id);
+            pageState.set(PAGE_STATES.Search);
+          }}
+        >
+          Search
+        </button>
+        <label>
+          Vid?
           <input
-            id=""
-            name="searchQuery"
+            type="checkbox"
+            name="vidEnabled"
             onChange={(e) => {
-              e.target.id = e.target.value;
+              setVid(e.target.checked);
             }}
-            className="border-2 p-2 bg-white/10"
-            type="text"
-            placeholder="search a song"
           />
-          <button
-            type="submit"
-            className="border-2 p-2"
-            onClick={() => {
-              setQuery(document.getElementsByName("searchQuery")[0].id);
-              pageState.set(PAGE_STATES.Search);
-            }}
-          >
-            Search
-          </button>
-          <label>
-            Vid?
-            <input
-              type="checkbox"
-              name="vidEnabled"
-              onChange={(e) => {
-                setVid(e.target.checked);
-              }}
+        </label>
+      </nav>
+
+      <main
+        className="relative overflow-y-scroll w-full grow min-h-[80%] max-h-[90%]"
+        style={{ backgroundColor: `${COLORS.BG}` }}
+      >
+        <AnimatePresence mode="wait">
+          {pageState.get === PAGE_STATES.Main && <Main songState={songState} />}
+          {pageState.get === PAGE_STATES.Search && (
+            <SearchResults
+              query={query}
+              songState={songState}
+              pageState={pageState}
             />
-          </label>
-        </nav>
-
-        <main className="relative overflow-hidden">
-          <AnimatePresence mode="wait">
-            {pageState.get === PAGE_STATES.Main && (
-              <Main songState={songState} />
-            )}
-            {pageState.get === PAGE_STATES.Search && (
-              <SearchResults
-                query={query}
+          )}
+          {pageState.get === PAGE_STATES.Preview && (
+            <motion.div
+              className="w-full h-full flex items-center justify-center"
+              key="previewWindow"
+              initial={{ y: "100%", opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: "100%", opacity: 0 }}
+              transition={{ duration: 0.125 }}
+            >
+              <Preview
+                songData={songState.get}
+                vidEnabled={vid}
+                audioPlayer={audioPlayer || null}
                 songState={songState}
-                pageState={pageState}
               />
-            )}
-            {pageState.get === PAGE_STATES.Preview && (
-              <motion.div
-                key="previewWindow"
-                initial={{ y: "100%", opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: "100%", opacity: 0 }}
-                transition={{ duration: 0.125 }}
-              >
-                <Preview
-                  songData={songState.get}
-                  vidEnabled={vid}
-                  audioPlayer={audioPlayer || null}
-                  songState={songState}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </main>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </main>
 
-        <div className="flex items-center justify-center w-[100vw]">
-          <Player
-            audioPlayer={audioPlayer || null}
-            songState={songState}
-            pageState={pageState}
-          />
-        </div>
+      <div className=" h-[11%] w-full">
+        <Player
+          audioPlayer={audioPlayer || null}
+          songState={songState}
+          pageState={pageState}
+        />
       </div>
     </div>
   );

@@ -27,9 +27,10 @@ import { AlbumData } from "@/util/types/AlbumData";
 import { COLORS } from "@/util/enums/colors";
 import { useLiveQuery } from "dexie-react-hooks";
 import { queueDB } from "@/db/queueDB";
-import { loadingSpinner } from "../Player/Controls";
+
 import Song from "./Item/Song";
 import { enqueue, play } from "@/player/manager";
+import { LoadingSpinner } from "../Icons/Icons";
 
 interface SearchResultsProps {
   query: string;
@@ -72,23 +73,13 @@ export default function SearchResults({
     setVideos(null);
 
     async function init() {
-      const topRes = await fetch(`/search/top`, {
-        method: "POST",
-        body: JSON.stringify({
-          query: query,
-        }),
-      });
+      const topRes = await fetch(`/search/top?q=${query}`);
       if (topRes.status === 200) {
         const data: TopResult = await topRes.json();
         setTopResult(data);
       }
 
-      const songRes = await fetch(`/search/songs`, {
-        method: "POST",
-        body: JSON.stringify({
-          query: query,
-        }),
-      });
+      const songRes = await fetch(`/search/songs?q=${query}`);
       if (songRes.status === 200) {
         const data: SongData[] = await songRes.json();
         setSongs(data as SongData[]);
@@ -127,12 +118,7 @@ export default function SearchResults({
       //   setPlaylists(data as PlaylistMetadata[]);
       // }
 
-      const videoRes = await fetch(`/search/videos`, {
-        method: "POST",
-        body: JSON.stringify({
-          query: query,
-        }),
-      });
+      const videoRes = await fetch(`/search/videos?q=${query}`);
       if (videoRes.status === 200) {
         const data: SongData[] = await videoRes.json();
         setVideos(data as SongData[]);
@@ -162,7 +148,7 @@ export default function SearchResults({
 
   return (
     <div
-      className="flex items-start justify-center w-[100vw] h-[83.25vh] overflow-y-scroll overflow-x-hidden"
+      className="flex items-center justify-center w-full h-full overflow-y-scroll overflow-x-hidden"
       onClick={(e) => {
         if (dropdownId.get) {
           dropdownId.set(null);
@@ -190,7 +176,7 @@ export default function SearchResults({
           <div className="relative flex items-center justify-center w-full h-[20%]">
             <div className="relative animate-pulse rounded-[4px] w-full h-full bg-white/10"></div>
             <span className="absolute z-[1]">
-              {loadingSpinner("5vw", "5vw")}
+              <LoadingSpinner size={"5vw"} fill={"#e8eaed"} opacity={0.8} />
             </span>
           </div>
         )}
@@ -201,7 +187,7 @@ export default function SearchResults({
           </span>
           <span className="flex items-center gap-2 justify-end w-full h-full">
             <button
-              className="border-2 opacity-50 h-[32px] w-[32px] rounded-full rotate-[270deg] hover:scale-110 hover:bg-white/5 hover:opacity-100"
+              className=" opacity-50 h-[32px] w-[32px] rounded rotate-[270deg] hover:scale-110 hover:bg-white/5 hover:opacity-100"
               onClick={() => {
                 const container = songItemsContainer.current;
                 if (!container) return;
@@ -214,7 +200,7 @@ export default function SearchResults({
               <img className="w-full h-full" src="/icons/chevron_0deg.svg" />
             </button>
             <button
-              className=" border-2 opacity-50 h-[32px] w-[32px] rounded-full rotate-[90deg] hover:scale-110 hover:bg-white/5 hover:opacity-100"
+              className="  opacity-50 h-[32px] w-[32px] rounded rotate-[90deg] hover:scale-110 hover:bg-white/5 hover:opacity-100"
               onClick={() => {
                 const container = songItemsContainer.current;
                 if (!container) return;
@@ -232,7 +218,7 @@ export default function SearchResults({
         <div
           id="songItemsContainer"
           ref={songItemsContainer}
-          className="w-full h-[54.25%] overflow-hidden"
+          className="w-full h-[58.2%] overflow-hidden"
         >
           {songCategoryItems ? (
             <div className="flex flex-col items-center gap-1 justify-start w-full h-[83.25vh]">
@@ -264,7 +250,7 @@ export default function SearchResults({
           </span>
           <span className="flex items-center gap-2 justify-end w-full h-full">
             <button
-              className="border-2 opacity-50 h-[32px] w-[32px] rounded-full rotate-[270deg] hover:scale-110 hover:bg-white/5 hover:opacity-100"
+              className=" opacity-50 h-[32px] w-[32px] rounded rotate-[270deg] hover:scale-110 hover:bg-white/5 hover:opacity-100"
               onClick={() => {
                 const container = videoItemsContainer.current;
                 if (!container) return;
@@ -277,7 +263,7 @@ export default function SearchResults({
               <img className="w-full h-full" src="/icons/chevron_0deg.svg" />
             </button>
             <button
-              className=" border-2 opacity-50 h-[32px] w-[32px] rounded-full rotate-[90deg] hover:scale-110 hover:bg-white/5 hover:opacity-100"
+              className="  opacity-50 h-[32px] w-[32px] rounded rotate-[90deg] hover:scale-110 hover:bg-white/5 hover:opacity-100"
               onClick={() => {
                 const container = videoItemsContainer.current;
                 if (!container) return;
@@ -295,7 +281,7 @@ export default function SearchResults({
         <div
           id="videoItemsContainer"
           ref={videoItemsContainer}
-          className="w-full h-[54.25%] overflow-hidden"
+          className="w-full h-[58.2%] overflow-hidden"
         >
           {videoCategoryItems ? (
             <div className="flex flex-col items-center gap-1 justify-start w-full h-[83.25vh]">

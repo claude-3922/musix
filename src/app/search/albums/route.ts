@@ -4,19 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import YTMusic from "ytmusic-api";
 
 export async function POST(req: NextRequest) {
-  let query: string | null = null;
-
-  try {
-    const body = await req.json();
-    query = body.query;
-  } catch (error) {
-    console.log(" INFO /search/albums 'Invalid request body'");
-    console.log(error);
-    return NextResponse.json(
-      { message: "Invalid request body" },
-      { status: 403 }
-    );
-  }
+  const query: string | null = req.nextUrl.searchParams.get("q");
 
   if (!query || query.trim().length === 0) {
     console.log(" INFO /search/albums 'No query provided'");

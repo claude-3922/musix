@@ -44,13 +44,13 @@ export default function Suggestions({
   if (loading) return <>Loading...</>;
 
   return (
-    <div>
+    <>
       {suggestions
         ? suggestions.map((s, i) => {
             return (
-              <div
+              <span
                 key={i}
-                className="flex items-center justify-start bg-white/10 mb-[1%] rounded"
+                className="flex items-center justify-start bg-white/[5%] mb-[0.5%]"
               >
                 <span className="flex items-center justify-center w-[5%]">
                   {i + 1}
@@ -61,7 +61,6 @@ export default function Suggestions({
                   width="5vw"
                   height="5vw"
                   iconStyle={{
-                    borderRadius: "3px",
                     overflow: "hidden",
                     margin: "0.5vw 0.5vw",
                   }}
@@ -97,10 +96,10 @@ export default function Suggestions({
                     {formatSongDuration(s.duration)}
                   </p>
                 </span>
-              </div>
+              </span>
             );
           })
         : "No suggestions found."}
-    </div>
+    </>
   );
 }

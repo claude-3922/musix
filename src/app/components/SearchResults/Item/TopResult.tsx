@@ -11,10 +11,15 @@ import OverlayIcon from "../../Util/OverlayIcon";
 import { AlbumData } from "@/util/types/AlbumData";
 import { ArtistData } from "@/util/types/ArtistData";
 import { dequeue, enqueue, play } from "@/player/manager";
-import { loadingSpinner } from "../../Player/Controls";
 import { COLORS } from "@/util/enums/colors";
 import { useLiveQuery } from "dexie-react-hooks";
 import { queueDB } from "@/db/queueDB";
+import {
+  LoadingSpinner,
+  PlaySymbol,
+  QueueAdd,
+  QueueRemove,
+} from "../../Icons/Icons";
 
 interface TopResultProps {
   type: "SONG" | "ARTIST" | "ALBUM" | "VIDEO" | "PLAYLIST";
@@ -137,7 +142,7 @@ export default function TopResult({
 
   return (
     <div
-      className="flex justify-start items-center rounded-[4px] h-[20%] w-full bg-white/[5%]"
+      className="flex justify-start items-center h-[21%] w-full bg-white/[5%]"
       onContextMenu={(e) => {
         dropdownPos.set({
           x: e.clientX - 20,
@@ -152,7 +157,6 @@ export default function TopResult({
         width={"8vw"}
         height={"8vw"}
         iconStyle={{
-          borderRadius: "4px",
           overflow: "hidden",
           margin: "1vw",
         }}
@@ -162,12 +166,9 @@ export default function TopResult({
         }}
       >
         {waiting ? (
-          loadingSpinner("50%", "50%")
+          <LoadingSpinner size={"50%"} fill={"#e8eaed"} opacity={0.8} />
         ) : (
-          <img
-            src="/icons/playFill.svg"
-            style={{ width: "50%", height: "50%", opacity: 0.8 }}
-          />
+          <PlaySymbol size={"50%"} fill={"#e8eaed"} opacity={0.8} />
         )}
       </OverlayIcon>
 
@@ -194,7 +195,7 @@ export default function TopResult({
 
       <span className="flex justify-end items-center gap-2 min-w-[35%] max-w-[50%] h-full">
         <button
-          className="text-base rounded-full px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50 disabled:ring-0 whitespace-nowrap text-ellipsis overflow-hidden"
+          className="text-base rounded px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50 disabled:ring-0 whitespace-nowrap text-ellipsis overflow-hidden"
           onClick={async () => {
             if (isNp) return;
             await handlePlay();
@@ -208,7 +209,7 @@ export default function TopResult({
           {isNp ? "Already playing" : "Play"}
         </button>
         <button
-          className="text-base rounded-full px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50 disabled:ring-0 whitespace-nowrap text-ellipsis overflow-hidden"
+          className="text-base rounded px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50 disabled:ring-0 whitespace-nowrap text-ellipsis overflow-hidden"
           onClick={async () => {
             if (addedToQueue) {
               await handleDequeue();
@@ -224,11 +225,21 @@ export default function TopResult({
             backgroundColor: COLORS.ACCENT,
           }}
         >
-          {addedToQueue ? "Remove from queue" : "Add to queue"}
+          {addedToQueue ? (
+            <span className="flex items-center justify-center gap-2">
+              <QueueRemove size={"24px"} fill={"#e8eaed"} opacity={1} />
+              <p>Remove from queue</p>
+            </span>
+          ) : (
+            <span className="flex items-center justify-center gap-2">
+              <QueueAdd size={"24px"} fill={"#e8eaed"} opacity={1} />
+              <p>Add to queue</p>
+            </span>
+          )}
         </button>
         <span
           //type="button"
-          className="w-[10%] h-[20%] flex items-center justify-center relative rounded-full hover:cursor-pointer"
+          className="w-[10%] h-[20%] flex items-center justify-center relative hover:cursor-pointer"
           onClick={(e) => {
             dropdownPos.set({
               x: e.clientX - 20,

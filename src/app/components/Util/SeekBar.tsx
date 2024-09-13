@@ -108,87 +108,85 @@ export default function SeekBar({
   };
 
   return (
-    <>
-      <span
-        className="no-select flex items-center relative hover:cursor-pointer"
-        onClick={(e) => {
-          if (!isSeeking) {
-            seekHandler(e);
-          }
-        }}
-        onMouseDown={() => {
-          setIsSeeking(true);
-          if (onMouseDragStart && seekbarContainer.current && thumb.current) {
-            onMouseDragStart(seekbarContainer.current, thumb.current);
-          }
-        }}
-        onMouseUp={(e) => {
-          setIsSeeking(false);
+    <span
+      className="no-select flex items-center justify-center relative hover:cursor-pointer w-full h-full"
+      onClick={(e) => {
+        if (!isSeeking) {
+          seekHandler(e);
+        }
+      }}
+      onMouseDown={() => {
+        setIsSeeking(true);
+        if (onMouseDragStart && seekbarContainer.current && thumb.current) {
+          onMouseDragStart(seekbarContainer.current, thumb.current);
+        }
+      }}
+      onMouseUp={(e) => {
+        setIsSeeking(false);
 
-          if (onMouseDragEnd && seekbarContainer.current && thumb.current) {
-            onMouseDragEnd(seekbarContainer.current, thumb.current);
-          }
-        }}
-        onMouseOver={(e) => {
-          setShowThumb(true);
-          if (seekbarContainer.current && songDuration) {
-            seekbarContainer.current.title = `${formatSongDuration(
-              getDurationAtCurrentPos(e, songDuration)
-            )}`;
-          }
-        }}
-        onMouseMove={(e) => {
-          if (isSeeking && e.buttons === 1) {
-            return seekHandler(e);
-          }
-        }}
-        onMouseOut={() => {
-          setShowThumb(false);
-        }}
+        if (onMouseDragEnd && seekbarContainer.current && thumb.current) {
+          onMouseDragEnd(seekbarContainer.current, thumb.current);
+        }
+      }}
+      onMouseOver={(e) => {
+        setShowThumb(true);
+        if (seekbarContainer.current && songDuration) {
+          seekbarContainer.current.title = `${formatSongDuration(
+            getDurationAtCurrentPos(e, songDuration)
+          )}`;
+        }
+      }}
+      onMouseMove={(e) => {
+        if (isSeeking && e.buttons === 1) {
+          return seekHandler(e);
+        }
+      }}
+      onMouseOut={() => {
+        setShowThumb(false);
+      }}
+      style={{
+        paddingTop: height,
+        paddingBottom: height,
+      }}
+      ref={seekbarContainer}
+    >
+      <span
+        className="flex flex-col items-start justify-center"
         style={{
-          paddingTop: height,
-          paddingBottom: height,
+          ...containerStyles,
+          position: "relative",
+          width: width,
+          height: height,
+          overflowX: "hidden",
+          overflowY: "hidden",
         }}
-        ref={seekbarContainer}
       >
         <span
-          className="flex flex-col items-start justify-center"
+          ref={progressBar}
           style={{
-            ...containerStyles,
-            position: "relative",
-            width: width,
-            height: height,
-            overflowX: "hidden",
-            overflowY: "hidden",
-          }}
-        >
-          <span
-            ref={progressBar}
-            style={{
-              ...progressStyles,
-              position: "absolute",
-              zIndex: 1,
-              height: height,
-              width: `${current}%`,
-            }}
-          ></span>
-        </span>
-
-        <span
-          ref={thumb}
-          style={{
-            width: `${thumbRadius_pixels}px`,
-            height: `${thumbRadius_pixels}px`,
-            opacity: showThumb ? "100%" : "0%",
-            transition: "opacity 0.125s linear",
-            ...thumbStyles,
+            ...progressStyles,
             position: "absolute",
-            zIndex: 2,
-            left: `${thumbPositionX}%`,
-            borderRadius: "10vw",
+            zIndex: 1,
+            height: height,
+            width: `${current}%`,
           }}
         ></span>
       </span>
-    </>
+
+      <span
+        ref={thumb}
+        style={{
+          width: `${thumbRadius_pixels}px`,
+          height: `${thumbRadius_pixels}px`,
+          opacity: showThumb ? "100%" : "0%",
+          transition: "opacity 0.125s linear",
+          ...thumbStyles,
+          position: "absolute",
+          zIndex: 2,
+          left: `${thumbPositionX}%`,
+          borderRadius: "10vw",
+        }}
+      ></span>
+    </span>
   );
 }

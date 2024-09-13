@@ -15,15 +15,13 @@ export default function Main({ songState }: MainProps) {
   const queue = useLiveQuery(() => queueDB.queue.toArray());
 
   return (
-    <div className="flex items-start justify-center w-[100vw] h-[83.25vh] overflow-y-scroll">
-      <div
-        className={`videoContainer flex flex-col w-[100vw] h-[100vh] mt-[2vh] overflow:hidden`}
-      >
-        <div className="font-bold mx-[2vw] my-[4vh]">
+    <div className="flex items-start justify-center w-full h-full overflow-y-scroll">
+      <div className={`flex flex-col w-full h-full overflow:hidden`}>
+        <div className="font-bold">
           <h1 className="text-5xl">Welcome, {"user"}</h1>
         </div>
 
-        <div className="mx-[4vw] my-[1vh]">
+        <div>
           <h1 className="text-2xl">SKIBIDI SIGMA Fanum Tax baby gronk</h1>
         </div>
       </div>

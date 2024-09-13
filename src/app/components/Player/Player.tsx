@@ -3,12 +3,11 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import Thumbnail from "./Thumbnail";
 import Controls from "./Controls";
 import Extras from "./Extras";
 import PlayerLoading from "./PlayerLoading";
 import { pSBC } from "@/util/pSBC";
-import Title from "./Title";
+
 import { SongData } from "@/util/types/SongData";
 
 import { StateManager } from "@/util/types/StateManager";
@@ -19,6 +18,7 @@ import PlayerEmpty from "./PlayerEmpty";
 import { PAGE_STATES } from "@/util/enums/pageState";
 import { COLORS } from "@/util/enums/colors";
 import { play } from "@/player/manager";
+import OverlayIcon from "../Util/OverlayIcon";
 
 interface PlayerProps {
   audioPlayer: HTMLAudioElement | null;
@@ -31,6 +31,7 @@ export function Player({ audioPlayer, songState, pageState }: PlayerProps) {
 
   const [songData, setSongData] = useState<SongData | null>(null);
   const [audioLoading, setAudioLoading] = useState(true);
+  const [showVolumeBar, setShowVolumeBar] = useState(false);
 
   const playerTime = useStateManager<number>(0);
   const playerPaused = useStateManager<boolean>(false);
@@ -137,17 +138,62 @@ export function Player({ audioPlayer, songState, pageState }: PlayerProps) {
 
   return (
     <div
-      className={`no-select text-white flex flex-row items-center justify-between w-[100vw] h-[6.07vw] px-[1vw]`}
+      className={`no-select text-white flex flex-row items-center justify-evenly w-full h-full px-[1%]`}
       style={{
         backgroundColor: `${pSBC(0.4, COLORS.BG, "#000000")}`,
       }}
     >
-      <div className="flex justify-start items-center w-[30vw]">
-        <Thumbnail songData={songData} pageState={pageState} />
-        <Title data={songData} />
+      <div className="flex justify-start items-center w-[30%] h-full gap-2">
+        <OverlayIcon
+          thumbnailURL={songData.thumbnail}
+          width={"18%"}
+          height={"85%"}
+          iconStyle={{
+            overflow: "hidden",
+          }}
+          onClick={() =>
+            pageState.set(
+              pageState.get === PAGE_STATES.Preview
+                ? PAGE_STATES.Main
+                : PAGE_STATES.Preview
+            )
+          }
+        >
+          <img
+            src="/icons/chevron_0deg.svg"
+            style={{
+              width: "50%",
+              height: "50%",
+              opacity: 0.8,
+              rotate:
+                pageState.get === PAGE_STATES.Preview ? "90deg" : "270deg",
+            }}
+          />
+        </OverlayIcon>
+
+        <div className="flex flex-col items-start justify-center w-[45%] h-full overflow-x-hidden">
+          {data && data.title.length > 21 ? (
+            <span className="text-base overflow-hidden whitespace-nowrap animateTitle">
+              {data.title}
+            </span>
+          ) : (
+            <span className="text-base overflow-hidden whitespace-nowrap">
+              {data?.title}
+            </span>
+          )}
+          {data && data.artist.name.length > 21 ? (
+            <span className="text-sm overflow-hidden whitespace-nowrap animateTitle">
+              {data.artist.name}
+            </span>
+          ) : (
+            <span className="text-sm overflow-hidden whitespace-nowrap">
+              {data?.artist.name}
+            </span>
+          )}
+        </div>
       </div>
 
-      <div className="flex flex-col justify-center w-[40vw] h-[6.07vw] items-center">
+      <div className="flex flex-col gap-1 justify-center grow h-full items-center">
         <Controls
           data={songData}
           songState={songState}
@@ -158,7 +204,17 @@ export function Player({ audioPlayer, songState, pageState }: PlayerProps) {
         />
       </div>
 
-      <Extras data={songData} audioPlayer={audioPlayer} />
+      <div
+        className="flex items-center justify-end w-[30%] h-full gap-2"
+        onMouseOver={() => setShowVolumeBar(true)}
+        onMouseOut={() => setShowVolumeBar(false)}
+      >
+        <Extras
+          data={songData}
+          audioPlayer={audioPlayer}
+          showVolumeBar={true}
+        />
+      </div>
     </div>
   );
 }
