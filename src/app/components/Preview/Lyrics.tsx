@@ -1,56 +1,33 @@
-import { durationSeconds } from "@/util/format";
 import { LyricsData } from "@/util/types/LyricsData";
-import React, { useEffect, useState } from "react";
-import moment from "moment";
-import { time } from "console";
+import React from "react";
 
 interface LyricsProps {
-  trackName: string;
-  albumName: string;
-  artistName: string;
-  duration: number;
+  lyricsData: LyricsData | null;
+  lyricsLoading: boolean;
 
   audioPlayer: HTMLAudioElement | null;
 }
 
 export default function Lyrics({
-  trackName,
-  albumName,
-  artistName,
-  duration,
+  lyricsData,
+  lyricsLoading,
   audioPlayer,
 }: LyricsProps) {
-  const [lyricsData, setLyricsData] = useState<LyricsData | null>(null);
-  const [audioTime, setAudioTime] = useState<number>(0);
-
-  useEffect(() => {
-    async function init() {
-      const res = await fetch(
-        `api/data/lyrics?name=${trackName}&artist=${artistName}&album=${albumName}&duration=${duration}`
-      );
-      if (res.status !== 200) return;
-      const data: LyricsData = await res.json();
-
-      setLyricsData(data);
-    }
-
-    init();
-    if (!audioPlayer) return;
-
-    const timeUpdateHandler = () => {
-      setAudioTime(audioPlayer.currentTime);
-    };
-    audioPlayer.addEventListener("timeupdate", timeUpdateHandler);
-
-    return () => {
-      audioPlayer.removeEventListener("timeupdate", timeUpdateHandler);
-    };
-  }, [albumName, artistName, audioPlayer, duration, trackName]);
-
-  if (!lyricsData) return <div>No lyrics found.</div>;
+  if (lyricsLoading)
+    return (
+      <div className="w-full h-full flex items-center justify-center text-3xl opacity-40 tracking-wide">
+        Loading...
+      </div>
+    );
+  if (!lyricsData)
+    return (
+      <div className="w-full h-full flex items-center justify-center text-3xl opacity-40 tracking-wide">
+        No lyrics found.
+      </div>
+    );
 
   return (
-    <div>
+    <div className="w-full h-full items-center justify-start">
       {lyricsData.lyrics.isSynced
         ? lyricsData.lyrics.syncedLyrics?.split("\n").map((l, i) => {
             const timeInfo = l

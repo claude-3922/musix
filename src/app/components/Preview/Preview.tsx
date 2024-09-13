@@ -17,31 +17,65 @@ import Suggestions from "./Suggestions";
 import { StateManager } from "@/util/types/StateManager";
 import Lyrics from "./Lyrics";
 import NowPlaying from "./NowPlaying";
+import { LyricsData } from "@/util/types/LyricsData";
 
 interface PreviewProps {
-  songData: SongData | null;
   audioPlayer: HTMLAudioElement | null;
   songState: StateManager<SongData | null>;
 }
 
-export default function Preview({
-  songData,
-  audioPlayer,
-  songState,
-}: PreviewProps) {
+export default function Preview({ audioPlayer, songState }: PreviewProps) {
   const videoPlayerState = useStateManager<HTMLVideoElement | null>(null);
   const previewPageState = useStateManager<PREVIEW_TAB_STATES>(
     PREVIEW_TAB_STATES.NowPlaying
   );
 
+  const [suggestions, setSuggestions] = useState<SongData[] | null>(null);
+  const [suggestionsLoading, setSuggestionsLoading] = useState(false);
+
+  const [lyrics, setLyrics] = useState<LyricsData | null>(null);
+  const [lyricsLoading, setLyricsLoading] = useState(false);
+
   useEffect(() => {
     if (!audioPlayer) return;
   }, [audioPlayer]);
 
+  useEffect(() => {
+    if (!songState.get) return;
+
+    setSuggestions(null);
+    setLyrics(null);
+    async function loadSuggestions() {
+      setSuggestionsLoading(true);
+      const res = await fetch(`api/data/suggestions?id=${songState.get?.id}`);
+      if (res.status === 200) {
+        const data: SongData[] = await res.json();
+        setSuggestions(data);
+      }
+      setSuggestionsLoading(false);
+    }
+
+    async function loadLyrics() {
+      setLyricsLoading(true);
+      const res = await fetch(
+        `api/data/lyrics?name=${songState.get?.title}&artist=${songState.get?.artist.name}&album=${songState.get?.album?.name}&duration=${songState.get?.duration}`
+      );
+      if (res.status === 200) {
+        const data: LyricsData = await res.json();
+        setLyrics(data);
+      }
+      setLyricsLoading(false);
+    }
+
+    loadLyrics();
+    loadSuggestions();
+  }, [songState.get]);
+
   // const queue = useLiveQuery(() => queueDB.queue.toArray());
   // const history = useLiveQuery(() => queueDB.history.toArray());
 
-  if (!audioPlayer || !songData) return null;
+  if (!audioPlayer || !songState.get) return null;
+  const songData = songState.get;
 
   const clickHandler = () => {
     audioPlayer.paused ? audioPlayer.play() : audioPlayer.pause();
@@ -97,16 +131,15 @@ export default function Preview({
           )}
           {previewPageState.get === PREVIEW_TAB_STATES.Suggestions && (
             <Suggestions
-              currentSongId={songData?.id || null}
+              suggestions={suggestions}
+              suggestionsLoading={suggestionsLoading}
               songState={songState}
             />
           )}
           {previewPageState.get === PREVIEW_TAB_STATES.Lyrics && (
             <Lyrics
-              trackName={songData.title}
-              albumName={songData.album?.name || ""}
-              artistName={songData.artist.name}
-              duration={songData.duration}
+              lyricsData={lyrics}
+              lyricsLoading={lyricsLoading}
               audioPlayer={audioPlayer}
             />
           )}

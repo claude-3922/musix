@@ -99,7 +99,6 @@ export default function Home() {
               transition={{ duration: 0.125 }}
             >
               <Preview
-                songData={songState.get}
                 audioPlayer={audioPlayer || null}
                 songState={songState}
               />

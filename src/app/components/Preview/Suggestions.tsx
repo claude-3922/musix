@@ -8,44 +8,17 @@ import { play } from "@/player/manager";
 import { Chevron_0Deg, PlaySymbol } from "../Icons/Icons";
 
 interface SuggestionsProps {
-  currentSongId: string | null;
+  suggestions: SongData[] | null;
+  suggestionsLoading: boolean;
   songState: StateManager<SongData | null>;
 }
 
 export default function Suggestions({
-  currentSongId,
+  suggestions,
   songState,
+  suggestionsLoading,
 }: SuggestionsProps) {
-  const [loading, setLoading] = useState(false);
-  const [suggestions, setSuggestions] = useState<SongData[] | null>(null);
-
-  useEffect(() => {
-    if (!currentSongId) return;
-
-    setLoading(true);
-
-    async function init() {
-      setSuggestions(null);
-      const res = await fetch(`api/data/suggestions?id=${currentSongId}`);
-      if (res.status === 200) {
-        const data: SongData[] = await res.json();
-        setSuggestions(data);
-        setLoading(false);
-      }
-    }
-
-    init();
-  }, [currentSongId]);
-
-  if (!currentSongId) {
-    return (
-      <div className="w-full h-full flex items-center justify-center text-3xl opacity-40 tracking-wide">
-        Player not found.
-      </div>
-    );
-  }
-
-  if (loading) {
+  if (suggestionsLoading) {
     return (
       <div className="w-full h-full flex items-center justify-center text-3xl opacity-40 tracking-wide">
         Loading....
