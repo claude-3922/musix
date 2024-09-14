@@ -133,7 +133,7 @@ export default function SearchResults({
           backgroundColor: COLORS.BG,
         }}
       >
-        <span className="flex items-center justify-center gap-2 text-3xl tracking-wide font-bold opacity-60">
+        <span className="flex items-center justify-center gap-2 text-3xl tracking-wide opacity-60">
           <Error size={"36px"} /> No query
         </span>
         <span className="opacity-60 text-lg">Type something maybe?</span>
@@ -174,7 +174,7 @@ export default function SearchResults({
     >
       <div className="w-[80%] h-full">
         <div className="w-full h-[7.5%] mt-[3%]">
-          <span className="flex items-center justify-StarFillt w-full h-full text-xl font-bold tracking-wide opacity-80 gap-2">
+          <span className="flex items-center justify-StarFillt w-full h-full text-2xl tracking-wide opacity-80 gap-2">
             <StarFill opacity={0.8} size={"24px"} />
             Top Result
           </span>
@@ -197,7 +197,7 @@ export default function SearchResults({
         )}
 
         <div className="flex items-center gap-2 justify-between w-full h-[7.5%] mt-[3%]">
-          <span className="flex items-center justify-StarFillt w-full h-full text-xl font-bold tracking-wide opacity-80 gap-2">
+          <span className="flex items-center justify-StarFillt w-full h-full text-2xl tracking-wide opacity-80 gap-2">
             <Music opacity={0.8} size={"24px"} />
             Songs
           </span>
@@ -254,7 +254,7 @@ export default function SearchResults({
         </div>
 
         <div className="flex items-center gap-2 justify-between w-full h-[7.5%] mt-[3%]">
-          <span className="flex items-center justify-StarFillt w-full h-full text-xl font-bold tracking-wide opacity-80 gap-2">
+          <span className="flex items-center justify-StarFillt w-full h-full text-2xl tracking-wide opacity-80 gap-2">
             <Video opacity={0.8} size={"24px"} />
             Videos
           </span>

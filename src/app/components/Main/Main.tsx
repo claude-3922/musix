@@ -4,7 +4,6 @@ import { StateManager } from "@/util/types/StateManager";
 import { useLiveQuery } from "dexie-react-hooks";
 import React, { useEffect, useState } from "react";
 
-import ExpandableList from "../Util/ExpandableList";
 import SeekBar from "../Util/SeekBar";
 
 interface MainProps {

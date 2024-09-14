@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
       .contents[0].as(YTNodes.MusicCarouselShelf)
       .contents.map((item) => item.as(YTNodes.MusicResponsiveListItem))
       .map(async (item, i) => {
-        if (i > 9 || !item.id) return;
+        if (!item.id) return;
         let thisSong = await yt.music.getInfo(item.id!);
         return {
           id: item.id!,
