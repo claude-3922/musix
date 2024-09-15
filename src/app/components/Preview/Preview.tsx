@@ -95,7 +95,7 @@ export default function Preview({ audioPlayer, songState }: PreviewProps) {
   ];
 
   return (
-    <div className="flex justify-center items-center gap-2 w-[90%] h-[90%] overflow-x-scroll">
+    <div className="flex justify-center items-center gap-2 w-[90%] h-[90%]">
       <video
         ref={(r) => videoPlayerState.set(r)}
         id="videoPlayer"
@@ -125,7 +125,7 @@ export default function Preview({ audioPlayer, songState }: PreviewProps) {
             </button>
           ))}
         </span>
-        <div className="h-full w-full overflow-y-hidden overflow-x-hidden rounded-br-lg">
+        <div className="h-full w-full overflow-y-scroll overflow-x-hidden rounded-br-lg">
           {previewPageState.get === PREVIEW_TAB_STATES.NowPlaying && (
             <NowPlaying data={songData} />
           )}

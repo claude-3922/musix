@@ -3,7 +3,7 @@ import { SongData } from "@/util/types/SongData";
 import { NextRequest, NextResponse } from "next/server";
 import YTMusic from "ytmusic-api";
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
   const query: string | null = req.nextUrl.searchParams.get("q");
 
   if (!query || query.trim().length === 0) {

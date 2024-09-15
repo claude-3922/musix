@@ -25,18 +25,9 @@ import {
 interface SongProps {
   data: SongData;
   songState: StateManager<SongData | null>;
-
-  dropdownId: StateManager<string | null>;
-  dropdownPos: StateManager<DropdownPos>;
 }
 
-export default function Song({
-  data,
-  songState,
-
-  dropdownId,
-  dropdownPos,
-}: SongProps) {
+export default function Song({ data, songState }: SongProps) {
   const [addedToQueue, setAddedToQueue] = useState(false);
   const [isNp, setIsNp] = useState(false);
 
@@ -70,13 +61,7 @@ export default function Song({
   return (
     <div
       className="flex items-center justify-start h-[25%] w-full bg-white/[5%]"
-      onContextMenu={(e) => {
-        dropdownPos.set({
-          x: e.clientX - 20,
-          y: e.clientY - 20,
-        });
-        toggleDropdown(currentItemId, dropdownId);
-      }}
+      onContextMenu={(e) => {}}
     >
       <OverlayIcon
         optionalYoutubeId={data.id}
@@ -108,16 +93,6 @@ export default function Song({
         <span
           //type="button"
           className="flex items-center justify-center relative hover:cursor-pointer w-[12%] h-[26%] hover:scale-110"
-          onClick={(e) => {
-            dropdownPos.set({
-              x: e.clientX - 20,
-              y: e.clientY - 20,
-            });
-            toggleDropdown(currentItemId as any, dropdownId);
-          }}
-          style={{
-            opacity: dropdownId.get === currentItemId ? 1 : 0.6,
-          }}
         >
           <MoreVertical size={"100%"} opacity={0.8} />
         </span>

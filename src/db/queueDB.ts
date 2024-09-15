@@ -1,10 +1,10 @@
 import { SongData } from "@/util/types/SongData";
 import Dexie, { Table } from "dexie";
 
-import indexedDB from "fake-indexeddb";
+// import indexedDB from "fake-indexeddb";
 
-// @ts-ignore
-import IDBKeyRange from "fake-indexeddb/lib/FDBKeyRange";
+// // @ts-ignore
+// import IDBKeyRange from "fake-indexeddb/lib/FDBKeyRange";
 
 interface NowPlayingRecord extends SongData {
   playingId: number;
@@ -16,10 +16,7 @@ class QueueDatabase extends Dexie {
   nowPlaying!: Table<NowPlayingRecord>;
 
   constructor() {
-    super("QueueDatabase", {
-      indexedDB: indexedDB,
-      IDBKeyRange: IDBKeyRange,
-    });
+    super("QueueDatabase");
     this.version(1).stores({
       history:
         "++id, vid.id, vid.title, vid.thumbnail, vid.duration, owner.title, playerInfo.topColor",

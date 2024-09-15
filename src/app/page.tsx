@@ -15,12 +15,18 @@ import { PAGE_STATES } from "@/util/enums/pageState";
 import { COLORS } from "@/util/enums/colors";
 import { pSBC } from "@/util/pSBC";
 import NavBar from "./components/Navigation/NavBar";
+import { BlockSign } from "./components/Icons/Icons";
+import Dropdown, { DropdownPos } from "./components/Util/Dropdown";
+import { play } from "@/player/manager";
 
 export default function Home() {
   const songState = useStateManager<SongData | null>(null);
   const pageState = useStateManager<PAGE_STATES>(PAGE_STATES.Main);
   const showPreview = useStateManager<boolean>(false);
   const queryState = useStateManager<string>("");
+
+  const dropdownId = useStateManager<string | null>(null);
+  const dropdownPos = useStateManager<DropdownPos>({ x: 0, y: 0 });
 
   const [audioPlayer, setAudioPlayer] = useState<HTMLAudioElement | null>(null);
 
@@ -117,3 +123,6 @@ export default function Home() {
     </div>
   );
 }
+
+export const isMobileDevice = () =>
+  /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);

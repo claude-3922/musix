@@ -27,19 +27,9 @@ interface TopResultProps {
   type: "SONG" | "ARTIST" | "ALBUM" | "VIDEO" | "PLAYLIST";
   data: SongData | ArtistData | AlbumData | PlaylistMetadata;
   songState: StateManager<SongData | null>;
-
-  dropdownId: StateManager<string | null>;
-  dropdownPos: StateManager<DropdownPos>;
 }
 
-export default function TopResult({
-  type,
-  data,
-  songState,
-
-  dropdownId,
-  dropdownPos,
-}: TopResultProps) {
+export default function TopResult({ type, data, songState }: TopResultProps) {
   const [addedToQueue, setAddedToQueue] = useState(false);
   const [isNp, setIsNp] = useState(false);
 
@@ -145,13 +135,7 @@ export default function TopResult({
   return (
     <div
       className="flex justify-start items-center h-[21%] w-full bg-white/[5%]"
-      onContextMenu={(e) => {
-        dropdownPos.set({
-          x: e.clientX - 20,
-          y: e.clientY - 20,
-        });
-        toggleDropdown(currentItemId as any, dropdownId);
-      }}
+      onContextMenu={(e) => {}}
     >
       <OverlayIcon
         optionalYoutubeId={data.id}
@@ -252,16 +236,6 @@ export default function TopResult({
         <span
           //type="button"
           className="w-[10%] h-[20%] flex items-center justify-center relative hover:cursor-pointer hover:scale-110"
-          onClick={(e) => {
-            dropdownPos.set({
-              x: e.clientX - 20,
-              y: e.clientY - 20,
-            });
-            toggleDropdown(currentItemId as any, dropdownId);
-          }}
-          style={{
-            opacity: dropdownId.get === currentItemId ? 1 : 0.6,
-          }}
         >
           <MoreVertical size={"90%"} opacity={0.8} />
         </span>
@@ -269,6 +243,8 @@ export default function TopResult({
     </div>
   );
 }
+
+const topResultDropdown = <div></div>;
 
 const fetchSongs = async (
   type: "ALBUM" | "PLAYLIST",
