@@ -55,8 +55,6 @@ export default function OverlayIcon({
           top: 0,
           width: "100%",
           height: "100%",
-          transform: hovering ? "scale(1.05)" : "scale(1)",
-          transition: "transform 0.125s linear",
         }}
       />
       {hovering && (
@@ -71,7 +69,7 @@ export default function OverlayIcon({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            background: "rgba(0, 0, 0, 0.5)",
+            background: "rgba(0, 0, 0, 0.7)",
           }}
         >
           {children}

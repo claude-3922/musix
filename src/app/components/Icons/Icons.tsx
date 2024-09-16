@@ -546,3 +546,22 @@ export function BlockSign({
     </svg>
   );
 }
+
+export function Explcit({
+  size = "24px",
+  fill = "white",
+  opacity = 1,
+}: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height={size}
+      viewBox="0 -960 960 960"
+      width={size}
+      fill={fill}
+      opacity={opacity}
+    >
+      <path d="M360-280h240v-80H440v-80h160v-80H440v-80h160v-80H360v400ZM120-120v-720h720v720H120Z" />
+    </svg>
+  );
+}

@@ -66,6 +66,7 @@ export default function Home() {
           ref={(el) => setAudioPlayer(el)}
           src={`api/media?id=${songState.get.id}&vid=0`}
           preload="auto"
+          autoPlay
         />
       ) : (
         <></>

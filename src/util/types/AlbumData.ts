@@ -7,6 +7,7 @@ export interface AlbumData extends AlbumMetadata {
   moreThumbnails?: string[];
   year: number;
   songs?: SongData[];
+  explicit?: boolean;
 }
 
 export interface AlbumMetadata {

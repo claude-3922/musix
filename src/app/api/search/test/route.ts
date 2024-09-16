@@ -1,8 +1,9 @@
+import { AlbumData } from "@/util/types/AlbumData";
 import { SongData } from "@/util/types/SongData";
 import ytdl from "@distube/ytdl-core";
 import { NextRequest, NextResponse } from "next/server";
 import YouTube from "youtube-sr";
-import Innertube from "youtubei.js";
+import Innertube, { YTNodes } from "youtubei.js";
 import YTMusic from "ytmusic-api";
 
 export async function GET(req: NextRequest) {
@@ -16,49 +17,66 @@ export async function GET(req: NextRequest) {
   // const res = await ytdl.getInfo(query, { limit: 1 });
   // const top = res[0];
 
-  // const ytMusic = await (await Innertube.create()).music;
-  // if (!ytMusic) {
-  //   console.log(" INFO /search/top 'Error while initializing YTMusic'");
-  //   return NextResponse.json(
-  //     { message: "Error while initializing YTMusic" },
-  //     { status: 500 }
-  //   );
+  const ytMusic = (
+    await Innertube.create({
+      retrieve_player: false,
+      generate_session_locally: false,
+    })
+  ).music;
+  if (!ytMusic) {
+    console.log(" INFO /search/top 'Error while initializing YTMusic'");
+    return NextResponse.json(
+      { message: "Error while initializing YTMusic" },
+      { status: 500 }
+    );
+  }
+
+  const res = await ytMusic.search(query, { type: "album" });
+  if (!res) {
+    console.log(" INFO /search/top 'No search results found'");
+    return NextResponse.json(
+      { message: "No search results found" },
+      { status: 404 }
+    );
+  }
+
+  let content = res.albums?.contents;
+  // if (res.has_continuation) {
+  //   const continuation = await res.getContinuation();
+  //   content?.concat(continuation as any);
   // }
 
-  // const res = await ytMusic.search(query);
-  // if (!res) {
-  //   console.log(" INFO /search/top 'No search results found'");
-  //   return NextResponse.json(
-  //     { message: "No search results found" },
-  //     { status: 404 }
-  //   );
-  // }
+  if (!content) {
+    console.log(" INFO /search/top 'No search results found'");
+    return NextResponse.json(
+      { message: "No search results found" },
+      { status: 404 }
+    );
+  }
 
-  // const top = res.songs?.contents[0];
-  // if (!top) {
-  //   console.log(" INFO /search/top 'No search results found'");
-  //   return NextResponse.json(
-  //     { message: "No search results found" },
-  //     { status: 404 }
-  //   );
-  // }
+  const albums = content.map((a) => {
+    const sortedThumbnails = a.thumbnail?.contents
+      .sort((a, b) => b.width - a.width)
+      .map((t) => t.url) || [""];
 
-  return NextResponse.json(
-    {
-      // type: "SONG",
-      // data: {
-      //   id: top.id || "UNKNOWN",
-      //   url: `https://www.youtube.com/watch?v=${top.id || ""}`,
-      //   title: top.title || "UNKNOWN",
-      //   thumbnail: top.thumbnail || "",
-      //   duration: top.duration,
-      //   artist: {
-      //     name: top.channel ? top.channel.name : "UNKNOWN",
-      //     id: top.channel ? top.channel.id : "UNKNOWN",
-      //   },
-      // } as SongData,
-      a: "b",
-    },
-    { status: 200 }
-  );
+    return {
+      id: a.id || "",
+      name: a.name || "",
+      thumbnail: sortedThumbnails[0],
+      artist: {
+        name: a.flex_columns[1].title.runs?.flat()[2].text || "",
+        id: (a.flex_columns[1].title.runs?.flat()[2] as any) || "",
+      },
+      year: a.year || 0,
+      moreThumbnails: sortedThumbnails,
+      explicit:
+        Boolean(
+          a.badges
+            ?.as(YTNodes.MusicInlineBadge)
+            .find((b) => b.label === "Explicit")
+        ) || false,
+    } as AlbumData;
+  });
+
+  return NextResponse.json(albums, { status: 200 });
 }

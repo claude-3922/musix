@@ -15,6 +15,7 @@ import { COLORS } from "@/util/enums/colors";
 import { useLiveQuery } from "dexie-react-hooks";
 import { queueDB } from "@/db/queueDB";
 import {
+  Explcit,
   LoadingSpinner,
   Minus,
   MoreVertical,
@@ -159,18 +160,27 @@ export default function TopResult({ type, data, songState }: TopResultProps) {
       </OverlayIcon>
 
       <span className="grow max-w-[60%]">
-        <span className="text-sm whitespace-nowrap text-ellipsis opacity-50 w-full">
-          <h1>{`${type} • ${
-            (type === "SONG" || type === "VIDEO") &&
-            formatSongDuration((data as SongData).duration)
-          }`}</h1>
+        <span className="flex items-center justify-starttext-sm whitespace-nowrap text-ellipsis w-full h-[10%] text-sm gap-1 opacity-60">
+          {type === "SONG" &&
+            ((data as SongData).explicit ? (
+              <Explcit size={"20px"} opacity={1} />
+            ) : (
+              <></>
+            ))}
+
+          <p>{type}</p>
+          <p>•</p>
+          <p>
+            {(type === "SONG" || type === "VIDEO") &&
+              formatSongDuration((data as SongData).duration)}
+          </p>
         </span>
         <span>
-          <h1 className="text-lg whitespace-nowrap text-ellipsis w-full">
+          <span className="flex justify-start items-center text-lg whitespace-nowrap text-ellipsis w-full gap-4">
             {type === "SONG" || type === "VIDEO"
               ? (data as SongData).title
               : (data as AlbumData | ArtistData | PlaylistMetadata).name}
-          </h1>
+          </span>
           <h1 className="text-base whitespace-nowrap text-ellipsis w-full">
             {type === "SONG" || type === "VIDEO" || type === "ALBUM"
               ? (data as SongData | AlbumData).artist.name

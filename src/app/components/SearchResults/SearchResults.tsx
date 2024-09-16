@@ -145,7 +145,7 @@ export default function SearchResults({
     ? videos.filter((v) =>
         topResult?.type === "VIDEO"
           ? v.id !== (topResult.data as SongData).id
-          : true
+          : v.duration !== 0 && v.id && true
       )
     : null;
 
@@ -180,7 +180,7 @@ export default function SearchResults({
           <TopResultLoading />
         )}
 
-        <ContainerPaginatorVertical
+        <ContainerScrollerVertical
           container={songItemsContainer.current}
           title="Songs"
         />
@@ -191,7 +191,7 @@ export default function SearchResults({
           className="w-full h-[55%] overflow-hidden"
         >
           {songCategoryItems ? (
-            <div className="flex flex-col items-center gap-0 justify-StarFillt w-full h-full">
+            <div className="flex flex-col items-center gap-0 justify-start w-full h-full">
               {songCategoryItems.map((r, i) => (
                 <Song key={i} data={r} songState={songState} />
               ))}
@@ -201,28 +201,26 @@ export default function SearchResults({
           )}
         </div>
 
-        <ContainerPaginatorHorizontal
-          container={songItemsContainer.current}
+        <ContainerScrollerHorizontal
+          container={albumItemsContainer.current}
           title="Albums"
         />
         <div
           id="albumItemsContainer"
           ref={albumItemsContainer}
-          className="flex items-center justify-start w-full h-[25%] overflow-x-hidden"
+          className="flex items-center justify-start w-full h-[35%] overflow-x-hidden"
         >
           {albumCategoryItems ? (
             albumCategoryItems.map((a, i) => (
               <div
                 key={i}
-                className="flex flex-col items-center justify-start w-full h-full"
+                className="flex flex-col items-center justify-center min-w-[20%] max-w-[20%] min-h-full max-h-full bg-white/[5%] overflow-hidden"
               >
-                <span className="flex items-center justify-center w-full h-full">
-                  <Image
+                <span className="relative w-[90%] h-[60%]">
+                  <img
+                    className="absolute left-[0%] top-[0%] w-full h-full object-cover"
                     src={a.thumbnail}
                     alt={a.name}
-                    width={200}
-                    height={200}
-                    className="object-cover"
                   />
                 </span>
               </div>
@@ -232,7 +230,7 @@ export default function SearchResults({
           )}
         </div>
 
-        <ContainerPaginatorVertical
+        <ContainerScrollerVertical
           container={videoItemsContainer.current}
           title="Videos"
         />
@@ -243,7 +241,7 @@ export default function SearchResults({
           className="w-full h-[55%] overflow-hidden"
         >
           {videoCategoryItems ? (
-            <div className="flex flex-col items-center justify-StarFillt w-full h-full">
+            <div className="flex flex-col items-center justify-start w-full h-full">
               {videoCategoryItems.map((r, i) => (
                 <Song key={i} data={r} songState={songState} />
               ))}
@@ -307,7 +305,7 @@ function SongsLoading() {
   );
 }
 
-function ContainerPaginatorVertical({
+function ContainerScrollerVertical({
   container,
   title,
 }: {
@@ -349,7 +347,7 @@ function ContainerPaginatorVertical({
   );
 }
 
-function ContainerPaginatorHorizontal({
+function ContainerScrollerHorizontal({
   container,
   title,
 }: {
@@ -363,11 +361,11 @@ function ContainerPaginatorHorizontal({
       </span>
       <span className="flex items-center gap-2 justify-end w-full h-full">
         <button
-          className=" opacity-50 h-[32px] w-[32px] rounded rotate-[180deg] hover:scale-110 hover:opacity-100"
+          className="opacity-50 h-[32px] w-[32px] rounded rotate-[180deg] hover:scale-110 hover:opacity-100"
           onClick={() => {
             if (!container) return;
             container.scrollBy({
-              left: -container.clientHeight,
+              left: -container.clientWidth,
               behavior: "smooth",
             });
           }}
@@ -379,7 +377,7 @@ function ContainerPaginatorHorizontal({
           onClick={() => {
             if (!container) return;
             container.scrollBy({
-              left: container.clientHeight,
+              left: container.clientWidth,
               behavior: "smooth",
             });
           }}

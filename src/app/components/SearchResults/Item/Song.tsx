@@ -16,6 +16,7 @@ import { COLORS } from "@/util/enums/colors";
 import { useLiveQuery } from "dexie-react-hooks";
 import { queueDB } from "@/db/queueDB";
 import {
+  Explcit,
   LoadingSpinner,
   MoreVertical,
   PlayButton,
@@ -82,7 +83,10 @@ export default function Song({ data, songState }: SongProps) {
       </OverlayIcon>
 
       <span className="flex flex-col items-start justify-center grow whitespace-nowrap text-ellipsis max-w-[70%] overflow-hidden">
-        <h1>{data.title}</h1>
+        <span className="flex items-center justify-start w-full h-[50%] gap-1">
+          {data.title}
+          {data.explicit && <Explcit size={"18px"} opacity={0.6} />}
+        </span>
         <h1 className="text-sm">{data.artist.name}</h1>
       </span>
       <span className="flex items-center justify-end gap-2 min-w-[30%] max-w-[50%] h-full">

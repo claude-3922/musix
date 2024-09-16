@@ -88,7 +88,7 @@ export async function GET(req: NextRequest) {
       res.headers.set(`Content-Range`, `bytes ${start}-${end}/${fileSize}`);
       res.headers.set("Accept-Ranges", "bytes");
       res.headers.set(`Content-Length`, `${chunksize}`);
-      res.headers.set(`Content-Type`, `${format?.mimeType}`);
+      res.headers.set(`Content-Type`, `${format.mimeType}`);
 
       return res;
     }
@@ -98,7 +98,7 @@ export async function GET(req: NextRequest) {
     const res = new NextResponse(readableStream as any, { status: 200 });
 
     res.headers.set(`Content-Length`, `${fileSize}`);
-    res.headers.set(`Content-Type`, `${format?.mimeType}`);
+    res.headers.set(`Content-Type`, `${format.mimeType}`);
 
     return res;
   }
