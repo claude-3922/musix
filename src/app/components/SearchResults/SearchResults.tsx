@@ -34,6 +34,7 @@ import { Chevron_0Deg, Error, LoadingSpinner, Video } from "../Icons/Icons";
 import OverlayIcon from "../Util/OverlayIcon";
 import Image from "next/image";
 import Album from "./Item/Album";
+import Artist from "./Item/Artist";
 
 interface SearchResultsProps {
   query: string;
@@ -88,12 +89,7 @@ export default function SearchResults({
         setAlbums(data as AlbumData[]);
       }
 
-      const artistRes = await fetch(`api/search/artists`, {
-        method: "POST",
-        body: JSON.stringify({
-          query: query,
-        }),
-      });
+      const artistRes = await fetch(`api/search/artists?q=${query}`);
       if (artistRes.status === 200) {
         const data: ArtistData[] = await artistRes.json();
         setArtists(data as ArtistData[]);
@@ -236,7 +232,11 @@ export default function SearchResults({
           ref={artistItemsContainer}
           className="flex items-center justify-start w-full h-[35%] overflow-x-hidden gap-0.5"
         >
-          <div>A</div>
+          {artistCategoryItems ? (
+            artistCategoryItems.map((a, i) => <Artist key={i} data={a} />)
+          ) : (
+            <div className="animate-pulse bg-white/[5%] w-full h-full"></div>
+          )}
         </div>
 
         <ContainerScrollerVertical

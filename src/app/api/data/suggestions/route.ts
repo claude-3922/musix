@@ -20,15 +20,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ message: "Invalid params" }, { status: 403 });
   }
 
-  const ytMusic = await new YTMusic().initialize();
-  if (!ytMusic) {
-    console.log(" INFO /data/suggestions 'Failed to initialize ytmusic'");
-    return NextResponse.json(
-      { message: "Failed to initialize ytmusic" },
-      { status: 500 }
-    );
-  }
-
   const yt = await Innertube.create({
     retrieve_player: false,
     generate_session_locally: false,
@@ -64,7 +55,7 @@ export async function GET(req: NextRequest) {
           moreThumbnails: item.thumbnails
             .sort((a, b) => b.width - a.width)
             .map((t) => t.url),
-          explicit: !thisSong.basic_info.is_family_safe || false,
+          explicit: thisSong.basic_info.is_family_safe || false,
         };
       })
   );

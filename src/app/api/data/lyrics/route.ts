@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
   if (res.status !== 200) {
     return NextResponse.json(
       { message: "Failed to fetch lyrics" },
-      { status: 500 }
+      { status: res.status }
     );
   }
 
