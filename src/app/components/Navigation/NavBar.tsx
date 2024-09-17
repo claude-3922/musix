@@ -39,35 +39,38 @@ export default function NavBar({
         <Home size={"30px"} opacity={0.8} />
       </button>
       <span className="relative h-[70%] w-[20%] mx-4">
-        <input
-          ref={searchBar}
-          data-query=""
-          onChange={(e) => {
-            e.target.dataset.query = e.target.value;
-          }}
-          className="absolute left-[0%] top-[0%] px-4 z-[0] rounded-full bg-white/10 w-full h-full focus:ring focus:ring-accentColor/50 focus:outline-none placeholder:text-white/50 pr-12"
-          type="text"
-          placeholder="Search"
-          onFocus={(e) => {
-            e.target.placeholder = "";
-            e.target.style.opacity = "100%";
-          }}
-          onBlur={(e) => {
-            e.target.placeholder = "Search";
-            e.target.style.opacity = "60%";
-          }}
-        />
-        <button
-          type="submit"
-          className="absolute flex items-center justify-center rounded-full right-[0%] top-[0%] z-[1] h-full w-[18%] opacity-60 hover:opacity-100"
-          onClick={() => {
-            queryState.set(searchBar.current?.dataset.query || "");
-            pageState.set(PAGE_STATES.Search);
-            if (showPreview.get) showPreview.set(false);
-          }}
-        >
-          <Search opacity={0.8} size={"24px"} />
-        </button>
+        <form onSubmit={(e) => e.preventDefault()}>
+          <input
+            ref={searchBar}
+            data-query=""
+            onChange={(e) => {
+              e.target.dataset.query = e.target.value;
+            }}
+            className="absolute left-[0%] top-[0%] px-4 z-[0] rounded-full bg-white/10 w-full h-full focus:ring focus:ring-accentColor/50 transition-[box-shadow] duration-75 ease-linear focus:outline-none placeholder:text-white/50 pr-12"
+            type="text"
+            placeholder="Search"
+            onFocus={(e) => {
+              e.target.placeholder = "";
+              e.target.style.opacity = "100%";
+            }}
+            onBlur={(e) => {
+              e.target.placeholder = "Search";
+              e.target.style.opacity = "60%";
+            }}
+          />
+          <button
+            type="submit"
+            className="absolute flex items-center justify-center rounded-full right-[0%] top-[0%] z-[1] h-full w-[18%] opacity-60 hover:opacity-100"
+            onClick={() => {
+              queryState.set(searchBar.current?.dataset.query || "");
+              pageState.set(PAGE_STATES.Search);
+              if (showPreview.get) showPreview.set(false);
+            }}
+            tabIndex={0}
+          >
+            <Search opacity={0.8} size={"24px"} />
+          </button>
+        </form>
       </span>
     </>
   );

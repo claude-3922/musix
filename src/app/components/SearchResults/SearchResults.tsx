@@ -33,6 +33,7 @@ import { enqueue, play } from "@/player/manager";
 import { Chevron_0Deg, Error, LoadingSpinner, Video } from "../Icons/Icons";
 import OverlayIcon from "../Util/OverlayIcon";
 import Image from "next/image";
+import Album from "./Item/Album";
 
 interface SearchResultsProps {
   query: string;
@@ -208,23 +209,10 @@ export default function SearchResults({
         <div
           id="albumItemsContainer"
           ref={albumItemsContainer}
-          className="flex items-center justify-start w-full h-[35%] overflow-x-hidden"
+          className="flex items-center justify-start w-full h-[35%] overflow-x-hidden gap-1"
         >
           {albumCategoryItems ? (
-            albumCategoryItems.map((a, i) => (
-              <div
-                key={i}
-                className="flex flex-col items-center justify-center min-w-[20%] max-w-[20%] min-h-full max-h-full bg-white/[5%] overflow-hidden"
-              >
-                <span className="relative w-[90%] h-[60%]">
-                  <img
-                    className="absolute left-[0%] top-[0%] w-full h-full object-cover"
-                    src={a.thumbnail}
-                    alt={a.name}
-                  />
-                </span>
-              </div>
-            ))
+            albumCategoryItems.map((a, i) => <Album key={i} data={a} />)
           ) : (
             <div className="animate-pulse bg-white/[5%] w-full h-full"></div>
           )}

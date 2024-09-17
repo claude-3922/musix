@@ -81,7 +81,9 @@ export async function GET(req: NextRequest) {
         format: format,
       });
 
-      readableStream.on("error", (err) => console.log(`NIGGER NIGGER ${err}`));
+      readableStream.on("error", (err) =>
+        console.log(`ERROR /api/media ${err}`)
+      );
 
       const res = new NextResponse(readableStream as any, { status: 206 });
 

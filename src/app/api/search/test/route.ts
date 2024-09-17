@@ -59,13 +59,22 @@ export async function GET(req: NextRequest) {
       .sort((a, b) => b.width - a.width)
       .map((t) => t.url) || [""];
 
+    let channelId;
+    if (a.artists) {
+      channelId = a.artists[0].channel_id
+        ? a.artists[0].channel_id
+        : a.author?.channel_id || "";
+    } else {
+      channelId = a.author?.channel_id || "";
+    }
+
     return {
       id: a.id || "",
-      name: a.name || "",
+      name: a.flex_columns[0].title.text || "",
       thumbnail: sortedThumbnails[0],
       artist: {
         name: a.flex_columns[1].title.runs?.flat()[2].text || "",
-        id: (a.flex_columns[1].title.runs?.flat()[2] as any) || "",
+        id: channelId,
       },
       year: a.year || 0,
       moreThumbnails: sortedThumbnails,

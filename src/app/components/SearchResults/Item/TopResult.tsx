@@ -161,13 +161,6 @@ export default function TopResult({ type, data, songState }: TopResultProps) {
 
       <span className="grow max-w-[60%]">
         <span className="flex items-center justify-starttext-sm whitespace-nowrap text-ellipsis w-full h-[10%] text-sm gap-1 opacity-60">
-          {type === "SONG" &&
-            ((data as SongData).explicit ? (
-              <Explcit size={"20px"} opacity={1} />
-            ) : (
-              <></>
-            ))}
-
           <p>{type}</p>
           <p>•</p>
           <p>
@@ -176,10 +169,16 @@ export default function TopResult({ type, data, songState }: TopResultProps) {
           </p>
         </span>
         <span>
-          <span className="flex justify-start items-center text-lg whitespace-nowrap text-ellipsis w-full gap-4">
+          <span className="flex justify-start items-center text-lg whitespace-nowrap text-ellipsis w-full gap-2">
             {type === "SONG" || type === "VIDEO"
               ? (data as SongData).title
               : (data as AlbumData | ArtistData | PlaylistMetadata).name}
+            {type === "SONG" &&
+              ((data as SongData).explicit ? (
+                <Explcit size={"22px"} opacity={0.6} />
+              ) : (
+                <></>
+              ))}
           </span>
           <h1 className="text-base whitespace-nowrap text-ellipsis w-full">
             {type === "SONG" || type === "VIDEO" || type === "ALBUM"
