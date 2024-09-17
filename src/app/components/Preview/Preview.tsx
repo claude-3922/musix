@@ -125,7 +125,7 @@ export default function Preview({ audioPlayer, songState }: PreviewProps) {
             </button>
           ))}
         </span>
-        <div className="h-full w-full overflow-y-scroll overflow-x-hidden rounded-br-lg">
+        <div className="flex items-center justify-center h-full w-full overflow-x-hidden rounded-br-lg">
           {previewPageState.get === PREVIEW_TAB_STATES.NowPlaying && (
             <NowPlaying data={songData} />
           )}

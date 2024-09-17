@@ -59,6 +59,7 @@ export default function SearchResults({
   const songItemsContainer = useRef<HTMLDivElement | null>(null);
   const videoItemsContainer = useRef<HTMLDivElement | null>(null);
   const albumItemsContainer = useRef<HTMLDivElement | null>(null);
+  const artistItemsContainer = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setTopResult(null);
@@ -87,16 +88,16 @@ export default function SearchResults({
         setAlbums(data as AlbumData[]);
       }
 
-      // const artistRes = await fetch(`api/search/artists`, {
-      //   method: "POST",
-      //   body: JSON.stringify({
-      //     query: query,
-      //   }),
-      // });
-      // if (artistRes.status === 200) {
-      //   const data: ArtistData[] = await artistRes.json();
-      //   setArtists(data as ArtistData[]);
-      // }
+      const artistRes = await fetch(`api/search/artists`, {
+        method: "POST",
+        body: JSON.stringify({
+          query: query,
+        }),
+      });
+      if (artistRes.status === 200) {
+        const data: ArtistData[] = await artistRes.json();
+        setArtists(data as ArtistData[]);
+      }
 
       // const playlistRes = await fetch(`api/search/playlists`, {
       //   method: "POST",
@@ -126,7 +127,7 @@ export default function SearchResults({
           backgroundColor: COLORS.BG,
         }}
       >
-        <span className="flex items-center justify-center gap-2 text-3xl tracking-wide opacity-60">
+        <span className="flex items-center justify-center gap-2 text-3xl tracking-tight opacity-60">
           <Error size={"36px"} /> No query
         </span>
         <span className="opacity-60 text-lg">Type something maybe?</span>
@@ -158,6 +159,14 @@ export default function SearchResults({
       )
     : null;
 
+  const artistCategoryItems = artists
+    ? artists.filter((v) =>
+        topResult?.type === "ARTIST"
+          ? v.id !== (topResult.data as ArtistData).id
+          : true
+      )
+    : null;
+
   return (
     <div
       className="flex items-center justify-center w-full h-full overflow-y-scroll overflow-x-hidden"
@@ -167,7 +176,7 @@ export default function SearchResults({
     >
       <div className="w-[80%] h-full">
         <div className="w-full h-[7.5%] mt-[3%]">
-          <span className="flex items-center justify-start w-full h-full text-2xl tracking-wide opacity-80 gap-2">
+          <span className="flex items-center justify-start w-full h-full text-2xl tracking-tight opacity-80 gap-2">
             Top Result
           </span>
         </div>
@@ -209,13 +218,25 @@ export default function SearchResults({
         <div
           id="albumItemsContainer"
           ref={albumItemsContainer}
-          className="flex items-center justify-start w-full h-[35%] overflow-x-hidden gap-1"
+          className="flex items-center justify-start w-full h-[35%] overflow-x-hidden gap-0.5"
         >
           {albumCategoryItems ? (
             albumCategoryItems.map((a, i) => <Album key={i} data={a} />)
           ) : (
             <div className="animate-pulse bg-white/[5%] w-full h-full"></div>
           )}
+        </div>
+
+        <ContainerScrollerHorizontal
+          container={artistItemsContainer.current}
+          title="Artists"
+        />
+        <div
+          id="artistItemsContainer"
+          ref={artistItemsContainer}
+          className="flex items-center justify-start w-full h-[35%] overflow-x-hidden gap-0.5"
+        >
+          <div>A</div>
         </div>
 
         <ContainerScrollerVertical
@@ -293,7 +314,7 @@ function SongsLoading() {
   );
 }
 
-function ContainerScrollerVertical({
+export function ContainerScrollerVertical({
   container,
   title,
 }: {
@@ -302,7 +323,7 @@ function ContainerScrollerVertical({
 }) {
   return (
     <div className="flex items-center gap-2 justify-between w-full h-[7.5%] mt-[3%]">
-      <span className="flex items-center justify-start w-full h-full text-2xl tracking-wide opacity-80 gap-2">
+      <span className="flex items-center justify-start w-full h-full text-2xl tracking-tight opacity-80 gap-2">
         {title}
       </span>
       <span className="flex items-center gap-2 justify-end w-full h-full">
@@ -335,7 +356,7 @@ function ContainerScrollerVertical({
   );
 }
 
-function ContainerScrollerHorizontal({
+export function ContainerScrollerHorizontal({
   container,
   title,
 }: {
@@ -344,7 +365,7 @@ function ContainerScrollerHorizontal({
 }) {
   return (
     <div className="flex items-center gap-2 justify-between w-full h-[7.5%] mt-[3%]">
-      <span className="flex items-center justify-start w-full h-full text-2xl tracking-wide opacity-80 gap-2">
+      <span className="flex items-center justify-start w-full h-full text-2xl tracking-tight opacity-80 gap-2">
         {title}
       </span>
       <span className="flex items-center gap-2 justify-end w-full h-full">

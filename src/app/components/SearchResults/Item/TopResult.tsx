@@ -145,7 +145,7 @@ export default function TopResult({ type, data, songState }: TopResultProps) {
         height={"8vw"}
         iconStyle={{
           overflow: "hidden",
-          margin: "1vw",
+          margin: "1%",
         }}
         onClick={async () => {
           if (isNp) return;
@@ -246,7 +246,7 @@ export default function TopResult({ type, data, songState }: TopResultProps) {
           //type="button"
           className="w-[10%] h-[20%] flex items-center justify-center relative hover:cursor-pointer hover:scale-110"
         >
-          <MoreVertical size={"90%"} opacity={0.8} />
+          <MoreVertical size={"24px"} opacity={0.8} />
         </span>
       </span>
     </div>

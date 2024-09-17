@@ -19,7 +19,7 @@ import { BlockSign } from "./components/Icons/Icons";
 import Dropdown, { DropdownPos } from "./components/Util/Dropdown";
 import { play } from "@/player/manager";
 
-export default function Home() {
+export default function Page() {
   const songState = useStateManager<SongData | null>(null);
   const pageState = useStateManager<PAGE_STATES>(PAGE_STATES.Main);
   const showPreview = useStateManager<boolean>(false);
@@ -124,6 +124,3 @@ export default function Home() {
     </div>
   );
 }
-
-export const isMobileDevice = () =>
-  /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);

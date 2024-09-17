@@ -71,7 +71,7 @@ export default function Song({ data, songState }: SongProps) {
         height={"5vw"}
         iconStyle={{
           overflow: "hidden",
-          margin: "1vw",
+          margin: "1%",
         }}
         onClick={async () => await handlePlay()}
       >
@@ -82,23 +82,23 @@ export default function Song({ data, songState }: SongProps) {
         )}
       </OverlayIcon>
 
-      <span className="flex flex-col items-start justify-center grow whitespace-nowrap text-ellipsis max-w-[70%] overflow-hidden">
+      <span className="flex flex-col items-start justify-center grow whitespace-nowrap text-ellipsis max-w-[80%] overflow-hidden">
         <span className="flex items-center justify-start w-full h-[50%] gap-1">
           {data.title}
           {data.explicit && <Explcit size={"18px"} opacity={0.6} />}
         </span>
         <h1 className="text-sm">{data.artist.name}</h1>
       </span>
-      <span className="flex items-center justify-end gap-2 min-w-[30%] max-w-[50%] h-full">
+      <span className="flex items-center justify-end gap-2 min-w-[16%] max-w-[50%] h-full">
         <h1 className="text-sm opacity-50">
           {formatSongDuration(data.duration)}
         </h1>
 
         <span
           //type="button"
-          className="flex items-center justify-center relative hover:cursor-pointer w-[12%] h-[26%] hover:scale-110"
+          className="flex items-center justify-center relative hover:cursor-pointer w-[20%] h-full hover:scale-110"
         >
-          <MoreVertical size={"100%"} opacity={0.8} />
+          <MoreVertical size={"24px"} opacity={0.8} />
         </span>
       </span>
     </div>

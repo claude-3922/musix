@@ -29,7 +29,10 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const yt = await Innertube.create();
+  const yt = await Innertube.create({
+    retrieve_player: false,
+    generate_session_locally: false,
+  });
 
   const res = await yt.music.getRelated(songId);
   const suggestions = await Promise.all(

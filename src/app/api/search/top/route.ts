@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const res = await ytMusic.search(query);
+  const res = await ytMusic.search(query, { type: "song" });
   if (!res) {
     console.log(" INFO /search/top 'No search results found'");
     return NextResponse.json(
@@ -65,8 +65,8 @@ export async function GET(req: NextRequest) {
         thumbnail: sortedThumbnails[0],
         duration: top.duration?.seconds || 0,
         artist: {
-          name: top.artists ? top.artists[0].name : "",
-          id: top.artists ? top.artists[0].channel_id || "" : "",
+          name: top.flex_columns[1].title.runs?.flat()[0].text || "",
+          id: top.flex_columns[1].title.endpoint?.payload.browseId || "",
         },
         album: {
           name: top.album ? top.album.name || "" : "",

@@ -63,7 +63,19 @@ export default function Controls({
 
   const nextHandler = async () => {
     const queue = await queueDB.queue.toArray();
-    if (queue.length === 0) return;
+    if (queue.length === 0) {
+      const suggestionsRes = await fetch(`api/data/suggestions?id=${data.id}`);
+      const suggestions: SongData[] = await suggestionsRes.json();
+      if (suggestions.length > 0) {
+        const songToPlay =
+          suggestions[Math.floor(Math.random() * suggestions.length - 1)];
+        const played = await play(songState, songToPlay);
+        if (!played) {
+          console.log("Failed to play song");
+        }
+      }
+      return;
+    }
     const songToPlay = queue[0];
 
     if (!songToPlay) return;
@@ -131,6 +143,7 @@ export default function Controls({
             }}
             onSeek={(newPercentage) => {
               const newTime = (newPercentage * data.duration) / 100;
+
               audioPlayer.currentTime = newTime;
               let videoPlayer = document.getElementById(
                 "videoPlayer"

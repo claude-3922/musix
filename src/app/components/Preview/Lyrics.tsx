@@ -41,6 +41,7 @@ export default function Lyrics({
             return (
               <>
                 <p
+                  className="text-xl tracking-tight"
                   key={i}
                   style={{ opacity: time === Number(audioTime) ? 1 : 0.5 }}
                 >

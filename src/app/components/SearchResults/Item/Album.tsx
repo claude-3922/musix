@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { AlbumData } from "@/util/types/AlbumData";
+import { Explcit } from "../../Icons/Icons";
 
 interface AlbumProps {
   data: AlbumData;
@@ -8,7 +9,7 @@ interface AlbumProps {
 
 export default function Album({ data }: AlbumProps) {
   return (
-    <div className="flex flex-col items-center justify-center min-w-[19.8%] max-w-[19.8%] min-h-full max-h-full bg-white/[5%] overflow-hidden py-2">
+    <div className="flex flex-col items-center justify-center min-w-[19.84%] max-w-[19.84%] min-h-full max-h-full bg-white/[5%] overflow-hidden py-2">
       <span className="block w-auto h-auto max-w-[60%]">
         <Image
           className="object-cover"
@@ -18,7 +19,7 @@ export default function Album({ data }: AlbumProps) {
           alt={data.name}
         />
       </span>
-      <span className="flex flex-col items-center gap-1 justify-center grow min-h-[40%] min-w-full">
+      <span className="flex flex-col items-center justify-center grow min-h-[40%] min-w-full py-2">
         <span className="flex flex-col items-center justify-center grow w-full">
           <span className="albumCardContainerTitlew-full text-center">
             <style>

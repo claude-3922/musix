@@ -75,6 +75,16 @@ export function Player({ audioPlayer, songState, showPreview }: PlayerProps) {
     const songEndedHandler = async () => {
       if (audioPlayer.loop) return;
 
+      const suggestionsRes = await fetch(`api/data/suggestions?id=${data.id}`);
+      const suggestions: SongData[] = await suggestionsRes.json();
+      if (suggestions.length > 0) {
+        const songToPlay = suggestions[0];
+        const played = await play(songState, songToPlay);
+        if (!played) {
+          console.log("Failed to play song");
+        }
+      }
+
       const queue = await queueDB.queue.toArray();
       if (queue.length === 0) return;
       const songToPlay = queue[0];
@@ -156,8 +166,8 @@ export function Player({ audioPlayer, songState, showPreview }: PlayerProps) {
       <div className="flex justify-start items-center w-[30%] h-full gap-2">
         <OverlayIcon
           thumbnailURL={songData.thumbnail}
-          width={"18%"}
-          height={"85%"}
+          width={"16.5%"}
+          height={"78%"}
           iconStyle={{
             overflow: "hidden",
           }}
