@@ -28,24 +28,41 @@ interface TopResultProps {
   type: "SONG" | "ARTIST" | "ALBUM" | "VIDEO" | "PLAYLIST";
   data: SongData | ArtistData | AlbumData | PlaylistMetadata;
   songState: StateManager<SongData | null>;
+  audioPlayer: HTMLAudioElement | null;
 }
 
-export default function TopResult({ type, data, songState }: TopResultProps) {
+export default function TopResult({
+  type,
+  data,
+  songState,
+  audioPlayer,
+}: TopResultProps) {
   const [addedToQueue, setAddedToQueue] = useState(false);
-  const [isNp, setIsNp] = useState(false);
 
   const [waiting, setWaiting] = useState(false);
+  const [playerPaused, setPlayerPaused] = useState(false);
+  const [isNowPlaying, setIsNowPlaying] = useState(false);
 
   useEffect(() => {
-    async function init() {
-      if (songState.get && songState.get.id === data.id) {
-        setIsNp(true);
-      } else {
-        setIsNp(false);
-      }
-    }
-    init();
-  }, [data.id, songState]);
+    if (!audioPlayer) return;
+
+    setIsNowPlaying(songState.get?.id === data.id);
+
+    const playHandler = () => {
+      setPlayerPaused(false);
+    };
+    const pauseHandler = () => {
+      setPlayerPaused(true);
+    };
+
+    audioPlayer.addEventListener("play", playHandler);
+    audioPlayer.addEventListener("pause", pauseHandler);
+
+    return () => {
+      audioPlayer.removeEventListener("play", playHandler);
+      audioPlayer.removeEventListener("pause", pauseHandler);
+    };
+  }, [audioPlayer, data.id, songState.get?.id]);
 
   useLiveQuery(async () => {
     const queueArray = await queueDB.queue.toArray();
@@ -148,12 +165,17 @@ export default function TopResult({ type, data, songState }: TopResultProps) {
           margin: "1%",
         }}
         onClick={async () => {
-          if (isNp) return;
-          await handlePlay();
+          if (!isNowPlaying) {
+            await handlePlay();
+          } else {
+            playerPaused ? audioPlayer?.play() : audioPlayer?.pause();
+          }
         }}
       >
         {waiting ? (
           <LoadingSpinner size={"50%"} fill={"#e8eaed"} opacity={0.8} />
+        ) : isNowPlaying && !playerPaused ? (
+          <PauseSymbol size={"50%"} fill={"#e8eaed"} opacity={0.8} />
         ) : (
           <PlaySymbol size={"50%"} fill={"#e8eaed"} opacity={0.8} />
         )}
@@ -192,24 +214,26 @@ export default function TopResult({ type, data, songState }: TopResultProps) {
         <button
           className="text-base rounded-full px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50 disabled:ring-0 whitespace-nowrap text-ellipsis overflow-hidden"
           onClick={async () => {
-            if (isNp) return;
-            await handlePlay();
+            if (!isNowPlaying) {
+              await handlePlay();
+            } else {
+              playerPaused ? audioPlayer?.play() : audioPlayer?.pause();
+            }
           }}
-          disabled={waiting || isNp}
           style={{
-            opacity: waiting || isNp ? 0.5 : 1,
+            opacity: waiting ? 0.5 : 1,
             backgroundColor: COLORS.ACCENT,
           }}
         >
-          {isNp ? (
+          {isNowPlaying && !playerPaused ? (
             <span className="flex items-center justify-center gap-2">
               <PauseSymbol size={"24px"} fill={"#e8eaed"} opacity={1} />
-              <p>Playing</p>
+              <p>Pause</p>
             </span>
           ) : (
             <span className="flex items-center justify-center gap-2">
               <PlaySymbol size={"24px"} fill={"#e8eaed"} opacity={1} />
-              <p>Play</p>
+              <p>{!isNowPlaying ? "Play" : audioPlayer?.paused && "Resume"}</p>
             </span>
           )}
         </button>

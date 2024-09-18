@@ -94,7 +94,11 @@ export default function Page() {
             <Main songState={songState} />
           )) ||
             (pageState.get === PAGE_STATES.Search && !showPreview.get && (
-              <SearchResults query={queryState.get} songState={songState} />
+              <SearchResults
+                query={queryState.get}
+                songState={songState}
+                audioPlayer={audioPlayer || null}
+              />
             ))}
           {showPreview.get && (
             <motion.div

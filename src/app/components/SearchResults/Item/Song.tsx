@@ -5,7 +5,7 @@ import { pSBC } from "@/util/pSBC";
 import { PlaylistMetadata } from "@/util/types/PlaylistData";
 import { SongData } from "@/util/types/SongData";
 import { StateManager } from "@/util/types/StateManager";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Dropdown, { DropdownPos, toggleDropdown } from "../../Util/Dropdown";
 import OverlayIcon from "../../Util/OverlayIcon";
 import { AlbumData } from "@/util/types/AlbumData";
@@ -19,6 +19,7 @@ import {
   Explcit,
   LoadingSpinner,
   MoreVertical,
+  PauseSymbol,
   PlayButton,
   PlaySymbol,
 } from "../../Icons/Icons";
@@ -26,35 +27,53 @@ import {
 interface SongProps {
   data: SongData;
   songState: StateManager<SongData | null>;
+  audioPlayer: HTMLAudioElement | null;
 }
 
-export default function Song({ data, songState }: SongProps) {
+export default function Song({ data, songState, audioPlayer }: SongProps) {
   const [addedToQueue, setAddedToQueue] = useState(false);
-  const [isNp, setIsNp] = useState(false);
-
   const [waiting, setWaiting] = useState(false);
+  const [playerPaused, setPlayerPaused] = useState(false);
+  const [isNowPlaying, setIsNowPlaying] = useState(false);
+
+  useEffect(() => {
+    if (!audioPlayer) return;
+
+    setIsNowPlaying(songState.get?.id === data.id);
+
+    const playHandler = () => {
+      setPlayerPaused(false);
+    };
+    const pauseHandler = () => {
+      setPlayerPaused(true);
+    };
+
+    audioPlayer.addEventListener("play", playHandler);
+    audioPlayer.addEventListener("pause", pauseHandler);
+
+    return () => {
+      audioPlayer.removeEventListener("play", playHandler);
+      audioPlayer.removeEventListener("pause", pauseHandler);
+    };
+  }, [audioPlayer, data.id, songState.get?.id]);
 
   useLiveQuery(async () => {
     const queueArray = await queueDB.queue.toArray();
-    const np = await queueDB.getNowPlaying();
 
     if (queueArray.find((s) => s.id === data.id)) {
       setAddedToQueue(true);
     }
-    if (np && np.id === data.id) {
-      setIsNp(true);
-    }
   });
 
-  let currentItemId: string = data.id;
-
   const handlePlay = async () => {
+    setWaiting(true);
     await play(songState, data);
 
     setWaiting(false);
   };
 
   const handleEnqueue = async () => {
+    setWaiting(true);
     await enqueue(data as SongData);
     setWaiting(false);
   };
@@ -73,10 +92,18 @@ export default function Song({ data, songState }: SongProps) {
           overflow: "hidden",
           margin: "1%",
         }}
-        onClick={async () => await handlePlay()}
+        onClick={async () => {
+          if (!isNowPlaying) {
+            await handlePlay();
+          } else {
+            playerPaused ? audioPlayer?.play() : audioPlayer?.pause();
+          }
+        }}
       >
         {waiting ? (
           <LoadingSpinner size={"50%"} fill={"#e8eaed"} opacity={0.8} />
+        ) : isNowPlaying && !playerPaused ? (
+          <PauseSymbol size={"50%"} fill={"#e8eaed"} opacity={0.8} />
         ) : (
           <PlaySymbol size={"50%"} fill={"#e8eaed"} opacity={0.8} />
         )}

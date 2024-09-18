@@ -39,6 +39,7 @@ import Artist from "./Item/Artist";
 interface SearchResultsProps {
   query: string;
   songState: StateManager<SongData | null>;
+  audioPlayer: HTMLAudioElement | null;
 }
 
 interface TopResult {
@@ -49,6 +50,7 @@ interface TopResult {
 export default function SearchResults({
   query,
   songState,
+  audioPlayer,
 }: SearchResultsProps) {
   const [topResult, setTopResult] = useState<TopResult | null>(null);
   const [songs, setSongs] = useState<SongData[] | null>(null);
@@ -170,7 +172,7 @@ export default function SearchResults({
         backgroundColor: COLORS.BG,
       }}
     >
-      <div className="w-[80%] h-full">
+      <div className="w-[85%] h-full">
         <div className="w-full h-[7.5%] mt-[3%]">
           <span className="flex items-center justify-start w-full h-full text-2xl tracking-tight opacity-80 gap-2">
             Top Result
@@ -181,6 +183,7 @@ export default function SearchResults({
             type={topResult.type}
             data={topResult.data}
             songState={songState}
+            audioPlayer={audioPlayer || null}
           />
         ) : (
           <TopResultLoading />
@@ -199,7 +202,12 @@ export default function SearchResults({
           {songCategoryItems ? (
             <div className="flex flex-col items-center gap-0 justify-start w-full h-full">
               {songCategoryItems.map((r, i) => (
-                <Song key={i} data={r} songState={songState} />
+                <Song
+                  key={i}
+                  data={r}
+                  songState={songState}
+                  audioPlayer={audioPlayer || null}
+                />
               ))}
             </div>
           ) : (
@@ -252,7 +260,12 @@ export default function SearchResults({
           {videoCategoryItems ? (
             <div className="flex flex-col items-center justify-start w-full h-full">
               {videoCategoryItems.map((r, i) => (
-                <Song key={i} data={r} songState={songState} />
+                <Song
+                  key={i}
+                  data={r}
+                  songState={songState}
+                  audioPlayer={audioPlayer || null}
+                />
               ))}
             </div>
           ) : (
