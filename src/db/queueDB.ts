@@ -1,3 +1,8 @@
+/**
+ * !! Do not use !!
+ * Doesn't work for some reason, will add a new implementation soon
+ */
+
 import { SongData } from "@/util/types/SongData";
 import Dexie, { Table } from "dexie";
 

@@ -277,8 +277,6 @@ export default function TopResult({
   );
 }
 
-const topResultDropdown = <div></div>;
-
 const fetchSongs = async (
   type: "ALBUM" | "PLAYLIST",
   id: string

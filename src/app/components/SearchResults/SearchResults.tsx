@@ -35,6 +35,7 @@ import OverlayIcon from "../Util/OverlayIcon";
 import Image from "next/image";
 import Album from "./Item/Album";
 import Artist from "./Item/Artist";
+import Playlist from "./Item/Playlist";
 
 interface SearchResultsProps {
   query: string;
@@ -63,6 +64,7 @@ export default function SearchResults({
   const videoItemsContainer = useRef<HTMLDivElement | null>(null);
   const albumItemsContainer = useRef<HTMLDivElement | null>(null);
   const artistItemsContainer = useRef<HTMLDivElement | null>(null);
+  const playlistItemsContainer = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setTopResult(null);
@@ -97,16 +99,11 @@ export default function SearchResults({
         setArtists(data as ArtistData[]);
       }
 
-      // const playlistRes = await fetch(`api/search/playlists`, {
-      //   method: "POST",
-      //   body: JSON.stringify({
-      //     query: query,
-      //   }),
-      // });
-      // if (playlistRes.status === 200) {
-      //   const data = await playlistRes.json();
-      //   setPlaylists(data as PlaylistMetadata[]);
-      // }
+      const playlistRes = await fetch(`api/search/playlists?q=${query}`);
+      if (playlistRes.status === 200) {
+        const data = await playlistRes.json();
+        setPlaylists(data as PlaylistMetadata[]);
+      }
 
       const videoRes = await fetch(`api/search/videos?q=${query}`);
       if (videoRes.status === 200) {
@@ -161,6 +158,14 @@ export default function SearchResults({
     ? artists.filter((v) =>
         topResult?.type === "ARTIST"
           ? v.id !== (topResult.data as ArtistData).id
+          : true
+      )
+    : null;
+
+  const playlistCatergoryItems = playlists
+    ? playlists.filter((v) =>
+        topResult?.type === "PLAYLIST"
+          ? v.id !== (topResult.data as PlaylistMetadata).id
           : true
       )
     : null;
@@ -266,6 +271,27 @@ export default function SearchResults({
                   songState={songState}
                   audioPlayer={audioPlayer || null}
                 />
+              ))}
+            </div>
+          ) : (
+            <SongsLoading />
+          )}
+        </div>
+
+        <ContainerScrollerVertical
+          container={playlistItemsContainer.current}
+          title="Playlists"
+        />
+
+        <div
+          id="playlistItemsContainer"
+          ref={playlistItemsContainer}
+          className="w-full h-[55%] overflow-hidden"
+        >
+          {playlistCatergoryItems ? (
+            <div className="flex flex-col items-center justify-start w-full h-full">
+              {playlistCatergoryItems.map((r, i) => (
+                <Playlist key={i} data={r} />
               ))}
             </div>
           ) : (

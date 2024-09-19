@@ -20,15 +20,31 @@ import Dropdown, { DropdownPos } from "./components/Util/Dropdown";
 import { play } from "@/player/manager";
 
 export default function Page() {
+  const [blocked, setBlocked] = useState(false);
+
   const songState = useStateManager<SongData | null>(null);
   const pageState = useStateManager<PAGE_STATES>(PAGE_STATES.Main);
   const showPreview = useStateManager<boolean>(false);
   const queryState = useStateManager<string>("");
 
-  const dropdownId = useStateManager<string | null>(null);
-  const dropdownPos = useStateManager<DropdownPos>({ x: 0, y: 0 });
-
   const [audioPlayer, setAudioPlayer] = useState<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    const loadHandler = () => {
+      const isMobileDevice = () =>
+        /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+      if (isMobileDevice()) {
+        setBlocked(true);
+      }
+    };
+
+    window.addEventListener("load", () => loadHandler);
+
+    return () => {
+      window.removeEventListener("load", () => loadHandler);
+    };
+  }, []);
 
   useEffect(() => {
     if (!audioPlayer) return;
@@ -54,6 +70,17 @@ export default function Page() {
       if (audioContext) audioContext.close().catch(console.log);
     };
   }, [audioPlayer]);
+
+  if (blocked) {
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-full">
+        <BlockSign size={"36px"} />
+        <span className="text-lg">
+          Sorry, but mobile devices are not supported
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div
