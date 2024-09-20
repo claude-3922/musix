@@ -34,28 +34,32 @@ export async function GET(req: NextRequest) {
       .map(async (item, i) => {
         if (!item.id) return;
         let thisSong = await yt.music.getInfo(item.id!);
+        const sortedThumbnails = item.thumbnails
+          .sort((a, b) => b.width - a.width)
+          .map((t) => t.url);
         return {
-          id: item.id!,
-          url: `https://www.youtube.com/watch?v=${item.id!}`,
-          title: item.flex_columns[0].title.text?.toString() || "Unknown",
-          thumbnail: item.thumbnails[0].url,
+          id: item.id || thisSong.basic_info.id || "",
+          url: `https://www.youtube.com/watch?v=${
+            item.id || thisSong.basic_info.id || ""
+          }`,
+          title: item.flex_columns[0].title.text?.toString() || "",
+          thumbnail: sortedThumbnails[0],
           duration: item.duration?.seconds || thisSong.basic_info.duration || 0,
           artist: {
-            name: item.flex_columns[1].title.text?.toString() || "Unknown",
-            id:
-              item.flex_columns[1].title.endpoint?.payload?.browseId ||
-              "Unknown",
+            name: item.flex_columns[1].title.text?.toString() || "",
+            id: item.flex_columns[1].title.endpoint?.payload?.browseId || "",
           },
           album: {
-            name: item.flex_columns[2].title.text?.toString() || "Unknown",
-            id:
-              item.flex_columns[2].title.endpoint?.payload?.browseId ||
-              "Unknown",
+            name: item.flex_columns[2].title.text?.toString() || "",
+            id: item.flex_columns[2].title.endpoint?.payload?.browseId || "",
           },
-          moreThumbnails: item.thumbnails
-            .sort((a, b) => b.width - a.width)
-            .map((t) => t.url),
-          explicit: !thisSong.basic_info.is_family_safe || false,
+          moreThumbnails: sortedThumbnails.slice(1),
+          explicit:
+            Boolean(
+              item.badges?.find(
+                (b) => b.as(YTNodes.MusicInlineBadge).label === "Explicit"
+              )
+            ) || false,
         };
       })
   );

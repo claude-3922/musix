@@ -60,12 +60,6 @@ export default function SearchResults({
   const [playlists, setPlaylists] = useState<PlaylistMetadata[] | null>(null);
   const [videos, setVideos] = useState<SongData[] | null>(null);
 
-  const songItemsContainer = useRef<HTMLDivElement | null>(null);
-  const videoItemsContainer = useRef<HTMLDivElement | null>(null);
-  const albumItemsContainer = useRef<HTMLDivElement | null>(null);
-  const artistItemsContainer = useRef<HTMLDivElement | null>(null);
-  const playlistItemsContainer = useRef<HTMLDivElement | null>(null);
-
   useEffect(() => {
     setTopResult(null);
     setSongs(null);
@@ -101,7 +95,7 @@ export default function SearchResults({
 
       const playlistRes = await fetch(`api/search/playlists?q=${query}`);
       if (playlistRes.status === 200) {
-        const data = await playlistRes.json();
+        const data: PlaylistMetadata[] = await playlistRes.json();
         setPlaylists(data as PlaylistMetadata[]);
       }
 
@@ -130,45 +124,15 @@ export default function SearchResults({
     );
   }
 
-  const songCategoryItems = songs
-    ? songs.filter((v) =>
-        topResult?.type === "SONG"
-          ? v.id !== (topResult.data as SongData).id
-          : true
-      )
-    : null;
-
-  const videoCategoryItems = videos
-    ? videos.filter((v) =>
-        topResult?.type === "VIDEO"
-          ? v.id !== (topResult.data as SongData).id
-          : v.duration !== 0 && v.id && true
-      )
-    : null;
-
-  const albumCategoryItems = albums
-    ? albums.filter((v) =>
-        topResult?.type === "ALBUM"
-          ? v.id !== (topResult.data as AlbumData).id
-          : true
-      )
-    : null;
-
-  const artistCategoryItems = artists
-    ? artists.filter((v) =>
-        topResult?.type === "ARTIST"
-          ? v.id !== (topResult.data as ArtistData).id
-          : true
-      )
-    : null;
-
-  const playlistCatergoryItems = playlists
-    ? playlists.filter((v) =>
-        topResult?.type === "PLAYLIST"
-          ? v.id !== (topResult.data as PlaylistMetadata).id
-          : true
-      )
-    : null;
+  const categoryTitle = (type: string) => {
+    return (
+      <div className="w-full h-[7.5%] mt-[3%]">
+        <span className="flex items-center justify-start w-full h-full text-2xl tracking-tight opacity-80 gap-2">
+          {type}
+        </span>
+      </div>
+    );
+  };
 
   return (
     <div
@@ -178,11 +142,7 @@ export default function SearchResults({
       }}
     >
       <div className="w-[85%] h-full">
-        <div className="w-full h-[7.5%] mt-[3%]">
-          <span className="flex items-center justify-start w-full h-full text-2xl tracking-tight opacity-80 gap-2">
-            Top Result
-          </span>
-        </div>
+        {categoryTitle("Top Result")}
         {topResult ? (
           <TopResult
             type={topResult.type}
@@ -194,19 +154,12 @@ export default function SearchResults({
           <TopResultLoading />
         )}
 
-        <ContainerScrollerVertical
-          container={songItemsContainer.current}
-          title="Songs"
-        />
+        {categoryTitle("Songs")}
 
-        <div
-          id="songItemsContainer"
-          ref={songItemsContainer}
-          className="w-full h-[55%] overflow-hidden"
-        >
-          {songCategoryItems ? (
+        <div className="w-full h-[55%] overflow-x-hidden pr-1 overflow-y-scroll snap-y snap-mandatory">
+          {songs ? (
             <div className="flex flex-col items-center gap-0 justify-start w-full h-full">
-              {songCategoryItems.map((r, i) => (
+              {songs.map((r, i) => (
                 <Song
                   key={i}
                   data={r}
@@ -220,51 +173,32 @@ export default function SearchResults({
           )}
         </div>
 
-        <ContainerScrollerHorizontal
-          container={albumItemsContainer.current}
-          title="Albums"
-        />
-        <div
-          id="albumItemsContainer"
-          ref={albumItemsContainer}
-          className="flex items-center justify-start w-full h-[35%] overflow-x-hidden gap-0.5"
-        >
-          {albumCategoryItems ? (
-            albumCategoryItems.map((a, i) => <Album key={i} data={a} />)
+        {categoryTitle("Albums")}
+
+        <div className="flex items-center justify-start w-full h-[35%] pb-1 overflow-y-hidden overflow-x-scroll snap-x snap-mandatory gap-0.5">
+          {albums ? (
+            albums.map((a, i) => <Album key={i} data={a} />)
           ) : (
             <div className="animate-pulse bg-white/[5%] w-full h-full"></div>
           )}
         </div>
 
-        <ContainerScrollerHorizontal
-          container={artistItemsContainer.current}
-          title="Artists"
-        />
-        <div
-          id="artistItemsContainer"
-          ref={artistItemsContainer}
-          className="flex items-center justify-start w-full h-[35%] overflow-x-hidden gap-0.5"
-        >
-          {artistCategoryItems ? (
-            artistCategoryItems.map((a, i) => <Artist key={i} data={a} />)
+        {categoryTitle("Artists")}
+
+        <div className="flex items-center justify-start w-full h-[35%] pb-1 overflow-y-hidden overflow-x-scroll snap-x snap-mandatory gap-0.5">
+          {artists ? (
+            artists.map((a, i) => <Artist key={i} data={a} />)
           ) : (
             <div className="animate-pulse bg-white/[5%] w-full h-full"></div>
           )}
         </div>
 
-        <ContainerScrollerVertical
-          container={videoItemsContainer.current}
-          title="Videos"
-        />
+        {categoryTitle("Videos")}
 
-        <div
-          id="videoItemsContainer"
-          ref={videoItemsContainer}
-          className="w-full h-[55%] overflow-hidden"
-        >
-          {videoCategoryItems ? (
+        <div className="w-full h-[55%] overflow-x-hidden pr-1 overflow-y-scroll snap-y snap-mandatory">
+          {videos ? (
             <div className="flex flex-col items-center justify-start w-full h-full">
-              {videoCategoryItems.map((r, i) => (
+              {videos.map((r, i) => (
                 <Song
                   key={i}
                   data={r}
@@ -278,19 +212,12 @@ export default function SearchResults({
           )}
         </div>
 
-        <ContainerScrollerVertical
-          container={playlistItemsContainer.current}
-          title="Playlists"
-        />
+        {categoryTitle("Playlists")}
 
-        <div
-          id="playlistItemsContainer"
-          ref={playlistItemsContainer}
-          className="w-full h-[55%] overflow-hidden"
-        >
-          {playlistCatergoryItems ? (
+        <div className="w-full h-[55%] overflow-x-hidden pr-1 overflow-y-scroll snap-y snap-mandatory">
+          {playlists ? (
             <div className="flex flex-col items-center justify-start w-full h-full">
-              {playlistCatergoryItems.map((r, i) => (
+              {playlists.map((r, i) => (
                 <Playlist key={i} data={r} />
               ))}
             </div>

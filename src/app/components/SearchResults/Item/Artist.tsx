@@ -22,9 +22,9 @@ export default function Artist({ data }: ArtistProps) {
       </span>
       <span className="flex flex-col items-center justify-center grow min-h-[40%] min-w-full py-2">
         <span className="flex flex-col items-center justify-center grow w-full">
-          <span className="albumCardContainerTitlew-full text-center">
+          <span className="artistCardContainerTitle w-full text-center">
             <style>
-              {`.albumCardContainerTitle {
+              {`.artistCardContainerTitle {
                         -webkit-line-clamp: 2;
                         -webkit-box-orient: vertical;
                         overflow: hidden;

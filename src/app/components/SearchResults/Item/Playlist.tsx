@@ -10,7 +10,7 @@ interface PlaylistProps {
 export default function Playlist({ data }: PlaylistProps) {
   return (
     <div
-      className="flex items-center justify-start h-[25%] w-full bg-white/[5%]"
+      className="flex items-center justify-start h-[25%] w-full bg-white/[5%] snap-always snap-start"
       onContextMenu={(e) => {}}
     >
       <OverlayIcon

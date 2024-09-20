@@ -47,7 +47,7 @@ export default function NavBar({
             onChange={(e) => {
               e.target.dataset.query = e.target.value;
             }}
-            className="absolute left-[0%] top-[0%] px-4 z-[0] rounded-full bg-white/10 w-full h-full focus:ring focus:ring-accentColor/50 transition-[box-shadow] duration-75 ease-linear focus:outline-none placeholder:text-white/50 pr-12"
+            className="absolute left-[0%] top-[0%] px-4 z-[0] rounded-full bg-white/10 w-full h-full focus:ring focus:ring-accentColor/50 transition-[box-shadow] duration-75 ease-linear focus:outline-none placeholder:text-white/50 pr-12 caret-white/50"
             type="text"
             placeholder="Search"
             onFocus={(e) => {

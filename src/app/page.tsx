@@ -31,13 +31,10 @@ export default function Page() {
 
     let audioContext: AudioContext | null = null;
     let source: MediaElementAudioSourceNode | null = null;
-    let convolver: ConvolverNode | null = null;
 
     async function init(player: HTMLAudioElement) {
       audioContext = new window.AudioContext();
       source = audioContext.createMediaElementSource(player);
-
-      convolver = null;
 
       source.connect(audioContext.destination);
     }
@@ -45,7 +42,6 @@ export default function Page() {
     init(audioPlayer);
 
     return () => {
-      if (convolver) convolver.disconnect();
       if (source) source.disconnect();
       if (audioContext) audioContext.close().catch(console.log);
     };

@@ -38,6 +38,10 @@ export default function OverlayIcon({
         position: "relative",
         width: cssWidth,
         height: cssHeight,
+        minWidth: cssWidth,
+        minHeight: cssHeight,
+        maxHeight: cssHeight,
+        maxWidth: cssWidth,
         cursor: hovering ? "pointer" : "default",
       }}
     >

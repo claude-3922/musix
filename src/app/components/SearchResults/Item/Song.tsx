@@ -80,7 +80,7 @@ export default function Song({ data, songState, audioPlayer }: SongProps) {
 
   return (
     <div
-      className="flex items-center justify-start h-[25%] w-full bg-white/[5%]"
+      className="flex items-center justify-start h-[25%] w-full bg-white/[5%] snap-always snap-start"
       onContextMenu={(e) => {}}
     >
       <OverlayIcon

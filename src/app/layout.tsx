@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Rubik } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { COLORS } from "@/util/enums/colors";
 
-const font = Rubik({
+const font = Inter({
   weight: "400",
   subsets: ["latin"],
 });
