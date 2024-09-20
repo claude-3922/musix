@@ -1,4 +1,6 @@
 import { AlbumData } from "@/util/types/AlbumData";
+import { ArtistData, ArtistMetadata } from "@/util/types/ArtistData";
+import { PlaylistMetadata } from "@/util/types/PlaylistData";
 import { SongData } from "@/util/types/SongData";
 import ytdl from "@distube/ytdl-core";
 import { NextRequest, NextResponse } from "next/server";
@@ -31,7 +33,7 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const res = await ytMusic.search(query, { type: "album" });
+  const res = await ytMusic.search(query, { type: "playlist" });
   if (!res) {
     console.log(" INFO /search/top 'No search results found'");
     return NextResponse.json(
@@ -40,7 +42,7 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  let content = res.albums?.contents;
+  let content = res.playlists?.contents;
   // if (res.has_continuation) {
   //   const continuation = await res.getContinuation();
   //   content?.concat(continuation as any);
@@ -54,38 +56,22 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const albums = content.map((a) => {
-    const sortedThumbnails = a.thumbnail?.contents
+  const playlists = content.map((p) => {
+    const sortedThumbnails = p.thumbnail?.contents
       .sort((a, b) => b.width - a.width)
       .map((t) => t.url) || [""];
 
-    let channelId;
-    if (a.artists) {
-      channelId = a.artists[0].channel_id
-        ? a.artists[0].channel_id
-        : a.author?.channel_id || "";
-    } else {
-      channelId = a.author?.channel_id || "";
-    }
-
     return {
-      id: a.id || "",
-      name: a.flex_columns[0].title.text || "",
+      id: p.id || "",
+      name: p.title || p.flex_columns[0].title.text || "",
       thumbnail: sortedThumbnails[0],
-      artist: {
-        name: a.flex_columns[1].title.runs?.flat()[2].text || "",
-        id: channelId,
+      owner: {
+        name: p.author?.name || "",
+        id: p.author?.channel_id || "",
       },
-      year: a.year || 0,
-      moreThumbnails: sortedThumbnails,
-      explicit:
-        Boolean(
-          a.badges
-            ?.as(YTNodes.MusicInlineBadge)
-            .find((b) => b.label === "Explicit")
-        ) || false,
-    } as AlbumData;
+      moreThumbnails: sortedThumbnails.slice(1),
+    } as PlaylistMetadata;
   });
 
-  return NextResponse.json(albums, { status: 200 });
+  return NextResponse.json(playlists, { status: 200 });
 }

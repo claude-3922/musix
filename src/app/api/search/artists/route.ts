@@ -1,5 +1,6 @@
 import { ArtistData } from "@/util/types/ArtistData";
 import { NextRequest, NextResponse } from "next/server";
+import Innertube from "youtubei.js";
 import YTMusic from "ytmusic-api";
 
 export async function GET(req: NextRequest) {
@@ -10,36 +11,50 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ message: "No id provided" }, { status: 403 });
   }
 
-  const ytMusic = await new YTMusic().initialize();
+  const ytMusic = (
+    await Innertube.create({
+      retrieve_player: false,
+      generate_session_locally: false,
+    })
+  ).music;
   if (!ytMusic) {
-    console.log(" INFO /search/artists 'Error while initializing YTMusic'");
+    console.log(" INFO /search/top 'Error while initializing YTMusic'");
     return NextResponse.json(
       { message: "Error while initializing YTMusic" },
       { status: 500 }
     );
   }
 
-  const res = await ytMusic.searchArtists(query);
-  if (!res || res.length === 0) {
-    console.log(" INFO /search/artists 'No search results found'");
+  const res = await ytMusic.search(query, { type: "artist" });
+  if (!res) {
+    console.log(" INFO /search/top 'No search results found'");
     return NextResponse.json(
       { message: "No search results found" },
       { status: 404 }
     );
   }
 
-  let artists: ArtistData[] = [];
-  for (const artist of res) {
-    artists.push({
-      id: artist.artistId,
-      name: artist.name,
-      thumbnail: artist.thumbnails.sort((a, b) => b.width - a.width)[0].url,
-
-      moreThumbnails: artist.thumbnails
-        .sort((a, b) => b.width - a.width)
-        .map((t) => t.url),
-    });
+  let content = res.artists?.contents;
+  if (!content) {
+    console.log(" INFO /search/top 'No search results found'");
+    return NextResponse.json(
+      { message: "No search results found" },
+      { status: 404 }
+    );
   }
+
+  const artists = content.map((a) => {
+    const sortedThumbnails = a.thumbnail?.contents
+      .sort((a, b) => b.width - a.width)
+      .map((t) => t.url) || [""];
+
+    return {
+      id: a.id || "",
+      name: a.name || a.flex_columns[0].title.text || "",
+      thumbnail: sortedThumbnails[0] || "",
+      moreThumbnails: sortedThumbnails,
+    } as ArtistData;
+  });
 
   return NextResponse.json(artists, { status: 200 });
 }
