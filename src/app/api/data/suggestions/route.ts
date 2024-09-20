@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
           moreThumbnails: item.thumbnails
             .sort((a, b) => b.width - a.width)
             .map((t) => t.url),
-          explicit: thisSong.basic_info.is_family_safe || false,
+          explicit: !thisSong.basic_info.is_family_safe || false,
         };
       })
   );

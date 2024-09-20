@@ -270,7 +270,7 @@ export default function TopResult({
           //type="button"
           className="w-[10%] h-[20%] flex items-center justify-center relative hover:cursor-pointer hover:scale-110"
         >
-          <MoreVertical size={"24px"} opacity={0.8} />
+          <MoreVertical size={"30px"} opacity={0.8} />
         </span>
       </span>
     </div>

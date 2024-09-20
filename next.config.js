@@ -17,6 +17,10 @@ module.exports = {
         protocol: "https",
         hostname: "yt3.googleusercontent.com",
       },
+      {
+        protocol: "https",
+        hostname: "www.gstatic.com",
+      },
     ],
   },
 };

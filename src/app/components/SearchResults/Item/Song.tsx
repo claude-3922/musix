@@ -116,7 +116,7 @@ export default function Song({ data, songState, audioPlayer }: SongProps) {
         </span>
         <h1 className="text-sm">{data.artist.name}</h1>
       </span>
-      <span className="flex items-center justify-end gap-2 min-w-[16%] max-w-[50%] h-full">
+      <span className="flex items-center justify-end gap-2 min-w-[17%] max-w-[50%] h-full">
         <h1 className="text-sm opacity-50">
           {formatSongDuration(data.duration)}
         </h1>

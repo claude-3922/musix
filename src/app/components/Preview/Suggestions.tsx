@@ -12,12 +12,14 @@ interface SuggestionsProps {
   suggestions: SongData[] | null;
   suggestionsLoading: boolean;
   songState: StateManager<SongData | null>;
+  audioPlayer: HTMLAudioElement | null;
 }
 
 export default function Suggestions({
   suggestions,
   songState,
   suggestionsLoading,
+  audioPlayer,
 }: SuggestionsProps) {
   const suggestionsContainerRef = React.useRef<HTMLDivElement | null>(null);
   // const songElementRef = React.useRef<HTMLDivElement | null>(null);
@@ -75,7 +77,14 @@ export default function Suggestions({
           className="relative w-full min-h-[80%] max-h-[80%] flex flex-col items-center justify-start overflow-x-hidden overflow-y-hidden"
         >
           {suggestions.map((song, i) => {
-            return <Song data={song} songState={songState} key={i} />;
+            return (
+              <Song
+                data={song}
+                songState={songState}
+                key={i}
+                audioPlayer={audioPlayer}
+              />
+            );
           })}
         </div>
       </div>
