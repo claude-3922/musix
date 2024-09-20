@@ -18,6 +18,7 @@ export default function NavBar({
 
   return (
     <>
+      <p>In development, prone to errors</p>
       <button
         className="w-[3.5%] h-[80%] rounded-full flex items-center justify-center opacity-60 hover:opacity-100"
         onClick={() => {
