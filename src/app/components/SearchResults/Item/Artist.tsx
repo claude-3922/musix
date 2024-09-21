@@ -1,7 +1,5 @@
 import React from "react";
 import Image from "next/image";
-import { AlbumData } from "@/util/types/AlbumData";
-import { Explcit } from "../../Icons/Icons";
 import { ArtistData } from "@/util/types/ArtistData";
 
 interface ArtistProps {

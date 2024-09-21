@@ -1,4 +1,4 @@
-import { CSSProperties, SVGAttributes, SVGProps } from "react";
+import { CSSProperties, SVGAttributes } from "react";
 
 interface IconProps extends SVGAttributes<SVGElement> {
   size?: CSSProperties["width"];

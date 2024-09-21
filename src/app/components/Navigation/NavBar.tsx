@@ -1,6 +1,6 @@
 import { PAGE_STATES } from "@/util/enums/pageState";
 import { StateManager } from "@/util/types/StateManager";
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { Arrow_180Deg, Home, Search } from "../Icons/Icons";
 
 interface NavBarProps {

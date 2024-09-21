@@ -2,24 +2,18 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Controls from "./Controls";
 import Extras from "./Extras";
-
 import { pSBC } from "@/util/pSBC";
-
 import { SongData } from "@/util/types/SongData";
-
 import { StateManager } from "@/util/types/StateManager";
-import { queueDB } from "@/db/Queue";
-
 import useStateManager from "@/app/hooks/StateManager";
-
-import { PAGE_STATES } from "@/util/enums/pageState";
 import { COLORS } from "@/util/enums/colors";
 import { play } from "@/player/manager";
 import OverlayIcon from "../Util/OverlayIcon";
 import { Chevron_0Deg } from "../Icons/Icons";
+import queue from "@/db/Queue";
 
 interface PlayerProps {
   audioPlayer: HTMLAudioElement | null;
@@ -85,17 +79,17 @@ export function Player({ audioPlayer, songState, showPreview }: PlayerProps) {
         }
       }
 
-      const queue = await queueDB.queue.toArray();
-      if (queue.length === 0) return;
-      const songToPlay = queue[0];
+      // const queue = await queueDB.queue.toArray();
+      // if (queue.length === 0) return;
+      // const songToPlay = queue[0];
 
-      if (!songToPlay) return;
-      const played = await play(songState, songToPlay);
-      if (!played) {
-        console.log("Failed to play song");
-      }
+      // if (!songToPlay) return;
+      // const played = await play(songState, songToPlay);
+      // if (!played) {
+      //   console.log("Failed to play song");
+      // }
 
-      await queueDB.queue.where("vid.id").equals(songToPlay.id).delete();
+      // await queueDB.queue.where("vid.id").equals(songToPlay.id).delete();
     };
 
     const initPlayer = async (
@@ -103,7 +97,7 @@ export function Player({ audioPlayer, songState, showPreview }: PlayerProps) {
       audioPlayer: HTMLAudioElement
     ) => {
       setSongData(data);
-      queueDB.setNowPlaying(data);
+      // queue.setNowPlaying(data);
 
       audioPlayer.load();
       audioPlayer.volume = Number(

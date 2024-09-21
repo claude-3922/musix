@@ -1,17 +1,9 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
-import { pSBC } from "@/util/pSBC";
 import { SongData } from "@/util/types/SongData";
-import { AnimatePresence, motion } from "framer-motion";
-import React, { use, useEffect, useMemo, useRef, useState } from "react";
-
-import { useLiveQuery } from "dexie-react-hooks";
-import { queueDB } from "@/db/Queue";
-
+import React, { useEffect, useState } from "react";
 import useStateManager from "@/app/hooks/StateManager";
-
 import { COLORS } from "@/util/enums/colors";
-import OverlayIcon from "../Util/OverlayIcon";
 import { PREVIEW_TAB_STATES } from "@/util/enums/previewTabState";
 import Suggestions from "./Suggestions";
 import { StateManager } from "@/util/types/StateManager";

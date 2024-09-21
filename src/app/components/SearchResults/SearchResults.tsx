@@ -15,7 +15,7 @@ import Song from "./Item/Song";
 import { Error } from "../Icons/Icons";
 import Album from "./Item/Album";
 import Playlist from "./Item/Playlist";
-import useFetch, { FetchState } from "@/app/hooks/Fetch";
+import useFetch from "@/app/hooks/Fetch";
 import Artist from "./Item/Artist";
 
 interface SearchResultsProps {

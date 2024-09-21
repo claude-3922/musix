@@ -13,7 +13,6 @@ import { ArtistData } from "@/util/types/ArtistData";
 import { dequeue, enqueue, play } from "@/player/manager";
 import { COLORS } from "@/util/enums/colors";
 import { useLiveQuery } from "dexie-react-hooks";
-import { queueDB } from "@/db/Queue";
 import {
   Explcit,
   LoadingSpinner,
@@ -37,8 +36,6 @@ export default function TopResult({
   songState,
   audioPlayer,
 }: TopResultProps) {
-  const [addedToQueue, setAddedToQueue] = useState(false);
-
   const [waiting, setWaiting] = useState(false);
   const [playerPaused, setPlayerPaused] = useState(false);
   const [isNowPlaying, setIsNowPlaying] = useState(false);
@@ -63,14 +60,6 @@ export default function TopResult({
       audioPlayer.removeEventListener("pause", pauseHandler);
     };
   }, [audioPlayer, data.id, songState.get?.id]);
-
-  useLiveQuery(async () => {
-    const queueArray = await queueDB.queue.toArray();
-
-    if (queueArray.find((s) => s.id === data.id)) {
-      setAddedToQueue(true);
-    }
-  });
 
   let currentItemId: string | null = null;
 
@@ -240,13 +229,13 @@ export default function TopResult({
         <button
           className="text-base rounded-full px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50 disabled:ring-0 whitespace-nowrap text-ellipsis overflow-hidden"
           onClick={async () => {
-            if (addedToQueue) {
-              await handleDequeue();
-              setAddedToQueue(false);
-            } else {
-              await handleEnqueue();
-              setAddedToQueue(true);
-            }
+            // if (addedToQueue) {
+            //   await handleDequeue();
+            //   setAddedToQueue(false);
+            // } else {
+            //   await handleEnqueue();
+            //   setAddedToQueue(true);
+            // }
           }}
           disabled={waiting}
           style={{
@@ -254,7 +243,7 @@ export default function TopResult({
             backgroundColor: COLORS.ACCENT,
           }}
         >
-          {addedToQueue ? (
+          {/* {addedToQueue ? (
             <span className="flex items-center justify-center gap-2">
               <Minus size={"24px"} fill={"#e8eaed"} opacity={1} />
               <p>Remove from queue</p>
@@ -264,7 +253,8 @@ export default function TopResult({
               <Plus size={"24px"} fill={"#e8eaed"} opacity={1} />
               <p>Add to queue</p>
             </span>
-          )}
+          )} */}
+          ...
         </button>
         <span
           //type="button"

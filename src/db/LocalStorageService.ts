@@ -1,4 +1,4 @@
-class LocalStorageService {
+export class LocalStorageService {
   constructor() {
     if (!this.isLocalStorageAvailable()) {
       throw new Error("LocalStorage is not available in this environment.");

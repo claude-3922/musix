@@ -1,6 +1,7 @@
 import { SongData } from "@/util/types/SongData";
+import { LocalStorageService } from "./LocalStorageService";
 
-class Queue {
+export class Queue {
   private db: LocalStorageService;
   private nowPlaying: SongData | null;
   private queue: SongData[];
@@ -17,7 +18,7 @@ class Queue {
     return this.nowPlaying;
   }
 
-  set setNowPlaying(data: SongData | null) {
+  set setNowPlaying(data: SongData) {
     this.nowPlaying = data;
     this.db.setItem("nowPlaying", data);
   }

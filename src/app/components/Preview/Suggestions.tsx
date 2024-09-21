@@ -1,14 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 import { SongData } from "@/util/types/SongData";
 import { StateManager } from "@/util/types/StateManager";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import OverlayIcon from "../Util/OverlayIcon";
 import { formatSongDuration } from "@/util/format";
 import { play } from "@/player/manager";
-import { Chevron_0Deg, Explcit, PlayButton, PlaySymbol } from "../Icons/Icons";
-import Song from "../SearchResults/Item/Song";
-import Image from "next/image";
-import { COLORS } from "@/util/enums/colors";
+import { Explcit, PlaySymbol } from "../Icons/Icons";
 
 interface SuggestionsProps {
   suggestions: SongData[] | null;

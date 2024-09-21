@@ -1,17 +1,14 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import React, { ChangeEvent, CSSProperties, useEffect, useRef } from "react";
+import React from "react";
 import { SongData } from "@/util/types/SongData";
 import { formatSongDuration } from "@/util/format";
 
-import { pSBC } from "@/util/pSBC";
-
 import { StateManager } from "@/util/types/StateManager";
-import { queueDB } from "@/db/Queue";
 import SeekBar from "../Util/SeekBar";
 import { COLORS } from "@/util/enums/colors";
-import { enqueue, play } from "@/player/manager";
+
 import {
   LoadingSpinner,
   NextButton,
@@ -38,53 +35,47 @@ export default function Controls({
   playerPaused,
 }: ControlsProps) {
   const previousHandler = async () => {
-    const historyArray = await queueDB.history.toArray();
-    const nowPlaying = await queueDB.getNowPlaying();
-    const prevSong = historyArray[historyArray.length - 1];
-
-    if (!prevSong || historyArray.length === 0) {
-      return (audioPlayer.currentTime = 0);
-    }
-
-    if (nowPlaying) {
-      const enqueued = await enqueue(nowPlaying);
-      if (!enqueued) {
-        console.log("Failed to enqueue song");
-      }
-    }
-
-    const played = await play(songState, prevSong, false);
-    if (!played) {
-      console.log("Failed to play song");
-    }
-
-    await queueDB.history.where("vid.id").equals(prevSong.id).delete();
+    // const historyArray = await queueDB.history.toArray();
+    // const nowPlaying = await queueDB.getNowPlaying();
+    // const prevSong = historyArray[historyArray.length - 1];
+    // if (!prevSong || historyArray.length === 0) {
+    //   return (audioPlayer.currentTime = 0);
+    // }
+    // if (nowPlaying) {
+    //   const enqueued = await enqueue(nowPlaying);
+    //   if (!enqueued) {
+    //     console.log("Failed to enqueue song");
+    //   }
+    // }
+    // const played = await play(songState, prevSong, false);
+    // if (!played) {
+    //   console.log("Failed to play song");
+    // }
+    // await queueDB.history.where("vid.id").equals(prevSong.id).delete();
   };
 
   const nextHandler = async () => {
-    const queue = await queueDB.queue.toArray();
-    if (queue.length === 0) {
-      const suggestionsRes = await fetch(`api/data/suggestions?id=${data.id}`);
-      const suggestions: SongData[] = await suggestionsRes.json();
-      if (suggestions.length > 0) {
-        const songToPlay =
-          suggestions[Math.floor(Math.random() * suggestions.length - 1)];
-        const played = await play(songState, songToPlay);
-        if (!played) {
-          console.log("Failed to play song");
-        }
-      }
-      return;
-    }
-    const songToPlay = queue[0];
-
-    if (!songToPlay) return;
-    const played = await play(songState, songToPlay);
-    if (!played) {
-      console.log("Failed to play song");
-    }
-
-    await queueDB.queue.where("vid.id").equals(songToPlay.id).delete();
+    // const queue = await queueDB.queue.toArray();
+    // if (queue.length === 0) {
+    //   const suggestionsRes = await fetch(`api/data/suggestions?id=${data.id}`);
+    //   const suggestions: SongData[] = await suggestionsRes.json();
+    //   if (suggestions.length > 0) {
+    //     const songToPlay =
+    //       suggestions[Math.floor(Math.random() * suggestions.length - 1)];
+    //     const played = await play(songState, songToPlay);
+    //     if (!played) {
+    //       console.log("Failed to play song");
+    //     }
+    //   }
+    //   return;
+    // }
+    // const songToPlay = queue[0];
+    // if (!songToPlay) return;
+    // const played = await play(songState, songToPlay);
+    // if (!played) {
+    //   console.log("Failed to play song");
+    // }
+    // await queueDB.queue.where("vid.id").equals(songToPlay.id).delete();
   };
 
   return (

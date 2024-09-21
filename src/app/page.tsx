@@ -41,11 +41,15 @@ export default function Page() {
 
     init(audioPlayer);
 
+    audioPlayer.addEventListener("error", function (this) {
+      this.src = `api/media/v2?id=${songState.get?.id}`;
+    });
+
     return () => {
       if (source) source.disconnect();
       if (audioContext) audioContext.close().catch(console.log);
     };
-  }, [audioPlayer]);
+  }, [audioPlayer, songState.get?.id]);
 
   if (isMobile) {
     return (
@@ -67,7 +71,7 @@ export default function Page() {
         <audio
           id="audioPlayer"
           ref={(el) => setAudioPlayer(el)}
-          src={`api/media?id=${songState.get.id}&vid=0`}
+          src={`api/media?id=${songState.get.id}`}
           preload="auto"
           autoPlay
         />

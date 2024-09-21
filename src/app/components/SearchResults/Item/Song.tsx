@@ -14,7 +14,6 @@ import { enqueue, play } from "@/player/manager";
 
 import { COLORS } from "@/util/enums/colors";
 import { useLiveQuery } from "dexie-react-hooks";
-import { queueDB } from "@/db/Queue";
 import {
   Explcit,
   LoadingSpinner,
@@ -32,7 +31,6 @@ interface SongProps {
 }
 
 export default function Song({ data, songState, audioPlayer }: SongProps) {
-  const [addedToQueue, setAddedToQueue] = useState(false);
   const [waiting, setWaiting] = useState(false);
   const [playerPaused, setPlayerPaused] = useState(false);
   const [isNowPlaying, setIsNowPlaying] = useState(false);
@@ -57,16 +55,6 @@ export default function Song({ data, songState, audioPlayer }: SongProps) {
       audioPlayer.removeEventListener("pause", pauseHandler);
     };
   }, [audioPlayer, data, songState.get?.id]);
-
-  useLiveQuery(async () => {
-    if (!data) return;
-
-    const queueArray = await queueDB.queue.toArray();
-
-    if (queueArray.find((s) => s.id === data.id)) {
-      setAddedToQueue(true);
-    }
-  });
 
   const handlePlay = async () => {
     if (!data) return;
