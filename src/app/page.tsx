@@ -41,15 +41,11 @@ export default function Page() {
 
     init(audioPlayer);
 
-    audioPlayer.addEventListener("error", function (this) {
-      this.src = `api/media/v2?id=${songState.get?.id}`;
-    });
-
     return () => {
       if (source) source.disconnect();
       if (audioContext) audioContext.close().catch(console.log);
     };
-  }, [audioPlayer, songState.get?.id]);
+  }, [audioPlayer]);
 
   if (isMobile) {
     return (
