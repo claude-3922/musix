@@ -23,9 +23,10 @@ import {
   PlayButton,
   PlaySymbol,
 } from "../../Icons/Icons";
+import { FetchState } from "@/app/hooks/Fetch";
 
 interface SongProps {
-  data: SongData;
+  data: SongData | null;
   songState: StateManager<SongData | null>;
   audioPlayer: HTMLAudioElement | null;
 }
@@ -37,7 +38,7 @@ export default function Song({ data, songState, audioPlayer }: SongProps) {
   const [isNowPlaying, setIsNowPlaying] = useState(false);
 
   useEffect(() => {
-    if (!audioPlayer) return;
+    if (!audioPlayer || !data) return;
 
     setIsNowPlaying(songState.get?.id === data.id);
 
@@ -55,9 +56,11 @@ export default function Song({ data, songState, audioPlayer }: SongProps) {
       audioPlayer.removeEventListener("play", playHandler);
       audioPlayer.removeEventListener("pause", pauseHandler);
     };
-  }, [audioPlayer, data.id, songState.get?.id]);
+  }, [audioPlayer, data, songState.get?.id]);
 
   useLiveQuery(async () => {
+    if (!data) return;
+
     const queueArray = await queueDB.queue.toArray();
 
     if (queueArray.find((s) => s.id === data.id)) {
@@ -66,6 +69,8 @@ export default function Song({ data, songState, audioPlayer }: SongProps) {
   });
 
   const handlePlay = async () => {
+    if (!data) return;
+
     setWaiting(true);
     await play(songState, data);
 
@@ -73,61 +78,65 @@ export default function Song({ data, songState, audioPlayer }: SongProps) {
   };
 
   const handleEnqueue = async () => {
+    if (!data) return;
+
     setWaiting(true);
-    await enqueue(data as SongData);
+    await enqueue(data);
     setWaiting(false);
   };
 
-  return (
-    <div
-      className="flex items-center justify-start h-[25%] w-full bg-white/[5%] snap-always snap-start"
-      onContextMenu={(e) => {}}
-    >
-      <OverlayIcon
-        optionalYoutubeId={data.id}
-        thumbnailURL={data.thumbnail}
-        width={"5vw"}
-        height={"5vw"}
-        iconStyle={{
-          overflow: "hidden",
-          margin: "1%",
-        }}
-        onClick={async () => {
-          if (!isNowPlaying) {
-            await handlePlay();
-          } else {
-            playerPaused ? audioPlayer?.play() : audioPlayer?.pause();
-          }
-        }}
+  if (data) {
+    return (
+      <div
+        className="flex items-center justify-start h-[25%] w-full bg-white/[5%] snap-always snap-start"
+        onContextMenu={(e) => {}}
       >
-        {waiting ? (
-          <LoadingSpinner size={"50%"} fill={"#e8eaed"} opacity={0.8} />
-        ) : isNowPlaying && !playerPaused ? (
-          <PauseSymbol size={"50%"} fill={"#e8eaed"} opacity={0.8} />
-        ) : (
-          <PlaySymbol size={"50%"} fill={"#e8eaed"} opacity={0.8} />
-        )}
-      </OverlayIcon>
-
-      <span className="flex flex-col items-start justify-center grow whitespace-nowrap text-ellipsis max-w-[80%] overflow-hidden">
-        <span className="flex items-center justify-start w-full h-[50%] gap-1">
-          {data.title}
-          {data.explicit && <Explcit size={"18px"} opacity={0.6} />}
-        </span>
-        <h1 className="text-sm">{data.artist.name}</h1>
-      </span>
-      <span className="flex items-center justify-end gap-2 min-w-[17%] max-w-[50%] h-full">
-        <h1 className="text-sm opacity-50">
-          {formatSongDuration(data.duration)}
-        </h1>
-
-        <span
-          //type="button"
-          className="flex items-center justify-center relative hover:cursor-pointer w-[20%] h-full hover:scale-110"
+        <OverlayIcon
+          optionalYoutubeId={data.id}
+          thumbnailURL={data.thumbnail}
+          width={"5vw"}
+          height={"5vw"}
+          iconStyle={{
+            overflow: "hidden",
+            margin: "1%",
+          }}
+          onClick={async () => {
+            if (!isNowPlaying) {
+              await handlePlay();
+            } else {
+              playerPaused ? audioPlayer?.play() : audioPlayer?.pause();
+            }
+          }}
         >
-          <MoreVertical size={"24px"} opacity={0.8} />
+          {waiting ? (
+            <LoadingSpinner size={"50%"} fill={"#e8eaed"} opacity={0.8} />
+          ) : isNowPlaying && !playerPaused ? (
+            <PauseSymbol size={"50%"} fill={"#e8eaed"} opacity={0.8} />
+          ) : (
+            <PlaySymbol size={"50%"} fill={"#e8eaed"} opacity={0.8} />
+          )}
+        </OverlayIcon>
+
+        <span className="flex flex-col items-start justify-center grow whitespace-nowrap text-ellipsis max-w-[80%] overflow-hidden">
+          <span className="flex items-center justify-start w-full h-[50%] gap-1">
+            {data.title}
+            {data.explicit && <Explcit size={"18px"} opacity={0.6} />}
+          </span>
+          <h1 className="text-sm">{data.artist.name}</h1>
         </span>
-      </span>
-    </div>
-  );
+        <span className="flex items-center justify-end gap-2 min-w-[17%] max-w-[50%] h-full">
+          <h1 className="text-sm opacity-50">
+            {formatSongDuration(data.duration)}
+          </h1>
+
+          <span
+            //type="button"
+            className="flex items-center justify-center relative hover:cursor-pointer w-[20%] h-full hover:scale-110"
+          >
+            <MoreVertical size={"24px"} opacity={0.8} />
+          </span>
+        </span>
+      </div>
+    );
+  }
 }
