@@ -1,4 +1,4 @@
-import { queueDB } from "@/db/queueDB";
+import { queueDB } from "@/db/Queue";
 import { AlbumData } from "@/util/types/AlbumData";
 import { PlaylistMetadata } from "@/util/types/PlaylistData";
 import { SongData } from "@/util/types/SongData";

@@ -1,4 +1,4 @@
-import { queueDB } from "@/db/queueDB";
+import { queueDB } from "@/db/Queue";
 import { SongData } from "@/util/types/SongData";
 import { StateManager } from "@/util/types/StateManager";
 import { useLiveQuery } from "dexie-react-hooks";

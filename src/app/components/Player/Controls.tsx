@@ -8,7 +8,7 @@ import { formatSongDuration } from "@/util/format";
 import { pSBC } from "@/util/pSBC";
 
 import { StateManager } from "@/util/types/StateManager";
-import { queueDB } from "@/db/queueDB";
+import { queueDB } from "@/db/Queue";
 import SeekBar from "../Util/SeekBar";
 import { COLORS } from "@/util/enums/colors";
 import { enqueue, play } from "@/player/manager";

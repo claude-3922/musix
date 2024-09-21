@@ -17,7 +17,6 @@ import Album from "./Item/Album";
 import Playlist from "./Item/Playlist";
 import useFetch, { FetchState } from "@/app/hooks/Fetch";
 import Artist from "./Item/Artist";
-import exp from "constants";
 
 interface SearchResultsProps {
   query: string;

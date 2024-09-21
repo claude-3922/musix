@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import React, { use, useEffect, useMemo, useRef, useState } from "react";
 
 import { useLiveQuery } from "dexie-react-hooks";
-import { queueDB } from "@/db/queueDB";
+import { queueDB } from "@/db/Queue";
 
 import useStateManager from "@/app/hooks/StateManager";
 

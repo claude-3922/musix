@@ -14,7 +14,7 @@ import { enqueue, play } from "@/player/manager";
 
 import { COLORS } from "@/util/enums/colors";
 import { useLiveQuery } from "dexie-react-hooks";
-import { queueDB } from "@/db/queueDB";
+import { queueDB } from "@/db/Queue";
 import {
   Explcit,
   LoadingSpinner,

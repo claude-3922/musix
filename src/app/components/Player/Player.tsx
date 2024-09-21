@@ -11,7 +11,7 @@ import { pSBC } from "@/util/pSBC";
 import { SongData } from "@/util/types/SongData";
 
 import { StateManager } from "@/util/types/StateManager";
-import { queueDB } from "@/db/queueDB";
+import { queueDB } from "@/db/Queue";
 
 import useStateManager from "@/app/hooks/StateManager";
 

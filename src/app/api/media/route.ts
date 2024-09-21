@@ -3,35 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const id = req.nextUrl.searchParams.get("id");
-  const mediaTypeParam = req.nextUrl.searchParams.get("vid");
+  const mediaTypeParam = req.nextUrl.searchParams.has("vid");
 
-  if (!mediaTypeParam) {
-    console.log(" INFO /media 'No vid paramter given'");
-    return Response.json(
-      {
-        message: "No vid paramter given",
-      },
-      { status: 403 }
-    );
-  }
-
-  const mediaType = parseInt(mediaTypeParam || "");
   if (!id) {
     console.log(" INFO /media 'No id provided'");
     return Response.json({ message: "No id provided" }, { status: 403 });
-  }
-
-  if (mediaType < 0 || mediaType > 1 || isNaN(mediaType)) {
-    console.log(
-      " INFO /media 'vid paramter should be 0 for only audio, and 1 for only video'"
-    );
-    return Response.json(
-      {
-        message:
-          "vid paramter should be 0 for only audio, and 1 for only video",
-      },
-      { status: 403 }
-    );
   }
 
   if (!ytdl.validateID(id)) {
@@ -43,12 +19,12 @@ export async function GET(req: NextRequest) {
 
   let format;
 
-  if (mediaType === 0) {
+  if (!mediaTypeParam) {
     format = ytdl.chooseFormat(vidInfo.formats, {
       filter: "audioonly",
       quality: "highestaudio",
     });
-  } else if (mediaType === 1) {
+  } else {
     format = ytdl.chooseFormat(vidInfo.formats, {
       filter: (format) =>
         !format.hasAudio && format.hasVideo && format.quality === "hd720",
