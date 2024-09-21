@@ -10,7 +10,7 @@ interface ArtistProps {
 
 export default function Artist({ data }: ArtistProps) {
   return (
-    <div className="flex flex-col items-center justify-center min-w-[19.84%] max-w-[19.84%] min-h-full max-h-full bg-white/[5%] overflow-hidden py-2">
+    <div className="flex flex-col items-center justify-center min-w-[19.84%] max-w-[19.84%] min-h-full max-h-full bg-white/[5%] overflow-hidden py-2 snap-always snap-start">
       <span className="block w-auto h-auto max-w-[60%]">
         <Image
           className="object-cover rounded-full"

@@ -6,7 +6,10 @@ export type FetchState<T> = {
   pending: boolean;
 };
 
-export default function useFetch<T = any>(url: string): FetchState<T> {
+export default function useFetch<T = any>(
+  url: string,
+  opts?: RequestInit
+): FetchState<T> {
   const [state, setState] = useState<FetchState<T>>({
     data: null,
     error: null,
@@ -16,7 +19,7 @@ export default function useFetch<T = any>(url: string): FetchState<T> {
   useEffect(() => {
     let isMounted = true;
 
-    fetch(url)
+    fetch(url, opts)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`Error: ${response.statusText}`);
@@ -37,7 +40,7 @@ export default function useFetch<T = any>(url: string): FetchState<T> {
     return () => {
       isMounted = false;
     };
-  }, [url]);
+  }, [opts, url]);
 
   return state;
 }
