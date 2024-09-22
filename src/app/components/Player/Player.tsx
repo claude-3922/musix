@@ -73,23 +73,23 @@ export function Player({ audioPlayer, songState, showPreview }: PlayerProps) {
       const suggestions: SongData[] = await suggestionsRes.json();
       if (suggestions.length > 0) {
         const songToPlay = suggestions[0];
-        const played = await play(songState, songToPlay);
+        const played = play(songState, songToPlay);
         if (!played) {
           console.log("Failed to play song");
         }
       }
 
-      // const queue = await queueDB.queue.toArray();
-      // if (queue.length === 0) return;
-      // const songToPlay = queue[0];
+      const currentQueue = queue.getQueue;
+      if (currentQueue.length === 0) return;
+      const songToPlay = currentQueue[0];
 
-      // if (!songToPlay) return;
-      // const played = await play(songState, songToPlay);
-      // if (!played) {
-      //   console.log("Failed to play song");
-      // }
+      if (!songToPlay) return;
+      const played = play(songState, songToPlay);
+      if (!played) {
+        console.log("Failed to play song");
+      }
 
-      // await queueDB.queue.where("vid.id").equals(songToPlay.id).delete();
+      queue.dequeue(songToPlay);
     };
 
     const initPlayer = async (
@@ -97,7 +97,7 @@ export function Player({ audioPlayer, songState, showPreview }: PlayerProps) {
       audioPlayer: HTMLAudioElement
     ) => {
       setSongData(data);
-      // queue.setNowPlaying(data);
+      queue.setNowPlaying = data;
 
       audioPlayer.load();
       audioPlayer.volume = Number(

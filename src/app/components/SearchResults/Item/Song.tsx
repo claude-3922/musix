@@ -60,7 +60,7 @@ export default function Song({ data, songState, audioPlayer }: SongProps) {
     if (!data) return;
 
     setWaiting(true);
-    await play(songState, data);
+    play(songState, data);
 
     setWaiting(false);
   };
@@ -69,7 +69,7 @@ export default function Song({ data, songState, audioPlayer }: SongProps) {
     if (!data) return;
 
     setWaiting(true);
-    await enqueue(data);
+    enqueue(data);
     setWaiting(false);
   };
 

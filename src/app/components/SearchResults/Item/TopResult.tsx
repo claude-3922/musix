@@ -5,7 +5,7 @@ import { pSBC } from "@/util/pSBC";
 import { PlaylistMetadata } from "@/util/types/PlaylistData";
 import { SongData } from "@/util/types/SongData";
 import { StateManager } from "@/util/types/StateManager";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Dropdown, { DropdownPos, toggleDropdown } from "../../Util/Dropdown";
 import OverlayIcon from "../../Util/OverlayIcon";
 import { AlbumData } from "@/util/types/AlbumData";
@@ -22,6 +22,7 @@ import {
   PlaySymbol,
   Plus,
 } from "../../Icons/Icons";
+import queue from "@/db/Queue";
 
 interface TopResultProps {
   type: "SONG" | "ARTIST" | "ALBUM" | "VIDEO" | "PLAYLIST";
@@ -36,6 +37,9 @@ export default function TopResult({
   songState,
   audioPlayer,
 }: TopResultProps) {
+  const [addedToQueue, setAddedToQueue] = useState(
+    Boolean(queue.getQueue.find((q) => q.id === data.id))
+  );
   const [waiting, setWaiting] = useState(false);
   const [playerPaused, setPlayerPaused] = useState(false);
   const [isNowPlaying, setIsNowPlaying] = useState(false);
@@ -87,7 +91,7 @@ export default function TopResult({
     setWaiting(true);
 
     if (type === "SONG" || type === "VIDEO") {
-      await play(songState, data as SongData);
+      play(songState, data as SongData);
       setWaiting(false);
       return;
     }
@@ -95,9 +99,9 @@ export default function TopResult({
     const songs = await fetchSongs(type, data.id);
     if (songs.length === 0) return setWaiting(false);
 
-    await play(songState, songs[0]);
+    play(songState, songs[0]);
     for (const song of songs.slice(1)) {
-      await enqueue(song);
+      enqueue(song);
     }
 
     setWaiting(false);
@@ -108,14 +112,14 @@ export default function TopResult({
     setWaiting(true);
 
     if (type === "SONG" || type === "VIDEO") {
-      await enqueue(data as SongData);
+      enqueue(data as SongData);
       setWaiting(false);
       return;
     }
 
     const songs = await fetchSongs(type, data.id);
     for (const song of songs) {
-      await enqueue(song);
+      enqueue(song);
     }
 
     setWaiting(false);
@@ -126,14 +130,14 @@ export default function TopResult({
     setWaiting(true);
 
     if (type === "SONG" || type === "VIDEO") {
-      await dequeue(data as SongData);
+      dequeue(data as SongData);
       setWaiting(false);
       return;
     }
 
     const songs = await fetchSongs(type, data.id);
     for (const song of songs) {
-      await dequeue(song);
+      dequeue(song);
     }
 
     setWaiting(false);
@@ -229,13 +233,13 @@ export default function TopResult({
         <button
           className="text-base rounded-full px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50 disabled:ring-0 whitespace-nowrap text-ellipsis overflow-hidden"
           onClick={async () => {
-            // if (addedToQueue) {
-            //   await handleDequeue();
-            //   setAddedToQueue(false);
-            // } else {
-            //   await handleEnqueue();
-            //   setAddedToQueue(true);
-            // }
+            if (addedToQueue) {
+              await handleDequeue();
+              setAddedToQueue(false);
+            } else {
+              await handleEnqueue();
+              setAddedToQueue(true);
+            }
           }}
           disabled={waiting}
           style={{
@@ -243,7 +247,7 @@ export default function TopResult({
             backgroundColor: COLORS.ACCENT,
           }}
         >
-          {/* {addedToQueue ? (
+          {addedToQueue ? (
             <span className="flex items-center justify-center gap-2">
               <Minus size={"24px"} fill={"#e8eaed"} opacity={1} />
               <p>Remove from queue</p>
@@ -253,8 +257,7 @@ export default function TopResult({
               <Plus size={"24px"} fill={"#e8eaed"} opacity={1} />
               <p>Add to queue</p>
             </span>
-          )} */}
-          ...
+          )}
         </button>
         <span
           //type="button"

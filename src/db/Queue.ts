@@ -4,14 +4,23 @@ import { LocalStorageService } from "./LocalStorageService";
 export class Queue {
   private db: LocalStorageService;
   private nowPlaying: SongData | null;
-  private queue: SongData[];
-  private history: SongData[];
+  private queue: SongData[] | null;
+  private history: SongData[] | null;
 
   constructor() {
     this.db = new LocalStorageService();
+
+    if (!this.db.getItem("queue")) {
+      this.db.setItem("queue", []);
+    }
+
+    if (!this.db.getItem("history")) {
+      this.db.setItem("history", []);
+    }
+
     this.nowPlaying = this.db.getItem<SongData>("nowPlaying");
-    this.queue = this.db.getItem<SongData[]>("queue") || [];
-    this.history = this.db.getItem<SongData[]>("history") || [];
+    this.queue = this.db.getItem<SongData[]>("queue");
+    this.history = this.db.getItem<SongData[]>("history");
   }
 
   get getNowPlaying() {

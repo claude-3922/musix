@@ -16,6 +16,8 @@ import {
   PlayButton,
   PreviousButton,
 } from "../Icons/Icons";
+import queue from "@/db/Queue";
+import { enqueue, play } from "@/player/manager";
 
 interface ControlsProps {
   data: SongData;
@@ -35,47 +37,46 @@ export default function Controls({
   playerPaused,
 }: ControlsProps) {
   const previousHandler = async () => {
-    // const historyArray = await queueDB.history.toArray();
-    // const nowPlaying = await queueDB.getNowPlaying();
-    // const prevSong = historyArray[historyArray.length - 1];
-    // if (!prevSong || historyArray.length === 0) {
-    //   return (audioPlayer.currentTime = 0);
-    // }
-    // if (nowPlaying) {
-    //   const enqueued = await enqueue(nowPlaying);
-    //   if (!enqueued) {
-    //     console.log("Failed to enqueue song");
-    //   }
-    // }
-    // const played = await play(songState, prevSong, false);
-    // if (!played) {
-    //   console.log("Failed to play song");
-    // }
-    // await queueDB.history.where("vid.id").equals(prevSong.id).delete();
+    const nowPlaying = queue.getNowPlaying;
+    const prevSong = queue.getHistory[queue.getHistory.length - 1];
+    if (!prevSong || queue.getHistory.length === 0) {
+      return (audioPlayer.currentTime = 0);
+    }
+    if (nowPlaying) {
+      const enqueued = enqueue(nowPlaying);
+      if (!enqueued) {
+        console.log("Failed to enqueue song");
+      }
+    }
+    const played = play(songState, prevSong, false);
+    if (!played) {
+      console.log("Failed to play song");
+    }
+    queue.unlog(prevSong);
   };
 
   const nextHandler = async () => {
-    // const queue = await queueDB.queue.toArray();
-    // if (queue.length === 0) {
-    //   const suggestionsRes = await fetch(`api/data/suggestions?id=${data.id}`);
-    //   const suggestions: SongData[] = await suggestionsRes.json();
-    //   if (suggestions.length > 0) {
-    //     const songToPlay =
-    //       suggestions[Math.floor(Math.random() * suggestions.length - 1)];
-    //     const played = await play(songState, songToPlay);
-    //     if (!played) {
-    //       console.log("Failed to play song");
-    //     }
-    //   }
-    //   return;
-    // }
-    // const songToPlay = queue[0];
-    // if (!songToPlay) return;
-    // const played = await play(songState, songToPlay);
-    // if (!played) {
-    //   console.log("Failed to play song");
-    // }
-    // await queueDB.queue.where("vid.id").equals(songToPlay.id).delete();
+    const currentQueue = queue.getQueue;
+    if (currentQueue.length === 0) {
+      const suggestionsRes = await fetch(`api/data/suggestions?id=${data.id}`);
+      const suggestions: SongData[] = await suggestionsRes.json();
+      if (suggestions.length > 0) {
+        const songToPlay =
+          suggestions[Math.floor(Math.random() * suggestions.length - 1)];
+        const played = play(songState, songToPlay);
+        if (!played) {
+          console.log("Failed to play song");
+        }
+      }
+      return;
+    }
+    const songToPlay = currentQueue[0];
+    if (!songToPlay) return;
+    const played = play(songState, songToPlay);
+    if (!played) {
+      console.log("Failed to play song");
+    }
+    queue.dequeue(songToPlay);
   };
 
   return (
