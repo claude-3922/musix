@@ -1,12 +1,5 @@
-import { AlbumData } from "@/util/types/AlbumData";
-import { ArtistData, ArtistMetadata } from "@/util/types/ArtistData";
-import { PlaylistMetadata } from "@/util/types/PlaylistData";
-import { SongData } from "@/util/types/SongData";
-import ytdl from "@distube/ytdl-core";
 import { NextRequest, NextResponse } from "next/server";
-import YouTube from "youtube-sr";
 import Innertube, { YTNodes } from "youtubei.js";
-import YTMusic from "ytmusic-api";
 
 export async function GET(req: NextRequest) {
   const query: string | null = req.nextUrl.searchParams.get("q");
@@ -15,9 +8,6 @@ export async function GET(req: NextRequest) {
     console.log(" INFO /search/top 'No query provided'");
     return NextResponse.json({ message: "No query provided" }, { status: 403 });
   }
-
-  // const res = await ytdl.getInfo(query, { limit: 1 });
-  // const top = res[0];
 
   const ytMusic = (
     await Innertube.create({
@@ -33,45 +23,14 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const res = await ytMusic.search(query, { type: "playlist" });
-  if (!res) {
-    console.log(" INFO /search/top 'No search results found'");
-    return NextResponse.json(
-      { message: "No search results found" },
-      { status: 404 }
-    );
-  }
-
-  let content = res.playlists?.contents;
-  // if (res.has_continuation) {
-  //   const continuation = await res.getContinuation();
-  //   content?.concat(continuation as any);
-  // }
-
-  if (!content) {
-    console.log(" INFO /search/top 'No search results found'");
-    return NextResponse.json(
-      { message: "No search results found" },
-      { status: 404 }
-    );
-  }
-
-  const playlists = content.map((p) => {
-    const sortedThumbnails = p.thumbnail?.contents
-      .sort((a, b) => b.width - a.width)
-      .map((t) => t.url) || [""];
-
-    return {
-      id: p.id || "",
-      name: p.title || p.flex_columns[0].title.text || "",
-      thumbnail: sortedThumbnails[0],
-      owner: {
-        name: p.author?.name || "",
-        id: p.author?.channel_id || "",
-      },
-      moreThumbnails: sortedThumbnails.slice(1),
-    } as PlaylistMetadata;
-  });
-
-  return NextResponse.json(playlists, { status: 200 });
+  const res = await ytMusic.getRelated(query);
+  return NextResponse.json(
+    res
+      .as(YTNodes.SectionList)
+      .contents[0].as(YTNodes.MusicCarouselShelf)
+      .contents[0].as(YTNodes.MusicResponsiveListItem),
+    {
+      status: 200,
+    }
+  );
 }

@@ -105,13 +105,14 @@ export default function Preview({ audioPlayer, songState }: PreviewProps) {
             <button
               key={label}
               onClick={() => previewPageState.set(state)}
-              className="text-base rounded-full px-[0.75vw] py-[0.33vw] hover:ring hover:ring-accentColor/50 disabled:ring-0"
-              style={{
-                backgroundColor:
-                  previewPageState.get === state ? COLORS.ACCENT : "",
-                transition: "background-color 0.125s ease-in-out",
-              }}
+              className="text-base px-[0.75vw] py-[0.33vw]"
               disabled={previewPageState.get === state}
+              style={{
+                borderTopColor:
+                  previewPageState.get === state ? COLORS.ACCENT : "",
+                borderTopWidth: previewPageState.get === state ? "2px" : "0px",
+                color: previewPageState.get === state ? COLORS.ACCENT : "",
+              }}
             >
               {label}
             </button>

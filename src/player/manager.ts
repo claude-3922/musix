@@ -7,6 +7,7 @@ export const play = async (
   logInHistory = true
 ) => {
   songState.set(data);
+  return true;
 
   // if (!logInHistory) return true;
 
