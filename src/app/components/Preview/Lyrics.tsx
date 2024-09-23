@@ -1,25 +1,20 @@
+import { FetchState } from "@/app/hooks/Fetch";
 import { LyricsData } from "@/util/types/LyricsData";
 import React from "react";
 
 interface LyricsProps {
-  lyricsData: LyricsData | null;
-  lyricsLoading: boolean;
-
+  lyrics: FetchState<LyricsData>;
   audioPlayer: HTMLAudioElement | null;
 }
 
-export default function Lyrics({
-  lyricsData,
-  lyricsLoading,
-  audioPlayer,
-}: LyricsProps) {
-  if (lyricsLoading)
+export default function Lyrics({ lyrics, audioPlayer }: LyricsProps) {
+  if (lyrics.pending)
     return (
       <div className="w-full h-full flex items-center justify-center text-3xl opacity-40 tracking-wide">
         Loading...
       </div>
     );
-  if (!lyricsData)
+  if (lyrics.error)
     return (
       <div className="w-full h-full flex items-center justify-center text-3xl opacity-40 tracking-wide">
         No lyrics found.
@@ -27,9 +22,9 @@ export default function Lyrics({
     );
 
   return (
-    <div className="w-full h-full items-center justify-start">
-      {lyricsData.lyrics.isSynced
-        ? lyricsData.lyrics.syncedLyrics?.split("\n").map((l, i) => {
+    <div className="w-full h-full items-center justify-start p-4 overflow-y-scroll">
+      {lyrics.data?.lyrics.isSynced
+        ? lyrics.data.lyrics.syncedLyrics?.split("\n").map((l, i) => {
             const timeInfo = l
               .substring(0, 10)
               .replaceAll("[", "")
@@ -50,7 +45,7 @@ export default function Lyrics({
               </>
             );
           })
-        : lyricsData.lyrics.plainLyrics}
+        : lyrics.data?.lyrics.plainLyrics}
     </div>
   );
 }

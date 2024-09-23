@@ -103,14 +103,16 @@ function SearchResults({ query, songState, audioPlayer }: SearchResultsProps) {
           {songs?.error && <></>}
           {songs?.data && (
             <div className="flex flex-col items-center gap-0 justify-start w-full h-full">
-              {songs.data.map((r, i) => (
-                <Song
-                  key={i}
-                  data={r}
-                  songState={songState}
-                  audioPlayer={audioPlayer || null}
-                />
-              ))}
+              {songs.data
+                .filter((s) => s.id !== topResult.data?.data.id)
+                .map((r, i) => (
+                  <Song
+                    key={i}
+                    data={r}
+                    songState={songState}
+                    audioPlayer={audioPlayer || null}
+                  />
+                ))}
             </div>
           )}
         </div>
@@ -121,7 +123,10 @@ function SearchResults({ query, songState, audioPlayer }: SearchResultsProps) {
             <div className="w-full h-full animate-pulse bg-white/[5%]" />
           )}
           {albums?.error && <></>}
-          {albums.data && albums.data.map((a, i) => <Album key={i} data={a} />)}
+          {albums.data &&
+            albums.data
+              .filter((a) => a.id !== topResult.data?.data.id)
+              .map((a, i) => <Album key={i} data={a} />)}
         </div>
 
         {categoryTitle("Artists")}
@@ -131,7 +136,9 @@ function SearchResults({ query, songState, audioPlayer }: SearchResultsProps) {
           )}
           {artists?.error && <></>}
           {artists?.data &&
-            artists.data.map((a, i) => <Artist key={i} data={a} />)}
+            artists.data
+              .filter((a) => a.id !== topResult.data?.data.id)
+              .map((a, i) => <Artist key={i} data={a} />)}
         </div>
 
         {categoryTitle("Videos")}
@@ -142,14 +149,16 @@ function SearchResults({ query, songState, audioPlayer }: SearchResultsProps) {
           {videos?.error && <></>}
           {videos?.data && (
             <div className="flex flex-col items-center gap-0 justify-start w-full h-full">
-              {videos.data.map((r, i) => (
-                <Song
-                  key={i}
-                  data={r}
-                  songState={songState}
-                  audioPlayer={audioPlayer || null}
-                />
-              ))}
+              {videos.data
+                .filter((s) => s.id !== topResult.data?.data.id)
+                .map((r, i) => (
+                  <Song
+                    key={i}
+                    data={r}
+                    songState={songState}
+                    audioPlayer={audioPlayer || null}
+                  />
+                ))}
             </div>
           )}
         </div>
@@ -162,9 +171,11 @@ function SearchResults({ query, songState, audioPlayer }: SearchResultsProps) {
           {playlists?.error && <></>}
           {playlists?.data && (
             <div className="flex flex-col items-center justify-start w-full h-full">
-              {playlists.data.map((r, i) => (
-                <Playlist key={i} data={r} />
-              ))}
+              {playlists.data
+                .filter((s) => s.id !== topResult.data?.data.id)
+                .map((r, i) => (
+                  <Playlist key={i} data={r} />
+                ))}
             </div>
           )}
         </div>

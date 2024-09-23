@@ -86,7 +86,11 @@ export default function Extras({
         className="h-[30%] w-[12%] hover:scale-110"
         onClick={() => {
           const isMuted = audioPlayer.volume === 0;
-          isMuted ? (audioPlayer.volume = 1) : (audioPlayer.volume = 0);
+          isMuted
+            ? (audioPlayer.volume = JSON.parse(
+                localStorage.getItem("volume") || "1"
+              ))
+            : (audioPlayer.volume = 0);
         }}
       >
         {muted ? (

@@ -4,8 +4,8 @@ import { LocalStorageService } from "./LocalStorageService";
 export class Queue {
   private db: LocalStorageService;
   private nowPlaying: SongData | null;
-  private queue: SongData[] | null;
-  private history: SongData[] | null;
+  private queue: SongData[];
+  private history: SongData[];
 
   constructor() {
     this.db = new LocalStorageService();
@@ -19,8 +19,8 @@ export class Queue {
     }
 
     this.nowPlaying = this.db.getItem<SongData>("nowPlaying");
-    this.queue = this.db.getItem<SongData[]>("queue");
-    this.history = this.db.getItem<SongData[]>("history");
+    this.queue = this.db.getItem<SongData[]>("queue") || [];
+    this.history = this.db.getItem<SongData[]>("history") || [];
   }
 
   get getNowPlaying() {

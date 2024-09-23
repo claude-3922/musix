@@ -10,6 +10,7 @@ import { StateManager } from "@/util/types/StateManager";
 import Lyrics from "./Lyrics";
 import NowPlaying from "./NowPlaying";
 import { LyricsData } from "@/util/types/LyricsData";
+import useFetch from "@/app/hooks/Fetch";
 
 interface PreviewProps {
   audioPlayer: HTMLAudioElement | null;
@@ -22,49 +23,12 @@ export default function Preview({ audioPlayer, songState }: PreviewProps) {
     PREVIEW_TAB_STATES.NowPlaying
   );
 
-  const [suggestions, setSuggestions] = useState<SongData[] | null>(null);
-  const [suggestionsLoading, setSuggestionsLoading] = useState(false);
-
-  const [lyrics, setLyrics] = useState<LyricsData | null>(null);
-  const [lyricsLoading, setLyricsLoading] = useState(false);
-
-  useEffect(() => {
-    if (!audioPlayer) return;
-  }, [audioPlayer]);
-
-  useEffect(() => {
-    if (!songState.get) return;
-
-    setSuggestions(null);
-    setLyrics(null);
-    async function loadSuggestions() {
-      setSuggestionsLoading(true);
-      const res = await fetch(`api/data/suggestions?id=${songState.get?.id}`);
-      if (res.status === 200) {
-        const data: SongData[] = await res.json();
-        setSuggestions(data);
-      }
-      setSuggestionsLoading(false);
-    }
-
-    async function loadLyrics() {
-      setLyricsLoading(true);
-      const res = await fetch(
-        `api/data/lyrics?name=${songState.get?.title}&artist=${songState.get?.artist.name}&album=${songState.get?.album?.name}&duration=${songState.get?.duration}`
-      );
-      if (res.status === 200) {
-        const data: LyricsData = await res.json();
-        setLyrics(data);
-      }
-      setLyricsLoading(false);
-    }
-
-    loadLyrics();
-    loadSuggestions();
-  }, [songState.get]);
-
-  // const queue = useLiveQuery(() => queueDB.queue.toArray());
-  // const history = useLiveQuery(() => queueDB.history.toArray());
+  const related = useFetch<SongData[]>(
+    `api/data/suggestions/related?id=${songState.get?.id}`
+  );
+  const lyrics = useFetch<LyricsData>(
+    `api/data/lyrics?id=${songState.get?.id}`
+  );
 
   if (!audioPlayer || !songState.get) return null;
   const songData = songState.get;
@@ -118,24 +82,19 @@ export default function Preview({ audioPlayer, songState }: PreviewProps) {
             </button>
           ))}
         </span>
-        <div className="flex items-center justify-center h-full w-full overflow-x-hidden rounded-br-lg">
+        <div className="flex items-center justify-center bg-white/5 h-full w-full overflow-x-hidden rounded-br-lg">
           {previewPageState.get === PREVIEW_TAB_STATES.NowPlaying && (
             <NowPlaying data={songData} />
           )}
           {previewPageState.get === PREVIEW_TAB_STATES.Suggestions && (
             <Suggestions
-              suggestions={suggestions}
-              suggestionsLoading={suggestionsLoading}
+              related={related}
               songState={songState}
               audioPlayer={audioPlayer}
             />
           )}
           {previewPageState.get === PREVIEW_TAB_STATES.Lyrics && (
-            <Lyrics
-              lyricsData={lyrics}
-              lyricsLoading={lyricsLoading}
-              audioPlayer={audioPlayer}
-            />
+            <Lyrics lyrics={lyrics} audioPlayer={audioPlayer} />
           )}
         </div>
       </div>
