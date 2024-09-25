@@ -61,23 +61,42 @@ export default function Preview({ audioPlayer, songState }: PreviewProps) {
         onClick={clickHandler}
         autoPlay
         className="h-full w-[45%] object-cover rounded-l-lg"
-      >
-        Video not available on yo pc XD
-      </video>
-      <div className="flex items-center justify-center bg-white/5 h-full w-full overflow-x-hidden rounded-r-lg">
-        {previewPageState.get === PREVIEW_TAB_STATES.NowPlaying && (
-          <NowPlaying data={songData} />
-        )}
-        {previewPageState.get === PREVIEW_TAB_STATES.Suggestions && (
-          <Suggestions
-            related={related}
-            songState={songState}
-            audioPlayer={audioPlayer}
-          />
-        )}
-        {previewPageState.get === PREVIEW_TAB_STATES.Lyrics && (
-          <Lyrics lyrics={lyrics} audioPlayer={audioPlayer} />
-        )}
+      ></video>
+
+      <div className="flex flex-col justify-center items-center h-full min-w-[55%] max-w-[55%] border-y-1 border-r-1 gap-2 grow rounded-r-lg">
+        <span className="flex gap-4 justify-center items-center w-full pt-2">
+          {buttons.map(({ label, state }) => (
+            <button
+              key={label}
+              onClick={() => previewPageState.set(state)}
+              className="text-base px-[0.75vw] py-[0.33vw]"
+              disabled={previewPageState.get === state}
+              style={{
+                borderTopColor:
+                  previewPageState.get === state ? COLORS.ACCENT : "",
+                borderTopWidth: previewPageState.get === state ? "2px" : "0px",
+                color: previewPageState.get === state ? COLORS.ACCENT : "",
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </span>
+        <div className="flex items-center justify-center bg-white/5 h-full w-full overflow-x-hidden rounded-br-lg">
+          {previewPageState.get === PREVIEW_TAB_STATES.NowPlaying && (
+            <NowPlaying data={songData} />
+          )}
+          {previewPageState.get === PREVIEW_TAB_STATES.Suggestions && (
+            <Suggestions
+              related={related}
+              songState={songState}
+              audioPlayer={audioPlayer}
+            />
+          )}
+          {previewPageState.get === PREVIEW_TAB_STATES.Lyrics && (
+            <Lyrics lyrics={lyrics} audioPlayer={audioPlayer} />
+          )}
+        </div>
       </div>
     </div>
   );
