@@ -24,12 +24,12 @@ export async function GET(req: NextRequest) {
   const videoInfo = await ytClient.getBasicInfo(id);
   const format = videoInfo.chooseFormat({
     type: vidParam ? "video+audio" : "audio",
-    quality: vidParam ? "best" : "best",
+    quality: "best",
     format: "any",
   });
 
   const fileSize = format.content_length;
-  if (!format || !fileSize) {
+  if (!fileSize) {
     console.log(" INFO /api/media 'Couldn't find format'");
     return Response.json({ message: "Couldn't find format" }, { status: 404 });
   }

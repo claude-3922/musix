@@ -67,7 +67,7 @@ export default function Page() {
         <audio
           id="audioPlayer"
           ref={(el) => setAudioPlayer(el)}
-          src={`api/media?id=${songState.get.id}`}
+          src={`api/media/?id=${songState.get.id}`}
           preload="auto"
           autoPlay
         />
