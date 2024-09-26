@@ -1,18 +1,14 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 import { formatSongDuration } from "@/util/format";
-import { pSBC } from "@/util/pSBC";
 import { PlaylistMetadata } from "@/util/types/PlaylistData";
 import { SongData } from "@/util/types/SongData";
 import { StateManager } from "@/util/types/StateManager";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import Dropdown, { DropdownPos, toggleDropdown } from "../../Util/Dropdown";
+import React, { useEffect, useState } from "react";
 import OverlayIcon from "../../Util/OverlayIcon";
 import { AlbumData } from "@/util/types/AlbumData";
 import { ArtistData } from "@/util/types/ArtistData";
-import { dequeue, enqueue, play } from "@/player/manager";
 import { COLORS } from "@/util/enums/colors";
-import { useLiveQuery } from "dexie-react-hooks";
 import {
   Explcit,
   LoadingSpinner,
@@ -22,7 +18,6 @@ import {
   PlaySymbol,
   Plus,
 } from "../../Icons/Icons";
-import queue from "@/db/Queue";
 
 interface TopResultProps {
   type: "SONG" | "ARTIST" | "ALBUM" | "VIDEO" | "PLAYLIST";
@@ -37,9 +32,7 @@ export default function TopResult({
   songState,
   audioPlayer,
 }: TopResultProps) {
-  const [addedToQueue, setAddedToQueue] = useState(
-    Boolean(queue.getQueue.find((q) => q.id === data.id))
-  );
+  const [addedToQueue, setAddedToQueue] = useState(true);
   const [waiting, setWaiting] = useState(false);
   const [playerPaused, setPlayerPaused] = useState(false);
   const [isNowPlaying, setIsNowPlaying] = useState(false);
@@ -87,60 +80,50 @@ export default function TopResult({
   }
 
   const handlePlay = async () => {
-    if (type === "ARTIST") return;
-    setWaiting(true);
-
+    // if (type === "ARTIST") return;
+    // setWaiting(true);
     if (type === "SONG" || type === "VIDEO") {
-      play(songState, data as SongData);
+      songState.set(data as SongData);
       setWaiting(false);
       return;
     }
-
-    const songs = await fetchSongs(type, data.id);
-    if (songs.length === 0) return setWaiting(false);
-
-    play(songState, songs[0]);
-    for (const song of songs.slice(1)) {
-      enqueue(song);
-    }
-
-    setWaiting(false);
+    // const songs = await fetchSongs(type, data.id);
+    // if (songs.length === 0) return setWaiting(false);
+    // play(songState, songs[0]);
+    // for (const song of songs.slice(1)) {
+    //   enqueue(song);
+    // }
+    // setWaiting(false);
   };
 
   const handleEnqueue = async () => {
-    if (type === "ARTIST") return;
-    setWaiting(true);
-
-    if (type === "SONG" || type === "VIDEO") {
-      enqueue(data as SongData);
-      setWaiting(false);
-      return;
-    }
-
-    const songs = await fetchSongs(type, data.id);
-    for (const song of songs) {
-      enqueue(song);
-    }
-
-    setWaiting(false);
+    // if (type === "ARTIST") return;
+    // setWaiting(true);
+    // if (type === "SONG" || type === "VIDEO") {
+    //   enqueue(data as SongData);
+    //   setWaiting(false);
+    //   return;
+    // }
+    // const songs = await fetchSongs(type, data.id);
+    // for (const song of songs) {
+    //   enqueue(song);
+    // }
+    // setWaiting(false);
   };
 
   const handleDequeue = async () => {
-    if (type === "ARTIST") return;
-    setWaiting(true);
-
-    if (type === "SONG" || type === "VIDEO") {
-      dequeue(data as SongData);
-      setWaiting(false);
-      return;
-    }
-
-    const songs = await fetchSongs(type, data.id);
-    for (const song of songs) {
-      dequeue(song);
-    }
-
-    setWaiting(false);
+    // if (type === "ARTIST") return;
+    // setWaiting(true);
+    // if (type === "SONG" || type === "VIDEO") {
+    //   dequeue(data as SongData);
+    //   setWaiting(false);
+    //   return;
+    // }
+    // const songs = await fetchSongs(type, data.id);
+    // for (const song of songs) {
+    //   dequeue(song);
+    // }
+    // setWaiting(false);
   };
 
   return (

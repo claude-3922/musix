@@ -16,8 +16,6 @@ import {
   PlayButton,
   PreviousButton,
 } from "../Icons/Icons";
-import queue from "@/db/Queue";
-import { enqueue, play } from "@/player/manager";
 
 interface ControlsProps {
   data: SongData;
@@ -37,46 +35,37 @@ export default function Controls({
   playerPaused,
 }: ControlsProps) {
   const previousHandler = async () => {
-    const nowPlaying = queue.getNowPlaying;
-    const prevSong = queue.getHistory[queue.getHistory.length - 1];
-    if (!prevSong || queue.getHistory.length === 0) {
-      return (audioPlayer.currentTime = 0);
-    }
-    if (nowPlaying) {
-      const enqueued = enqueue(nowPlaying);
-      if (!enqueued) {
-        console.log("Failed to enqueue song");
-      }
-    }
-    const played = play(songState, prevSong, false);
-    if (!played) {
-      console.log("Failed to play song");
-    }
-    queue.unlog(prevSong);
+    // const nowPlaying = queueManager.nowPlaying;
+    // const prevSong =
+    //   queueManager.history.items[queueManager.history.items.length - 1];
+    // if (!prevSong || queueManager.history.items.length === 0) {
+    //   return (audioPlayer.currentTime = 0);
+    // }
+    // if (nowPlaying) {
+    //   const enqueued = queueManager.queue.add(queueManager.nowPlaying.data!);
+    // }
+    // songState.set(prevSong);
+    // queueManager.history.remove(prevSong);
   };
 
   const nextHandler = async () => {
-    const currentQueue = queue.getQueue;
-    if (currentQueue.length === 0) {
-      const suggestionsRes = await fetch(`api/data/suggestions?id=${data.id}`);
-      const suggestions: SongData[] = await suggestionsRes.json();
-      if (suggestions.length > 0) {
-        const songToPlay =
-          suggestions[Math.floor(Math.random() * suggestions.length - 1)];
-        const played = play(songState, songToPlay);
-        if (!played) {
-          console.log("Failed to play song");
-        }
-      }
-      return;
-    }
-    const songToPlay = currentQueue[0];
-    if (!songToPlay) return;
-    const played = play(songState, songToPlay);
-    if (!played) {
-      console.log("Failed to play song");
-    }
-    queue.dequeue(songToPlay);
+    // const currentQueue = queueManager.queue.items;
+    // if (currentQueue.length === 0) {
+    //   const suggestionsRes = await fetch(`api/data/suggestions?id=${data.id}`);
+    //   const suggestions: SongData[] = await suggestionsRes.json();
+    //   if (suggestions.length > 0) {
+    //     const songToPlay =
+    //       suggestions[Math.floor(Math.random() * suggestions.length - 1)];
+    //     songState.set(songToPlay);
+    //     queueManager.history.add(songToPlay);
+    //   }
+    //   return;
+    // }
+    // const songToPlay = currentQueue[0];
+    // if (!songToPlay) return;
+    // songState.set(songToPlay);
+    // queueManager.history.add(songToPlay);
+    // queueManager.queue.remove(songToPlay);
   };
 
   return (

@@ -1,31 +1,19 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 import { formatSongDuration } from "@/util/format";
-import { pSBC } from "@/util/pSBC";
-import { PlaylistMetadata } from "@/util/types/PlaylistData";
 import { SongData } from "@/util/types/SongData";
 import { StateManager } from "@/util/types/StateManager";
 import React, { useEffect, useState } from "react";
-import Dropdown, { DropdownPos, toggleDropdown } from "../../Util/Dropdown";
 import OverlayIcon from "../../Util/OverlayIcon";
-import { AlbumData } from "@/util/types/AlbumData";
-import { ArtistData } from "@/util/types/ArtistData";
-import { dequeue, enqueue, play } from "@/player/manager";
-
-import { COLORS } from "@/util/enums/colors";
-import { useLiveQuery } from "dexie-react-hooks";
 import {
   Explcit,
   LoadingSpinner,
   Minus,
   MoreVertical,
   PauseSymbol,
-  PlayButton,
   PlaySymbol,
   Plus,
 } from "../../Icons/Icons";
-import { FetchState } from "@/app/hooks/Fetch";
-import queue from "@/db/Queue";
 
 interface SongProps {
   data: SongData;
@@ -34,9 +22,7 @@ interface SongProps {
 }
 
 export default function Song({ data, songState, audioPlayer }: SongProps) {
-  const [addedToQueue, setAddedToQueue] = useState(
-    Boolean(queue.getQueue.find((q) => q.id === data.id))
-  );
+  const [addedToQueue, setAddedToQueue] = useState(true);
   const [waiting, setWaiting] = useState(false);
   const [playerPaused, setPlayerPaused] = useState(false);
   const [isNowPlaying, setIsNowPlaying] = useState(false);
@@ -65,20 +51,18 @@ export default function Song({ data, songState, audioPlayer }: SongProps) {
 
   const handlePlay = () => {
     setWaiting(true);
-    play(songState, data);
+    songState.set(data);
 
     setWaiting(false);
   };
 
   const handleEnqueue = () => {
     setWaiting(true);
-    enqueue(data);
     setWaiting(false);
   };
 
   const handleDequeue = () => {
     setWaiting(true);
-    dequeue(data);
     setWaiting(false);
   };
 

@@ -4,7 +4,6 @@ import { StateManager } from "@/util/types/StateManager";
 import React from "react";
 import OverlayIcon from "../Util/OverlayIcon";
 import { formatSongDuration } from "@/util/format";
-import { play } from "@/player/manager";
 import { Explcit, PlaySymbol } from "../Icons/Icons";
 import { FetchState } from "@/app/hooks/Fetch";
 
@@ -64,7 +63,6 @@ export default function Suggestions({
                         overflow: "hidden",
                         margin: "2%",
                       }}
-                      onClick={async () => play(songState, song)}
                     >
                       <PlaySymbol size={"50%"} fill={"#e8eaed"} opacity={0.8} />
                     </OverlayIcon>

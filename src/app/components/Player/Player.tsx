@@ -10,10 +10,8 @@ import { SongData } from "@/util/types/SongData";
 import { StateManager } from "@/util/types/StateManager";
 import useStateManager from "@/app/hooks/StateManager";
 import { COLORS } from "@/util/enums/colors";
-import { play } from "@/player/manager";
 import OverlayIcon from "../Util/OverlayIcon";
 import { Chevron_0Deg } from "../Icons/Icons";
-import queue from "@/db/Queue";
 
 interface PlayerProps {
   audioPlayer: HTMLAudioElement | null;
@@ -67,29 +65,21 @@ export function Player({ audioPlayer, songState, showPreview }: PlayerProps) {
     };
 
     const songEndedHandler = async () => {
-      if (audioPlayer.loop) return;
-
-      const suggestionsRes = await fetch(`api/data/suggestions?id=${data.id}`);
-      const suggestions: SongData[] = await suggestionsRes.json();
-      if (suggestions.length > 0) {
-        const songToPlay = suggestions[0];
-        const played = play(songState, songToPlay);
-        if (!played) {
-          console.log("Failed to play song");
-        }
-      }
-
-      const currentQueue = queue.getQueue;
-      if (currentQueue.length === 0) return;
-      const songToPlay = currentQueue[0];
-
-      if (!songToPlay) return;
-      const played = play(songState, songToPlay);
-      if (!played) {
-        console.log("Failed to play song");
-      }
-
-      queue.dequeue(songToPlay);
+      // if (audioPlayer.loop) return;
+      // const suggestionsRes = await fetch(`api/data/suggestions?id=${data.id}`);
+      // const suggestions: SongData[] = await suggestionsRes.json();
+      // if (suggestions.length > 0) {
+      //   const songToPlay = suggestions[0];
+      //   songState.set(songToPlay);
+      //   queueManager.history.add(songToPlay);
+      // }
+      // const currentQueue = queueManager.queue.items;
+      // if (currentQueue.length === 0) return;
+      // const songToPlay = currentQueue[0];
+      // if (!songToPlay) return;
+      // songState.set(songToPlay);
+      // queueManager.history.add(songToPlay);
+      // queueManager.queue.remove(songToPlay);
     };
 
     const initPlayer = async (
@@ -97,7 +87,7 @@ export function Player({ audioPlayer, songState, showPreview }: PlayerProps) {
       audioPlayer: HTMLAudioElement
     ) => {
       setSongData(data);
-      queue.setNowPlaying = data;
+      // queueManager.nowPlaying.set(data);
 
       audioPlayer.load();
       audioPlayer.volume = Number(
