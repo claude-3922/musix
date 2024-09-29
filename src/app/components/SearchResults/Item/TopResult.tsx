@@ -18,6 +18,7 @@ import {
   PlaySymbol,
   Plus,
 } from "../../Icons/Icons";
+import useAuth from "@/app/hooks/Auth";
 
 interface TopResultProps {
   type: "SONG" | "ARTIST" | "ALBUM" | "VIDEO" | "PLAYLIST";
@@ -126,6 +127,8 @@ export default function TopResult({
     // setWaiting(false);
   };
 
+  const user = useAuth();
+
   return (
     <div
       className="flex justify-start items-center h-[21%] w-full bg-white/[5%]"
@@ -214,7 +217,7 @@ export default function TopResult({
           )}
         </button>
         <button
-          className="text-base rounded-full px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50 disabled:ring-0 whitespace-nowrap text-ellipsis overflow-hidden"
+          className="text-base rounded-full px-[1vw] py-[0.5vh] hover:ring ring-accentColor/50 disabled:ring-0  whitespace-nowrap text-ellipsis overflow-hidden"
           onClick={async () => {
             if (addedToQueue) {
               await handleDequeue();
@@ -224,9 +227,9 @@ export default function TopResult({
               setAddedToQueue(true);
             }
           }}
-          disabled={waiting}
+          disabled={waiting || !Boolean(user)}
           style={{
-            opacity: waiting ? 0.5 : 1,
+            opacity: waiting || !Boolean(user) ? 0.5 : 1,
             backgroundColor: COLORS.ACCENT,
           }}
         >

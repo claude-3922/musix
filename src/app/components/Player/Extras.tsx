@@ -15,6 +15,7 @@ import {
   VolumeFull,
   VolumeMute,
 } from "../Icons/Icons";
+import useAuth from "@/app/hooks/Auth";
 
 interface ExtrasProps {
   data: SongData;
@@ -45,6 +46,8 @@ export default function Extras({
 
     localStorage.setItem("volume", JSON.stringify(audioPlayer.volume));
   };
+
+  const user = useAuth();
 
   return (
     <>
@@ -100,16 +103,18 @@ export default function Extras({
         )}
       </button>
 
-      <button
-        className="h-[30%] w-[10%] hover:scale-110"
-        onClick={() => setShowLikeFill((p) => !p)}
-      >
-        {showLikeFill ? (
-          <HeartFill size={"80%"} fill={COLORS.ACCENT} />
-        ) : (
-          <HeartEmpty size={"80%"} fill={"#e8eaed"} />
-        )}
-      </button>
+      {user && (
+        <button
+          className="h-[30%] w-[10%] hover:scale-110"
+          onClick={() => setShowLikeFill((p) => !p)}
+        >
+          {showLikeFill ? (
+            <HeartFill size={"80%"} fill={COLORS.ACCENT} />
+          ) : (
+            <HeartEmpty size={"80%"} fill={"#e8eaed"} />
+          )}
+        </button>
+      )}
       <button
         className="h-[30%] w-[10%] hover:scale-110"
         onClick={() => {

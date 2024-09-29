@@ -2,6 +2,10 @@ import { PAGE_STATES } from "@/util/enums/pageState";
 import { StateManager } from "@/util/types/StateManager";
 import React, { useRef } from "react";
 import { Arrow_180Deg, Home, Search } from "../Icons/Icons";
+import Link from "next/link";
+import { auth, provider } from "@/app/firebase/firebase";
+import { signInWithPopup, signOut } from "firebase/auth";
+import useAuth from "@/app/hooks/Auth";
 
 interface NavBarProps {
   pageState: StateManager<PAGE_STATES>;
@@ -15,6 +19,24 @@ export default function NavBar({
   showPreview,
 }: NavBarProps) {
   const searchBar = useRef<HTMLInputElement | null>(null);
+
+  const user = useAuth();
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (error) {
+      console.error("Error during sign in:", error);
+    }
+  };
+
+  const handleGoogleSignOut = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Error during sign out:", error);
+    }
+  };
 
   return (
     <>
@@ -73,6 +95,24 @@ export default function NavBar({
           </button>
         </form>
       </span>
+      {user ? (
+        <>
+          <span>Logged in as {user.displayName}</span>
+          <span
+            className="text-blue-500 hover:underline hover:cursor-pointer"
+            onClick={handleGoogleSignOut}
+          >
+            Sign out
+          </span>
+        </>
+      ) : (
+        <span
+          className="text-blue-500 hover:underline hover:cursor-pointer"
+          onClick={handleGoogleSignIn}
+        >
+          Sign in with Google
+        </span>
+      )}
     </>
   );
 }

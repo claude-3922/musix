@@ -17,6 +17,9 @@ import { COLORS } from "@/util/enums/colors";
 import { pSBC } from "@/util/pSBC";
 import NavBar from "./components/Navigation/NavBar";
 import { BlockSign } from "./components/Icons/Icons";
+import useAuth from "./hooks/Auth";
+import { redirect } from "next/dist/server/api-utils";
+import { useRouter } from "next/router";
 
 export default function Page() {
   const songState = useStateManager<SongData | null>(null);

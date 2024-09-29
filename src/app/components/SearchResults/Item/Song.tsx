@@ -14,6 +14,7 @@ import {
   PlaySymbol,
   Plus,
 } from "../../Icons/Icons";
+import useAuth from "@/app/hooks/Auth";
 
 interface SongProps {
   data: SongData;
@@ -65,6 +66,8 @@ export default function Song({ data, songState, audioPlayer }: SongProps) {
     setWaiting(true);
     setWaiting(false);
   };
+
+  const user = useAuth();
 
   return (
     <div
@@ -127,7 +130,8 @@ export default function Song({ data, songState, audioPlayer }: SongProps) {
               )}
             </button>
             <button
-              className="rounded-full bg-accentColor p-1 hover:ring ring-accentColor/50"
+              className="rounded-full bg-accentColor p-1 disabled:ring-0 hover:ring ring-accentColor/50 disabled:opacity-50"
+              disabled={!Boolean(user)}
               onClick={async () => {
                 if (addedToQueue) {
                   handleDequeue();
