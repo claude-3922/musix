@@ -16,6 +16,7 @@ import {
   PlayButton,
   PreviousButton,
 } from "../Icons/Icons";
+import useAuth from "@/app/hooks/Auth";
 
 interface ControlsProps {
   data: SongData;
@@ -68,12 +69,15 @@ export default function Controls({
     // queueManager.queue.remove(songToPlay);
   };
 
+  const user = useAuth();
+
   return (
     <>
       <span className="flex flex-row justify-center items-center w-[50%] h-[40%]">
         <button
-          className="w-[17%] h-full hover:scale-110 transition:transform"
+          className="w-[17%] h-full hover:scale-110 transition:transform disabled:opacity-50 disabled:scale-100"
           onClick={previousHandler}
+          disabled={!Boolean(user)}
         >
           <PreviousButton size={"100%"} fill={"#e8eaed"} />
         </button>
@@ -93,8 +97,9 @@ export default function Controls({
           )}
         </button>
         <button
-          className="w-[17%] h-full hover:scale-110 transition:transform"
+          className="w-[17%] h-full hover:scale-110 transition:transform disabled:opacity-50 disabled:scale-100"
           onClick={nextHandler}
+          disabled={!Boolean(user)}
         >
           <NextButton size={"100%"} fill={"#e8eaed"} />
         </button>

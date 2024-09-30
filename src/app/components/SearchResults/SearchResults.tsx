@@ -17,6 +17,7 @@ import Album from "./Item/Album";
 import Playlist from "./Item/Playlist";
 import useFetch from "@/app/hooks/Fetch";
 import Artist from "./Item/Artist";
+import ContainerScroller from "../Util/ContainerScroller";
 
 interface SearchResultsProps {
   query: string;
@@ -81,7 +82,15 @@ function SearchResults({ query, songState, audioPlayer }: SearchResultsProps) {
       }}
     >
       <div className="w-[85%] h-full">
-        {categoryTitle("Top Result")}
+        <div className="w-full h-[7.5%] mt-[3%] flex items-center justify-between">
+          <span className="flex items-center justify-start min-w-[50%] max-w-[80%] grow h-full text-2xl tracking-tight opacity-80 gap-2">
+            Top Result
+          </span>
+          <span className="flex items-center justify-end text-2xl tracking-tight min-w-[10%] max-w-[50%] h-full opacity-80 gap-2">
+            <ContainerScroller direction="y" container={null as any} />
+          </span>
+        </div>
+
         {topResult?.pending && (
           <div className="animate-pulse h-[21%] w-full bg-white/[5%]" />
         )}

@@ -130,7 +130,7 @@ export default function Song({ data, songState, audioPlayer }: SongProps) {
               )}
             </button>
             <button
-              className="rounded-full bg-accentColor p-1 disabled:ring-0 hover:ring ring-accentColor/50 disabled:opacity-50"
+              className="rounded-full bg-accentColor p-1 disabled:ring-0 hover:ring ring-accentColor/50"
               disabled={!Boolean(user)}
               onClick={async () => {
                 if (addedToQueue) {
