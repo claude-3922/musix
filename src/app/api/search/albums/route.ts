@@ -67,7 +67,7 @@ export async function GET(req: NextRequest) {
         name: a.flex_columns[1].title.runs?.flat()[2].text || "",
         id: channelId,
       },
-      year: a.year || 0,
+      year: parseInt(a.year || "0"),
       moreThumbnails: sortedThumbnails,
       explicit:
         Boolean(

@@ -1,6 +1,7 @@
 import { AlbumData } from "@/util/types/AlbumData";
 import { SongData } from "@/util/types/SongData";
 import { NextRequest, NextResponse } from "next/server";
+import Innertube, { YTNodes } from "youtubei.js";
 import YTMusic from "ytmusic-api";
 
 export async function GET(req: NextRequest) {
@@ -14,8 +15,13 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const ytMusic = await new YTMusic().initialize();
-  if (!ytMusic) {
+  const ytmusic = (
+    await Innertube.create({
+      retrieve_player: false,
+      generate_session_locally: false,
+    })
+  ).music;
+  if (!ytmusic) {
     console.log(" INFO /data/album 'Error while initializing YTMusic'");
     return NextResponse.json(
       { message: "Error while initializing YTMusic" },
@@ -23,7 +29,7 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const res = await ytMusic.getAlbum(albumId);
+  const res = await ytmusic.getAlbum(albumId);
   if (!res) {
     console.log(` INFO /data/album 'Album with id ${albumId} not found'`);
     return NextResponse.json(
@@ -32,40 +38,76 @@ export async function GET(req: NextRequest) {
     );
   }
 
+  const albumSongs = await Promise.all(
+    res.contents.map(async (s) => {
+      const song = await ytmusic.getInfo(s.id!);
+      const sortedThumbnails = song.basic_info.thumbnail
+        ?.sort((a, b) => {
+          return b.width - a.width;
+        })
+        .map((t) => t.url) || [""];
+      return {
+        id: song.basic_info.id || "unknown",
+        title: song.basic_info.title || "unknown",
+        url: `https://www.youtube.com/watch?v=${song.basic_info.id || ""}`,
+        artist: {
+          name:
+            res.header?.as(YTNodes.MusicResponsiveHeader).strapline_text_one
+              .text || "unknown",
+          id:
+            res.header?.as(YTNodes.MusicResponsiveHeader).strapline_text_one
+              .endpoint?.payload.browseId || "unknown",
+        },
+        thumbnail: sortedThumbnails[0],
+        moreThumbnails: sortedThumbnails.slice(1),
+        album: {
+          name: res.header?.title.text || "unknown",
+          id: albumId || "unknown",
+        },
+        duration: song.basic_info.duration || 0,
+        explicit: Boolean(
+          s.badges?.find(
+            (b) => b.as(YTNodes.MusicInlineBadge).label === "Explicit"
+          )
+        ),
+      } as SongData;
+    })
+  );
+
+  const sortedThumbnails = res.header
+    ?.as(YTNodes.MusicResponsiveHeader)
+    .thumbnail?.contents.sort((a, b) => {
+      return b.width - a.width;
+    })
+    .map((t) => t.url) || [""];
+
   return NextResponse.json(
     {
-      id: res.albumId,
-      name: res.name,
-      thumbnail: res.thumbnails.sort((a, b) => b.width - a.width)[0].url,
-
+      name: res.header?.title.text || "unknown",
+      id: albumId || "unknown",
+      year: parseInt(
+        res.header
+          ?.as(YTNodes.MusicResponsiveHeader)
+          .subtitle.text?.split("•")[1] || "0"
+      ),
       artist: {
-        name: res.artist.name,
-        id: res.artist.artistId || "Unknown",
+        name:
+          res.header?.as(YTNodes.MusicResponsiveHeader).strapline_text_one
+            .text || "unknown",
+        id:
+          res.header?.as(YTNodes.MusicResponsiveHeader).strapline_text_one
+            .endpoint?.payload.browseId || "unknown",
       },
-      moreThumbnails: res.thumbnails
-        .sort((a, b) => b.width - a.width)
-        .map((t) => t.url),
-      year: res.year || -1,
-      songs: res.songs.map((s) => {
-        return {
-          id: s.videoId,
-          url: `https://www.youtube.com/watch?v=${s.videoId}`,
-          title: s.name,
-          thumbnail: s.thumbnails.sort((a, b) => b.width - a.width)[0].url,
-          duration: s.duration || 0,
-          artist: {
-            name: s.artist.name,
-            id: s.artist.artistId || "Unknown",
-          },
-          album: {
-            name: res.name,
-            id: res.albumId,
-          },
-          moreThumbnails: s.thumbnails
-            .sort((a, b) => b.width - a.width)
-            .map((t) => t.url),
-        };
-      }),
+      thumbnail: sortedThumbnails[0],
+      moreThumbnails: sortedThumbnails.slice(1),
+      songs: albumSongs,
+      explicit: Boolean(
+        res.header
+          ?.as(YTNodes.MusicResponsiveHeader)
+          .subtitle_badge?.find(
+            (b) => b.as(YTNodes.MusicInlineBadge).label === "Explicit"
+          )
+      ),
     } as AlbumData,
     { status: 200 }
   );

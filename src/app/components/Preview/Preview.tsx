@@ -27,7 +27,7 @@ export default function Preview({ audioPlayer, songState }: PreviewProps) {
     `api/data/suggestions/related?id=${songState.get?.id}`
   );
   const lyrics = useFetch<LyricsData>(
-    `api/data/lyrics?name=${songState.get?.title}&artist=${songState.get?.artist}&album=${songState.get?.album}&duration=${songState.get?.duration}`
+    `api/data/lyrics?name=${songState.get?.title}&artist=${songState.get?.artist.name}&album=${songState.get?.album?.name}&duration=${songState.get?.duration}`
   );
 
   if (!audioPlayer || !songState.get) return null;
