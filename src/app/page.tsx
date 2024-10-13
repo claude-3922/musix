@@ -20,6 +20,7 @@ import { BlockSign } from "./components/Icons/Icons";
 import useAuth from "./hooks/Auth";
 import { redirect } from "next/dist/server/api-utils";
 import { useRouter } from "next/router";
+import React from "react";
 
 export default function Page() {
   const songState = useStateManager<SongData | null>(null);

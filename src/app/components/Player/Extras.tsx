@@ -52,7 +52,7 @@ export default function Extras({
   return (
     <>
       {showVolumeBar && (
-        <span className="grow max-w-[25%]">
+        <span className="grow max-w-[25%]" onClick={(e) => e.stopPropagation()}>
           <SeekBar
             width="100%"
             height="4px"
@@ -87,7 +87,8 @@ export default function Extras({
 
       <button
         className="h-[30%] w-[12%] hover:scale-110"
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation();
           const isMuted = audioPlayer.volume === 0;
           isMuted
             ? (audioPlayer.volume = JSON.parse(
@@ -106,7 +107,10 @@ export default function Extras({
       {user && (
         <button
           className="h-[30%] w-[10%] hover:scale-110"
-          onClick={() => setShowLikeFill((p) => !p)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowLikeFill((p) => !p);
+          }}
         >
           {showLikeFill ? (
             <HeartFill size={"80%"} fill={COLORS.ACCENT} />
@@ -117,7 +121,8 @@ export default function Extras({
       )}
       <button
         className="h-[30%] w-[10%] hover:scale-110"
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation();
           setLooped(!looped);
           audioPlayer.loop = !looped; //Need a ! because state won't update until rerender
         }}

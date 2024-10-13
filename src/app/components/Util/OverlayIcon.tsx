@@ -10,7 +10,6 @@ interface OverlayIconProps extends HTMLAttributes<HTMLSpanElement> {
   height: number | string;
 
   iconStyle: React.CSSProperties;
-
   optionalYoutubeId?: string;
 }
 
@@ -20,7 +19,6 @@ export default function OverlayIcon({
   height,
   iconStyle,
   children,
-  optionalYoutubeId,
   ...props
 }: OverlayIconProps) {
   const [hovering, setHovering] = useState(false);

@@ -35,7 +35,8 @@ export default function Controls({
   playerTime,
   playerPaused,
 }: ControlsProps) {
-  const previousHandler = async () => {
+  const previousHandler = async (e: any) => {
+    e.stopPropagation();
     // const nowPlaying = queueManager.nowPlaying;
     // const prevSong =
     //   queueManager.history.items[queueManager.history.items.length - 1];
@@ -49,7 +50,8 @@ export default function Controls({
     // queueManager.history.remove(prevSong);
   };
 
-  const nextHandler = async () => {
+  const nextHandler = async (e: any) => {
+    e.stopPropagation();
     // const currentQueue = queueManager.queue.items;
     // if (currentQueue.length === 0) {
     //   const suggestionsRes = await fetch(`api/data/suggestions?id=${data.id}`);
@@ -84,7 +86,8 @@ export default function Controls({
 
         <button
           className="w-[20%] h-[120%] hover:scale-110 transition:transform"
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             audioPlayer.paused ? audioPlayer.play() : audioPlayer.pause();
           }}
         >
@@ -104,7 +107,10 @@ export default function Controls({
           <NextButton size={"100%"} fill={"#e8eaed"} />
         </button>
       </span>
-      <span className="flex flex-row items-center gap-2 justify-center w-full">
+      <span
+        className="flex flex-row items-center gap-2 justify-center w-full"
+        onClick={(e) => e.stopPropagation()}
+      >
         <span className="flex justify-center items-center text-sm overflow-hidden w-[8%]">
           {formatSongDuration(playerTime.get)}
         </span>

@@ -113,6 +113,7 @@ export function Player({ audioPlayer, songState, showPreview }: PlayerProps) {
       style={{
         backgroundColor: `${pSBC(0.4, COLORS.BG, "#000000")}`,
       }}
+      onClick={() => showPreview.set(!showPreview.get)}
     >
       <div className="flex justify-start items-center w-[30%] h-full gap-2">
         <OverlayIcon
