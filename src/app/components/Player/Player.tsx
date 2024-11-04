@@ -1,7 +1,6 @@
-/* eslint-disable jsx-a11y/alt-text */
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
+import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import Controls from "./Controls";
 import Extras from "./Extras";
@@ -86,14 +85,15 @@ export function Player({ audioPlayer, songState, showPreview }: PlayerProps) {
 
   if (!audioPlayer) {
     return (
-      <div
-        className={`no-select flex flex-row items-center justify-center w-full h-full`}
-        style={{
-          backgroundColor: `${pSBC(0.4, COLORS.BG, "#000000")}`,
-        }}
-      >
-        <span className="text-2xl opacity-60">Nothing playing</span>
-      </div>
+      // <div
+      //   className={`no-select flex flex-row items-center justify-center w-full h-full`}
+      //   style={{
+      //     backgroundColor: `${pSBC(0.4, COLORS.BG, "#000000")}`,
+      //   }}
+      // >
+      //   <span className="text-2xl opacity-60">Nothing playing</span>
+      // </div>
+      <></>
     );
   } else if (!songState.get) {
     return null;
@@ -132,6 +132,23 @@ export function Player({ audioPlayer, songState, showPreview }: PlayerProps) {
             <Chevron_0Deg size={"100%"} opacity={0.8} />
           </span>
         </OverlayIcon>
+
+        <span>
+          <Image
+            loading="eager"
+            alt="Thumbnail"
+            width={120}
+            height={120}
+            src={songState.get.thumbnail}
+            style={{
+              objectFit: "cover",
+              position: "absolute",
+              zIndex: 0,
+              left: 0,
+              top: 0,
+            }}
+          />
+        </span>
 
         <div className="flex flex-col items-start justify-center w-[45%] h-full overflow-x-hidden">
           {data && data.title.length > 21 ? (

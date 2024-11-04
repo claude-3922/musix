@@ -86,9 +86,9 @@ function SearchResults({ query, songState, audioPlayer }: SearchResultsProps) {
           <span className="flex items-center justify-start min-w-[50%] max-w-[80%] grow h-full text-2xl tracking-tight opacity-80 gap-2">
             Top Result
           </span>
-          <span className="flex items-center justify-end text-2xl tracking-tight min-w-[10%] max-w-[50%] h-full opacity-80 gap-2">
+          {/* <span className="flex items-center justify-end text-2xl tracking-tight min-w-[10%] max-w-[50%] h-full opacity-80 gap-2">
             <ContainerScroller direction="y" container={null as any} />
-          </span>
+          </span> */}
         </div>
 
         {topResult?.pending && (
